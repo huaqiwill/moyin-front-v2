@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Header, Footer } from "./components";
+import { Header } from "./layout-header";
+import { Footer } from "./layout-footer";
 </script>
 
 <template>

@@ -15,5 +15,6 @@ module.exports = {
   rules: {
     // 变量未使用检查交由typescript负责
     '@typescript-eslint/no-unused-vars': 'off',
+    'vue/multi-word-component-names': 'off',
   },
 }
