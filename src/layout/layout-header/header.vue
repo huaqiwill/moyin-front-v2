@@ -1,6 +1,10 @@
 <template>
-  <el-header class="header">
-    <a-menu mode="horizontal" :default-selected-keys="['开始配音']">
+  <div class="header">
+    <a-menu
+      mode="horizontal"
+      :default-selected-keys="['开始配音']"
+      class="menu-container"
+    >
       <a-menu-item
         key="0"
         :style="{ padding: 0, marginRight: '38px', cursor: 'pointer' }"
@@ -54,7 +58,7 @@
       </el-dropdown>
     </div> -->
     <!-- <LoginOrRegister :show="loginOrRegisterDialogShow"></LoginOrRegister> -->
-  </el-header>
+  </div>
 </template>
 
 <script setup>
@@ -102,10 +106,10 @@ const menus = [
   // border-bottom: 1px solid #dcdfe6;
 
   .menu-container {
-    display: flex;
+    width: calc(100% - 200px);
+    height: 100%;
 
     .menu-list {
-      height: 60px !important;
       display: flex;
       gap: 20px;
       align-items: center;

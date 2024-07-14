@@ -7,11 +7,7 @@ import { Footer } from "./layout-footer";
   <div class="common-layout">
     <Header />
     <div class="content">
-      <router-view v-slot="{ Component }">
-        <transition name="fade">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+      <router-view />
     </div>
     <Footer />
   </div>
@@ -19,12 +15,25 @@ import { Footer } from "./layout-footer";
 
 <style scoped lang="scss">
 .common-layout {
-  // height: 100vh;
+  height: 100vh;
+
+  .header {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 85px;
+  }
 
   .content {
-    padding: 4px 6px;
+    // padding: 4px 6px;
     display: flex;
-    height: calc(100vh - 100px);
+    height: calc(100% - 140px);
+  }
+
+  .footer {
+    width: 100%;
+    height: 30px;
+    max-height: 30px;
   }
 }
 </style>

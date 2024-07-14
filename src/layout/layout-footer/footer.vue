@@ -14,7 +14,8 @@ const endYear = ref("2024");
 
 <style scoped lang="scss">
 .footer {
-  padding: 13px;
+  padding: 10px;
+  box-sizing: border-box;
   background-color: #fff;
 
   p {

@@ -85,12 +85,7 @@ async function handleSaveEditorHtml(editor: IDomEditor) {
   <div
     ref="boxRef"
     class="editor-core scrollbar"
-    style="
-      height: 70vh;
-      overflow-y: hidden;
-      width: 100%;
-      font-size: 16px;
-    "
+    style="overflow-y: hidden; width: 100%; font-size: 16px"
   ></div>
 </template>
 

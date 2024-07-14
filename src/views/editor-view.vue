@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import EditorHeader from './editor-header.vue'
+// import EditorHeader from './editor-header.vue'
+import { DubbingFooter } from '@/components'
 import EditorCore from './editor-core.vue'
 import EditorBar from './editor-bar.vue'
 import { type IDomEditor } from '@wangeditor/editor'
@@ -56,24 +57,38 @@ function handleKeyDown(ev: KeyboardEvent) {
         <EditorCore @change="handleChange" @created="handleCreated"></EditorCore>
         <slot name="sidebar"></slot>
       </div>
+      <slot name="footer">
+        <!-- <EditorHeader></EditorHeader> -->
+        <DubbingFooter />
+      </slot>
     </div>
-    <slot name="header"><EditorHeader></EditorHeader></slot>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .editor-view {
   background-color: var(--tool-bg-color);
+  width: 100%;
+  height: 100%;
 
   .editor-box {
     background-color: var(--tool-bg-grey-color);
+    width: 100%;
+    height: calc(100% - 60px);
 
     .editor-core-container {
       margin: 0 auto;
-      // width: 60vw;
       width: 100%;
+      background-color: #fff;
+      padding: 5px 0 5px 0;
+      height: calc(100% - 75px);
       display: flex;
     }
+  }
+
+  .dubbing-footer {
+    height: 50px;
+    background-color: #f4f6f7;
   }
 }
 </style>

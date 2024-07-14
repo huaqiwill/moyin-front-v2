@@ -14,6 +14,8 @@ const onShowSpeakerInfo = () => {
   dialogShow.value = true;
 };
 
+const loading = ref(false);
+
 const showAllCriteria = ref(false); // 控制是否显示所有搜索条件
 
 const hasMoreCriteria = computed(() => {
@@ -56,12 +58,14 @@ const queryParams = reactive({
   pageNum: 1,
 });
 
-onMounted(() => {
-  getSpeakerEmotionList().then((res) => {
+onMounted(async () => {
+  loading.value = true;
+
+  const speakerEmotionPromise = getSpeakerEmotionList().then((res) => {
     speakerEmotionList.value = res.data;
   });
 
-  getStoreSearchCriteria().then((res) => {
+  const storeSearchCriteriaPromise = getStoreSearchCriteria().then((res) => {
     storeSearchCriteria.value = res.data;
     let keys = Object.keys(storeSearchCriteria.value);
     let list = [];
@@ -75,11 +79,19 @@ onMounted(() => {
     searchCriteriaList.value = list;
   });
 
-  getSearchSpeakers();
+  const searchSpeakersPromise = getSearchSpeakers();
+
+  await Promise.all([
+    speakerEmotionPromise,
+    storeSearchCriteriaPromise,
+    searchSpeakersPromise,
+  ]);
+
+  loading.value = false;
 });
 
 const getSearchSpeakers = () => {
-  searchSpeakers(queryParams).then((res) => {
+  return searchSpeakers(queryParams).then((res) => {
     searchSpeakerList.value = res.data.results;
     console.log(searchSpeakerList.value);
   });
@@ -105,7 +117,7 @@ const handleOk = () => {
 </script>
 
 <template>
-  <a-card class="dubbing-list-1" style="min-width: 290px">
+  <a-card class="dubbing-list-1" v-loading="loading">
     <!-- 搜索 -->
     <a-input
       v-model="queryParams.keyWord"
@@ -167,9 +179,9 @@ const handleOk = () => {
             <span>{{ item.name }}</span>
           </div>
           <!-- <div class="speaker-count">16种风格</div> -->
-          <div class="speaker-style" style="margin-top: 8px">
+          <!-- <div class="speaker-style" style="margin-top: 8px">
             {{ item.behavior.replace("，", "\n") }}
-          </div>
+          </div> -->
         </a-badge>
       </a-list-item>
     </a-list>
@@ -229,7 +241,8 @@ const handleOk = () => {
 
 .dubbing-list-1 {
   height: 100%;
-  width: 600px;
+  max-width: 400px;
+  min-width: 400px;
   overflow-y: auto;
   // border-radius: 6px;
 
@@ -273,17 +286,18 @@ const handleOk = () => {
 }
 
 .speaker-list {
-  padding: 10px;
+  width: 100%;
+  padding: 5px;
   border: 1px solid #d3dee7;
 
   .speaker-item {
     position: relative;
-    width: 100px;
-    height: 135px;
+    width: 80px;
+    height: 90px;
     border-radius: 5px;
-    padding: 14px 10px;
+    // padding: 14px 10px;
     border: 1px solid #d3dee7;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 
     // &.selected .speaker-img {
     //   border-radius: 50%;
@@ -319,8 +333,8 @@ const handleOk = () => {
     }
 
     .speaker-img {
-      width: 60px;
-      height: 60px;
+      width: 40px;
+      height: 40px;
       margin-bottom: 8px;
       cursor: pointer;
       // border: 2px solid transparent;
@@ -331,7 +345,7 @@ const handleOk = () => {
         -webkit-user-drag: none;
         width: 100%;
         height: 100%;
-        // border-radius: 50%;
+        border-radius: 50%;
         vertical-align: middle;
         text-align: center;
         border: none;
