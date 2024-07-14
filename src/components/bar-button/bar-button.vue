@@ -43,6 +43,7 @@ const handleClick = throttle(() => {
 button {
   width: 65px;
   height: 65px;
+  border: none;
 }
 .play-menu-icon {
   color: rgb(198, 19, 19);

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function tts(data: any) {
   return request({
-    url: '/api/moyin/tts',
+    url: '/moyin/tts',
     method: 'post',
     data,
   })

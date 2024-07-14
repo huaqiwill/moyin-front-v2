@@ -78,7 +78,7 @@ function handleSubmit(opt: SubmitData) {
 </script>
 
 <template>
-  <DragBox ref="dragRef" v-model:visible="visible">
+  <DragBox ref="dragRef" v-model:visible="visible" title="多人配音">
     <template #reference>
       <BarButton ref="menuRef" icon="management" @click="handleClick">多人配音</BarButton>
     </template>

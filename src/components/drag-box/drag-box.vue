@@ -8,7 +8,8 @@ import { emitter } from '@/event-bus'
 const emit = defineEmits<{ 'update:visible': [value: boolean]; close: [] }>()
 const props = defineProps<{
   visible: boolean
-  initialValue?: Position
+  initialValue?: Position,
+  title?:string
 }>()
 
 const boxRef = ref<HTMLElement>()
@@ -84,12 +85,28 @@ function handleKeyDownEsc(event: KeyboardEvent) {
       @mousedown.prevent
     >
       <div class="w-100 d-flex flex-row align-items-center">
-        <div ref="dragRef" class="w-100" style="height: 40px; cursor: move"></div>
-        <span @click="handleClose" class="btn iconfont icon-close fs-5"></span>
+        <div ref="dragRef" class="w-100" style="height: 40px; cursor: move">
+          <span
+            v-if="props.title"
+            style="line-height: 40px; font-size: 18px; margin-left: 8px"
+          >
+            {{ props.title }}
+          </span>
+        </div>
+        <span
+          @click="handleClose"
+          class="btn iconfont icon-close fs-5 border border-0"
+        ></span>
       </div>
       <slot></slot>
     </div>
   </Teleport>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.btn {
+  &:hover {
+    background-color: #e5e5e5;
+  }
+}
+</style>

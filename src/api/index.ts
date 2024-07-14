@@ -35,7 +35,7 @@ export function moyinEmotionList() {
 }
 
 // 配音员列表
-export function moyinDubbingList(data) {
+export function moyinDubbingList(data: any) {
   return request({
     url: '/moyin/dubbing/list',
     method: 'GET',
@@ -48,5 +48,22 @@ export function moyinMemberInfo() {
   return request({
     url: '/moyin/member/info',
     method: 'POST',
+  })
+}
+
+// 获取用户协议
+export function getUserProtocol() {
+  return request({
+    url: '/moyin/websiteConfig/getUserProtocol',
+    method: 'GET',
+  })
+}
+
+// 查敏感词
+export function sensitiveWordIdentify(text: string) {
+  return request({
+    url: '/moyin/sensitiveWord/identify',
+    method: 'POST',
+    data: text,
   })
 }

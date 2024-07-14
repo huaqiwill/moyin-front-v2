@@ -1,12 +1,12 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
-export const useDubbingStore = defineStore("dubbing", {
+export const useDubbingStore = defineStore('dubbing', {
   state: () => {
     return {
       // 配音文字
-      dubbingText: "",
+      dubbingText: '',
       // 选中的配音文字
-      dubbingSelectedText: "",
+      dubbingSelectedText: '',
       // 当前光标位置
       dubbingSelectedIndex: 0,
       // 当前选中的文本长度
@@ -19,8 +19,10 @@ export const useDubbingStore = defineStore("dubbing", {
       // 编辑器实例
       quillEditorRef: null,
 
-      
-    };
+      //
+      ssmlRef: '',
+      ssmlFormatRef: '',
+    }
   },
   getters: {},
   actions: {
@@ -28,4 +30,4 @@ export const useDubbingStore = defineStore("dubbing", {
       // 登录逻辑
     },
   },
-});
+})

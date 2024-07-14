@@ -1,3 +1,67 @@
+<script setup>
+import { ref, reactive, watch, computed, defineProps, onMounted } from "vue";
+import { ElMessage } from "element-plus";
+import { User, Lock, Key } from "@element-plus/icons-vue";
+import { useRoute, useRouter } from "vue-router";
+import { login, getCodeImg } from "@/api/login";
+import { getUserProtocol } from "@/api";
+import { useUserStore } from "@/stores/index";
+import { setToken } from "@/utils/auth";
+
+const { token } = useUserStore();
+const route = useRoute();
+const router = useRouter();
+
+const imgSrc = ref("");
+
+const loginForm = reactive({
+  username: "",
+  password: "",
+  code: "",
+  uuid: "",
+});
+
+const formRules = {
+  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+  code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+};
+
+onMounted(() => {
+  handleGetCaptcha();
+});
+
+// 登录
+const handleLogin = () => {
+  login(loginForm).then((res) => {
+    setToken(res.token);
+    router.push({ path: "/" }).catch(() => {});
+  });
+};
+
+// 注册
+const handleRegister = () => {
+  router.push({
+    name: "register",
+  });
+};
+
+// 用户协议
+const handleUserProtocol = () => {
+  getUserProtocol().then((res) => {
+    ElMessage(res.data);
+  });
+};
+
+// 获取验证码
+const handleGetCaptcha = () => {
+  getCodeImg().then((res) => {
+    imgSrc.value = "data:image/gif;base64," + res.img;
+    loginForm.uuid = res.uuid;
+  });
+};
+</script>
+
 <template>
   <div class="login-container">
     <el-card>
@@ -51,69 +115,6 @@
     </el-card>
   </div>
 </template>
-
-<script setup>
-import { ref, reactive, watch, computed, defineProps, onMounted } from "vue";
-import { ElMessage } from "element-plus";
-import { User, Lock, Key } from "@element-plus/icons-vue";
-import { useRoute, useRouter } from "vue-router";
-import { login, getCodeImg } from "@/api/login.js";
-
-import { useUserStore } from "@/stores/index";
-import { setToken } from "@/utils/auth";
-const { token } = useUserStore();
-
-const route = useRoute();
-
-const router = useRouter();
-
-const imgSrc = ref("");
-
-const loginForm = reactive({
-  username: "",
-  password: "",
-  code: "",
-  uuid: "",
-});
-
-const formRules = {
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
-  code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
-};
-
-onMounted(() => {
-  handleGetCaptcha();
-});
-
-// 登录
-const handleLogin = () => {
-  login(loginForm).then((res) => {
-    setToken(res.token);
-    router.push({ path: "/" }).catch(() => {});
-  });
-};
-
-// 注册
-const handleRegister = () => {
-  router.push({
-    name: "register",
-  });
-};
-
-// 用户协议
-const handleUserProtocol = () => {
-  ElMessage("用户协议");
-};
-
-// 获取验证码
-const handleGetCaptcha = () => {
-  getCodeImg().then((res) => {
-    imgSrc.value = "data:image/gif;base64," + res.img;
-    loginForm.uuid = res.uuid;
-  });
-};
-</script>
 
 <style scoped lang="scss">
 .login-container {

@@ -22,15 +22,8 @@ export function getStoreSearchCriteria() {
   })
 }
 
-export function searchSpeakers(params: any) {
-  return request({
-    url: 'https://openapi.mobvoi.com/open-apis/speaker/searchSpeakers',
-    method: 'get',
-    headers: {
-      isToken: false,
-      repeatSubmit: false,
-    },
-    params: {
+/**
+ * params: {
       ...params,
       keyWord: '',
       domainId: '',
@@ -44,6 +37,18 @@ export function searchSpeakers(params: any) {
       pageSize: 30,
       pageNum: 1,
     },
+ * @param params 
+ * @returns 
+ */
+export function searchSpeakers(params: any) {
+  return request({
+    url: 'https://openapi.mobvoi.com/open-apis/speaker/searchSpeakers',
+    method: 'get',
+    headers: {
+      isToken: false,
+      repeatSubmit: false,
+    },
+    params,
   })
 }
 

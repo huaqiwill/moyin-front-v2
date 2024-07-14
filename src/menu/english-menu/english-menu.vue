@@ -52,7 +52,7 @@ function handleItemClick(item: LabelValue) {
 <template>
   <BarPopover v-model:visible="visible">
     <template #reference>
-      <BarButton icon="english" @click="handleClick">音标</BarButton>
+      <BarButton icon="english" @click="handleClick" class="disabled">音标</BarButton>
     </template>
     <div class="d-flex flex-column">
       <div

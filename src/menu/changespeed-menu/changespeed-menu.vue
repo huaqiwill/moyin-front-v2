@@ -25,7 +25,7 @@ async function handleClick(editor: IDomEditor) {
   show()
 }
 
-function handleItemClick(item: LabelValue) {
+function handleItemClick(item: LabelValue) {  
   fn.value?.exec({ ...item })
   hide()
 }

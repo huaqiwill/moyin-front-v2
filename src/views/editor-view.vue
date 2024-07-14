@@ -54,6 +54,7 @@ function handleKeyDown(ev: KeyboardEvent) {
       <EditorBar></EditorBar>
       <div class="editor-core-container shadow pt-1">
         <EditorCore @change="handleChange" @created="handleCreated"></EditorCore>
+        <slot name="sidebar"></slot>
       </div>
     </div>
     <slot name="header"><EditorHeader></EditorHeader></slot>
@@ -69,7 +70,9 @@ function handleKeyDown(ev: KeyboardEvent) {
 
     .editor-core-container {
       margin: 0 auto;
-      width: 60vw;
+      // width: 60vw;
+      width: 100%;
+      display: flex;
     }
   }
 }

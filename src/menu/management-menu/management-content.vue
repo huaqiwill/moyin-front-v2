@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 多人配音
 import { defaultFilterSpeaker, type LabelValue, type Speaker } from '@/model'
 import { ElInput, ElForm, ElTag, ElButton } from 'element-plus'
 import { More, Search } from '@element-plus/icons-vue'
@@ -201,9 +202,17 @@ defineExpose({
 </script>
 
 <template>
-  <div ref="boxRef" style="width: 600px; height: 360px" class="position-relative px-2 pb-2">
+  <div
+    ref="boxRef"
+    style="width: 600px; height: 360px"
+    class="position-relative px-2 pb-2"
+  >
     <ElForm @submit.prevent="handleSelectCategory('')">
-      <ElInput ref="searchRef" v-model="searchInput" placeholder="请输入名称快速查找配音师">
+      <ElInput
+        ref="searchRef"
+        v-model="searchInput"
+        placeholder="请输入名称快速查找配音师"
+      >
         <template #append>
           <ElButton @click="handleSelectCategory('')" :icon="Search" />
         </template>
@@ -211,13 +220,17 @@ defineExpose({
     </ElForm>
     <div class="position-relative">
       <div class="position-absolute top-0 end-0">
-        <ElButton size="small" :icon="More" @click="() => (showMore = !showMore)"></ElButton>
+        <ElButton
+          size="small"
+          :icon="More"
+          @click="() => (showMore = !showMore)"
+        ></ElButton>
       </div>
       <ul
-        class="d-flex flex-row row-gap-1 column-gap-2 overflow-x-hidden"
+        class="d-flex flex-row row-gap-1 column-gap-2 overflow-x-hidden mt-1"
         :class="{ 'flex-wrap': showMore }"
       >
-        <li><span class="text-nowrap">近期使用:</span></li>
+        <li class="mt-2"><span class="text-nowrap">近期使用:</span></li>
         <li
           class="btn m-0 p-0"
           v-for="(item, index) in recentUsageCache"
@@ -259,9 +272,15 @@ defineExpose({
       </div>
     </div>
 
-    <div class="position-absolute bottom-0 end-0 d-flex flex-row justify-content-end me-4 mb-3">
-      <ElButton v-show="!showMore" @click="() => handleSubmit()" type="primary">确定</ElButton>
-      <ElButton v-show="showMore" @click="handleRecentUsageClean" type="primary">全部清空</ElButton>
+    <div
+      class="position-absolute bottom-0 end-0 d-flex flex-row justify-content-end me-4 mb-3"
+    >
+      <ElButton v-show="!showMore" @click="() => handleSubmit()" type="primary"
+        >确定</ElButton
+      >
+      <ElButton v-show="showMore" @click="handleRecentUsageClean" type="primary"
+        >全部清空</ElButton
+      >
     </div>
   </div>
 </template>

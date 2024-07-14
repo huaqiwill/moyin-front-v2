@@ -11,16 +11,24 @@
     <div style="margin-top: 15px">
       <el-input type="textarea" v-model="text"></el-input>
     </div>
+    <a-button class="mt-2" type="primary" @click="handleFind">查敏感词</a-button>
   </el-dialog>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { DubbingButton } from "@/components";
+import { sensitiveWordIdentify } from "@/api";
 
 const dialogShow = ref(false);
 const handleFindSensitiveWords = () => {
   dialogShow.value = true;
+};
+
+const handleFind = () => {
+  sensitiveWordIdentify(text).then((res) => {
+    console.log(res);
+  });
 };
 
 const text = ref("");

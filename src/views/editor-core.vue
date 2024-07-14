@@ -82,11 +82,20 @@ async function handleSaveEditorHtml(editor: IDomEditor) {
 </script>
 
 <template>
-  <div ref="boxRef" class="editor-core scrollbar" style="height: 70vh; overflow-y: hidden"></div>
+  <div
+    ref="boxRef"
+    class="editor-core scrollbar"
+    style="
+      height: 70vh;
+      overflow-y: hidden;
+      width: 100%;
+      font-size: 16px;
+    "
+  ></div>
 </template>
 
 <style lang="scss" scoped>
-@import '@/assets/scrollbar.scss';
+@import "@/assets/scrollbar.scss";
 
 :deep() {
   .w-e-scroll {

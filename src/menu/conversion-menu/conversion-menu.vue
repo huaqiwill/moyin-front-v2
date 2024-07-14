@@ -38,7 +38,7 @@ function handleMenuSubmit(opt: LabelValue) {
 </script>
 
 <template>
-  <DragBox ref="dragRef" v-model:visible="visible">
+  <DragBox ref="dragRef" v-model:visible="visible" title="局部变音">
     <template #reference>
       <BarButton ref="menuRef" icon="conversion" @click="handleClick">局部变音</BarButton>
     </template>

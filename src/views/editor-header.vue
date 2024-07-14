@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ElButton, ElDialog, ElMessage } from "element-plus";
-import { computed, inject, ref, useSlots } from "vue";
+import { computed, inject, onMounted, ref, useSlots } from "vue";
 import xmlFormat from "xml-formatter";
 import { serializeToSSML } from "@/serialize";
 import { useEditorStore, useSSMLStore } from "@/stores";
+// import { storeToRefs } from "pinia";
 import { PlayTag } from "@/components";
 import { exportRaw } from "@/utils";
 import dayjs from "dayjs";
@@ -17,6 +18,12 @@ const ssml = ref("");
 const { rootBackgroundaudio } = useSSMLStore();
 const editorStore = useEditorStore();
 const editorKey = inject<symbol>("editorKey")!;
+// const { ssmlRef, ssmlFormatRef } = storeToRefs(useDubbingStore());
+
+onMounted(() => {
+  // ssmlRef.value = ssml.value;
+  // ssmlFormatRef.value = ssmlFormat.value;
+});
 
 const ssmlFormat = computed(() => {
   return xmlFormat(ssml.value, {
@@ -77,6 +84,8 @@ function handleExport() {
  * @param isFormat 是否格式化ssml(多余的空格和换行可能会导致意外的停顿)
  */
 async function handleCopy(isFormat: boolean) {
+  console.log(ssml.value);
+
   await navigator.clipboard.writeText(isFormat ? ssmlFormat.value : ssml.value);
   dialogVisible.value = false;
   ElMessage.success({ message: "复制成功!", grouping: true });

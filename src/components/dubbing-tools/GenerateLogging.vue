@@ -1,3 +1,43 @@
+<script setup>
+import { onMounted, ref } from "vue";
+import { DubbingButton } from "@/components";
+import { ttsRecordList, ttsRecordDelete } from "@/api/tts";
+import { ElMessage, ElMessageBox } from "element-plus";
+
+const dialogVisible = ref(false);
+
+const handleClicked = () => {
+  getTtsRecordList();
+  dialogVisible.value = true;
+};
+
+const getTtsRecordList = () => {
+  ttsRecordList().then((res) => {
+    console.log(res);
+    tableData.value = res.rows;
+  });
+};
+
+const onDelete = (row) => {
+  ElMessageBox.confirm("确认删除吗？", "提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    ttsRecordDelete(row.id).then((res) => {
+      ElMessage({
+        message: "删除成功",
+        type: "success",
+      });
+      getTtsRecordList();
+    });
+  });
+};
+
+onMounted(() => {});
+
+const tableData = ref([]);
+</script>
 <template>
   <!-- 生成记录 -->
   <DubbingButton
@@ -12,7 +52,7 @@
       <el-table-column prop="createTime" label="生成时间" width="180" />
       <el-table-column prop="speaker" label="生成音色" width="180" />
       <el-table-column prop="text" label="生成内容" />
-      <el-table-column fixed="right" label="Operations" width="120" align="center">
+      <el-table-column fixed="right" label="操作" width="120" align="center">
         <template #default="scope">
           <el-button type="primary" @click="onDelete(scope.row)">删除</el-button>
         </template>
@@ -20,56 +60,4 @@
     </el-table>
   </el-dialog>
 </template>
-
-<script setup>
-import { onMounted, ref } from "vue";
-import { DubbingButton } from "@/components";
-import { ttsRecordList, ttsRecordDelete } from "@/api/tts";
-import { ElMessage } from "element-plus";
-
-const dialogVisible = ref(false);
-
-const handleClicked = () => {
-  dialogVisible.value = true;
-};
-
-const onDelete = (row) => {
-  ttsRecordDelete(row.id).then((res) => {
-    ElMessage({
-      message: "删除成功",
-      type: "success",
-    });
-  });
-};
-
-onMounted(() => {
-  ttsRecordList().then((res) => {
-    tableData.value = res.data;
-  });
-});
-
-const tableData = [
-  {
-    createTime: "2016-05-03",
-    speaker: "Tom",
-    text: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    createTime: "2016-05-02",
-    speaker: "Tom",
-    text: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    createTime: "2016-05-04",
-    speaker: "Tom",
-    text: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    createTime: "2016-05-01",
-    speaker: "Tom",
-    text: "No. 189, Grove St, Los Angeles",
-  },
-];
-</script>
-
 <style lang="scss" scoped></style>

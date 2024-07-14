@@ -39,17 +39,33 @@ function serializeBreak(node: Break) {
 
 function serializePhoneme(node: Phoneme, children: string) {
   if (!node.ph) return children
-  return `<p phoneme="${formatPinyin(node.ph)}">${children}</phoneme>`
+  return ` <p phoneme="${formatPinyin(node.ph)}">${children}</p>`
 }
 
+/**
+ * 局部变速
+ * @param node
+ * @param children
+ * @returns
+ * 
+ * 更新
+ * 1. 语速从 
+ *  \<prosody rate="-50%">${children}</prosody>
+ * 变为
+ *  \<option speed="0.5">${children}</option>
+ */
 function serializeProsody(node: Prosody, children: string) {
   if (!node.contour && !node.pitch && !node.range && !node.rate && !node.volume) return children
   const contour = node.contour ? ` contour="${node.contour}"` : ''
   const pitch = node.pitch ? ` pitch="${node.pitch}"` : ''
   const range = node.range ? ` range="${node.range}"` : ''
   const volume = node.volume ? ` volume="${node.volume}"` : ''
-  const rate = node.rate ? ` rate="${node.rate}"` : ''
-  return `<prosody${contour}${pitch}${range}${volume}${rate}>${children}</prosody>`
+  // const rate = node.rate ? ` rate="${node.rate}"` : ''
+  // node.rate = node.rate ? node.rate : node.rate
+  const speed = node.rate ? ` speed="${node.rate}"` : ''
+  // return `<prosody${contour}${pitch}${range}${volume}${rate}>${children}</prosody>`
+  // 更新
+  return `<option${contour}${pitch}${range}${volume}${speed}>${children}</option>`
 }
 
 function serializeSayAs(node: SayAs, children: string) {
@@ -231,8 +247,10 @@ export function serializeToSpeakDataList() {
 export default function serializeToSSML() {
   const list = serializeToSpeakDataList()
   function speakDataToXML(data: SpeakData) {
-    return `<with name="${data.name}" role="${data.role}" style="${data.style}" speed="${data.speed}" pitch="${data.pitch}">${data.ssml}</with>`
+    // return `<with name="${data.name}" role="${data.role}" style="${data.style}" speed="${data.speed}" pitch="${data.pitch}">${data.ssml}</with>`
+    return `${data.ssml}`
   }
   const ssml = list.map((v) => speakDataToXML(v)).join('')
-  return `<ssml>${ssml}</ssml>`
+  // return `<ssml>${ssml}</ssml>`
+  return `${ssml}`
 }

@@ -1,7 +1,8 @@
 import type { LabelValue } from '@/model'
 
 function format(n: number) {
-  return `${((n - 1) * 100).toFixed(0)}%`
+  // return `${((n - 1) * 100).toFixed(0)}%`
+  return n + ''
 }
 
 export const rates: LabelValue[] = [

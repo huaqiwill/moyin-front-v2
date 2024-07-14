@@ -16,7 +16,7 @@ const props = defineProps({
 });
 
 const handleBuy = () => {
-  ElMessageBox.alert("内容", "标题", {
+  ElMessageBox.alert("测试中... 会员暂不可购买", "提示", {
     confirmButtonText: "确定",
     callback: (action) => {
       if (action === "confirm") {

@@ -1,11 +1,20 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+// 是否显示竖线
+const showLine = false;
+
+const style = showLine
+  ? "height: 50px; width: 2px; margin: 1px 14px"
+  : "height: 50px; width: 0; margin: 1px 14px"; // 宽度不显示
+</script>
 
 <template>
-  <div class="bar-wrapper-menus d-flex flex-row justify-content-center align-items-center">
+  <div
+    class="bar-wrapper-menus d-flex flex-row justify-content-center align-items-center"
+  >
     <div class="menus d-flex flex-row justify-content-center align-items-center">
       <slot></slot>
     </div>
-    <div class="divider" style="height: 50px; width: 2px; margin: 1px 14px"></div>
+    <div v-if="showLine" class="divider" :style="style"></div>
   </div>
 </template>
 
