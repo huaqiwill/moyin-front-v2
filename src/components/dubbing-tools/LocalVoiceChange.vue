@@ -7,7 +7,7 @@
     @click="handleMultiplayerDubbing"
   />
 
-  <el-dialog v-model="dialogShow" title="局部变音" width="400">
+  <el-dialog v-model="dialogShow" title="局部变音" width="400" draggable>
     <div class="voice-adjust">
       <p>请在安静的环境中进行录音，以需要转换的风格，读出以下文案</p>
       <el-input v-model="textarea" :rows="2" type="textarea" placeholder="Please input" />

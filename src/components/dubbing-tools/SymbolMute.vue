@@ -7,7 +7,7 @@
     @click="handleClicked"
   />
 
-  <el-dialog v-model="dialogShow" title="符号停顿">
+  <el-dialog v-model="dialogShow" title="符号停顿" draggable>
     <div>
       <p>
         开启：智能分句开启后，将使用更自然真人的高阶模型算法，极大的提升发音人的自然度，更加媲美真人。

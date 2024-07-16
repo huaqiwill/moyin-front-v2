@@ -13,6 +13,7 @@
         content="从光标处开始试听"
         icon="volume"
         @click="handleClicked"
+        placement="left"
       />
     </template>
     <div class="volume">

@@ -55,19 +55,22 @@ function handleMinimize() {
     class="try-play user-select-none card z-3 shadow"
   >
     <div class="box ms-2">
-      <div class="text-center d-flex flex-row justify-content-between" style="height: 30px">
-        <div ref="handleRef" class="h-100 w-100" style="cursor: move"></div>
+      <div
+        class="text-center d-flex flex-row justify-content-between"
+        style="height: 30px"
+      >
+        <div ref="handleRef" class="h-100 w-100 text-start" style="cursor: move">
+          <span class="dubbing-title">配音员列表</span>
+        </div>
         <button @click="handleMinimize" class="btn btn-sm border-0" style="width: 45px">
           <span class="iconfont icon-zuixiaohua text-white fs-6"></span>
         </button>
       </div>
       <div class="try-play-body d-flex flex-row">
-        <div class="try-play-left w-50 border-right border-secondary">
+        <div class="try-play-left w-50">
           <LeftPanle></LeftPanle>
         </div>
-        <div
-          class="try-play-right w-50 border-start rounded border-top border-secondary overflow-x-hidden overflow-y-auto scrollbar-none"
-        >
+        <div class="try-play-right w-50 overflow-x-hidden overflow-y-auto scrollbar-none">
           <RightPanle></RightPanle>
         </div>
       </div>
@@ -77,18 +80,30 @@ function handleMinimize() {
 
 <style lang="scss" scoped>
 $width: 890px;
-$height: 390px;
+$height: 420px;
+
+.dubbing-title {
+  text-align: left;
+  color: #fff;
+  line-height: 30px;
+}
 
 .try-play {
   width: $width;
   background-color: #2254a1;
 
   .try-play-body {
+    border-top: 1px solid #3463ab;
+    padding-top: 8px;
     height: $height;
 
-    .try-play-left,
+    .try-play-left {
+      height: $height - 15px;
+    }
+    
     .try-play-right {
-      height: $height;
+      height: $height - 15px;
+      border-left: 1px solid #3463ab;
     }
 
     :deep(.el-input__wrapper) {

@@ -15,6 +15,7 @@ import { ElMessage } from "element-plus";
 import { useDubbingStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { downloadAudio, tts } from "@/api/tts";
+const Base64 = require("js-base64").Base64;
 
 const { quillEditorRef } = storeToRefs(useDubbingStore());
 
@@ -22,6 +23,9 @@ const audioSrc = ref("");
 
 const handleClicked = () => {
   let text = quillEditorRef.value.getText() || "";
+
+  console.log(Base64.encode(text));
+
   if (text.length === 1) {
     ElMessage({
       message: "请输入文本后重试",
@@ -31,17 +35,28 @@ const handleClicked = () => {
   }
 
   let data = {
-    text,
+    text: "1212",
+    speaker: "",
+    audioType: "mp3",
+    speed: 1,
+    convert: "",
+    rate: "",
+    volume: 1,
+    pitch: "",
+    symbolSil: "",
+    ignoreLimit: true,
+    genSrt: true,
+    mergeSymbol: false,
   };
 
   console.log(data);
 
-  tts(text).then((res) => {
-    // console.log(res);
-    // audioSrc.value = "/dev-api/moyin/tts/audition/" + res.data;
-    const audio = new Audio("/dev-api/moyin/tts/audition/" + res.data);
-    audio.play();
-  });
+  // tts(data).then((res) => {
+  //   // console.log(res);
+  //   // audioSrc.value = "/dev-api/moyin/tts/audition/" + res.data;
+  //   const audio = new Audio("/dev-api/moyin/tts/audition/" + res.data);
+  //   audio.play();
+  // });
 };
 </script>
 

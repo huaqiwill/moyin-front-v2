@@ -36,14 +36,18 @@ function searchInputFocus() {
           :input-style="{ color: 'white' }"
           ref="searchInputRef"
           v-model="searchInput"
-          placeholder="输入名称搜索"
+          placeholder="共763款配音师，输入名称搜索"
         ></ElInput>
       </ElForm>
     </div>
     <SimpleTagList v-model:filter="filter"></SimpleTagList>
-    <div class="py-1 border-top border-secondary"></div>
+    <div class="py-1 line"></div>
     <SpeakerAvatarList :filter="filter"></SpeakerAvatarList>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.line {
+  border-top: 1px solid #3463ab;
+}
+</style>

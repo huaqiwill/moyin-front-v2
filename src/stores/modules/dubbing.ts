@@ -1,4 +1,9 @@
 import { defineStore } from 'pinia'
+import {
+  getStoreSearchCriteria as getStoreSearchCriteriaApi,
+  getSpeakerEmotionList as getSpeakerEmotionListApi,
+  searchSpeakers as searchSpeakersApi,
+} from '@/api/moyin'
 
 export const useDubbingStore = defineStore('dubbing', {
   state: () => {
@@ -22,12 +27,32 @@ export const useDubbingStore = defineStore('dubbing', {
       //
       ssmlRef: '',
       ssmlFormatRef: '',
+
+      // 搜索条件
+      storeSearchCriteria: null,
+      // 情绪列表
+      speakerEmotionList: null,
+      // 领域列表
+      domainList: [],
+      // 配音员列表
+      searchSpeakerList: [],
     }
   },
   getters: {},
   actions: {
-    async login() {
-      // 登录逻辑
+    async getStoreSearchCriteria() {
+      const res = await getStoreSearchCriteriaApi()
+      this.storeSearchCriteria = res.data      
+      this.domainList = res.data['全部领域:domainId']      
+    },
+    async getSpeakerEmotionList() {
+      const res = await getSpeakerEmotionListApi()
+      this.speakerEmotionList = res.data
+    },
+    async searchSpeakers(queryParams: any) {
+      return searchSpeakersApi(queryParams).then((res) => {
+        this.searchSpeakerList = res.data.results
+      })
     },
   },
 })

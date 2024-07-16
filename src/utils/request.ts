@@ -1,11 +1,16 @@
 import axios from 'axios'
 import { saveAs } from 'file-saver'
-import { ElMessage, ElMessageBox } from 'element-plus'
-// import { getToken } from '@/utils/auth'
+import { ElMessage, ElMessageBox, ElNotification, ElLoading } from 'element-plus'
+import { getToken } from '@/utils/auth'
 // import errorCode from '@/utils/errorCode'
 // import { tansParams, blobValidate } from '@/utils/ruoyi'
 import cache from './cache'
-import Cookies from 'js-cookie'
+// import { useUserStore } from '@/stores'
+// import { useRouter } from 'vue-router'
+
+// const store = useUserStore()
+// const router = useRouter()
+import router from '@/router'
 
 // 验证是否为blob格式
 export function blobValidate(data: any) {
@@ -13,24 +18,12 @@ export function blobValidate(data: any) {
 }
 
 export const errorCode = {
-  '401': '认证失败，无法访问系统资源',
-  '403': '当前操作没有权限',
-  '404': '访问资源不存在',
+  401: '认证失败，无法访问系统资源',
+  403: '当前操作没有权限',
+  404: '访问资源不存在',
+  500: '服务器错误',
+  601: '其他错误',
   default: '系统未知错误，请反馈给管理员',
-}
-
-const TokenKey = 'Admin-Token'
-
-export function getToken() {
-  return Cookies.get(TokenKey)
-}
-
-export function setToken(token: string) {
-  return Cookies.set(TokenKey, token)
-}
-
-export function removeToken() {
-  return Cookies.remove(TokenKey)
 }
 
 let downloadLoadingInstance: any
@@ -67,7 +60,7 @@ export const isRelogin = { show: false }
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
 // 创建axios实例
-const service = axios.create({
+const request = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
   baseURL: import.meta.env.VITE_APP_BASE_API,
   // 超时
@@ -75,7 +68,7 @@ const service = axios.create({
 })
 
 // request拦截器
-service.interceptors.request.use(
+request.interceptors.request.use(
   (config) => {
     // 是否需要设置 token
     const isToken = (config.headers || {}).isToken === false
@@ -133,16 +126,25 @@ service.interceptors.request.use(
 )
 
 // 响应拦截器
-service.interceptors.response.use(
+request.interceptors.response.use(
   (res) => {
     // 未设置状态码则默认成功状态
-    const code = res.data.code || 200
+    const code = (res.data.code as keyof typeof errorCode) || 200
     // 获取错误信息
     const msg = errorCode[code] || res.data.msg || errorCode['default']
     // 二进制数据则直接返回
     if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
       return res.data
     }
+    // 如果包含状态码，且为200
+    if (res.data.code === 200) {
+      return res.data
+    }
+    // 兼容魔音接口
+    if (res.data.err_code === 0) {
+      return res.data
+    }
+    // 错误验证
     if (code === 401) {
       if (!isRelogin.show) {
         isRelogin.show = true
@@ -152,9 +154,10 @@ service.interceptors.response.use(
           type: 'warning',
         })
           .then(() => {
+            // 重新登录
             isRelogin.show = false
-            store.dispatch('LogOut').then(() => {
-              location.href = '/index'
+            router.push({
+              name: 'login',
             })
           })
           .catch(() => {
@@ -163,20 +166,18 @@ service.interceptors.response.use(
       }
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
     } else if (code === 500) {
-      ElMessage({ message: msg, type: 'error' })
+      ElMessage.error({ message: msg })
       return Promise.reject(new Error(msg))
     } else if (code === 601) {
-      ElMessage({ message: msg, type: 'warning' })
-      return Promise.reject('error')
-    } else if (code !== 200) {
-      Notification.error({ title: msg })
+      ElMessage.warning({ message: msg })
       return Promise.reject('error')
     } else {
-      return res.data
+      ElNotification.error({ title: msg })
+      return Promise.reject('error')
     }
   },
   (error) => {
-    console.log('err' + error)
+    console.log('出现了错误：' + error)
     let { message } = error
     if (message == 'Network Error') {
       message = '后端接口连接异常'
@@ -191,13 +192,13 @@ service.interceptors.response.use(
 )
 
 // 通用下载方法
-export function download(url, params, filename, config) {
-  downloadLoadingInstance = Loading.service({
+export function download(url: string, params: object, filename: string, config: object) {
+  downloadLoadingInstance = ElLoading.service({
     text: '正在下载数据，请稍候',
     spinner: 'el-icon-loading',
     background: 'rgba(0, 0, 0, 0.7)',
   })
-  return service
+  return request
     .post(url, params, {
       transformRequest: [
         (params) => {
@@ -216,7 +217,8 @@ export function download(url, params, filename, config) {
       } else {
         const resText = await data.text()
         const rspObj = JSON.parse(resText)
-        const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
+        const code = rspObj.code as keyof typeof errorCode
+        const errMsg = errorCode[code] || rspObj.msg || errorCode['default']
         ElMessage.error(errMsg)
       }
       downloadLoadingInstance.close()
@@ -228,4 +230,4 @@ export function download(url, params, filename, config) {
     })
 }
 
-export default service
+export default request

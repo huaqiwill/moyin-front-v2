@@ -7,8 +7,11 @@ import { login, getCodeImg } from "@/api/login";
 import { getUserProtocol } from "@/api";
 import { useUserStore } from "@/stores/index";
 import { setToken } from "@/utils/auth";
+import { storeToRefs } from "pinia";
 
-const { token } = useUserStore();
+const userStore = useUserStore();
+const { token, isLogin } = storeToRefs(userStore);
+
 const route = useRoute();
 const router = useRouter();
 
@@ -33,10 +36,11 @@ onMounted(() => {
 
 // 登录
 const handleLogin = () => {
-  login(loginForm).then((res) => {
-    setToken(res.token);
-    router.push({ path: "/" }).catch(() => {});
-  });
+  userStore.login(loginForm);
+  // login(loginForm).then((res) => {
+  //   setToken(res.token);
+  //   router.push({ path: "/" }).catch(() => {});
+  // });
 };
 
 // 注册

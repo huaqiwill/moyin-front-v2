@@ -56,7 +56,7 @@ function handleCopySSML() {
 function handleCloseBgm() {
   rootBackgroundaudio.src = "";
   rootBackgroundaudio.remark = "";
-}
+} 
 
 async function handleSave() {
   const editor = editorStore.editor;

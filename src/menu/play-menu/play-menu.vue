@@ -9,6 +9,9 @@ import { inject, ref } from "vue";
 import { serializeToSSML } from "@/serialize";
 import { useEditorStore } from "@/stores";
 
+const editorStore = useEditorStore();
+const { editor } = storeToRefs(editorStore);
+
 withDefaults(defineProps<{ disabled?: boolean }>(), { disabled: false });
 
 const tryPlayStore = useTryPlayStore();
@@ -21,26 +24,41 @@ const ssmlEditorConfig = getConfig(editorKey);
 // import { storeToRefs } from "pinia";
 import { tts } from "@/api/tts";
 // const { ssmlRef } = storeToRefs(useDubbingStore());
+import { Base64 } from "js-base64";
+import { storeToRefs } from "pinia";
 
 const handleClick = throttle(async () => {
-  console.log("开始播放");
   // console.log(ssmlRef.value);
-  let text2 = serializeToSSML();
-
-  let { editor } = useEditorStore();
-  if (!editor) {
+  if (!editor.value) {
     return;
   }
+  let text = serializeToSSML();
 
   // console.log(editor.getText());
 
   // console.log(text2);
-  // text2 = editor.getText();
-  const text = text2;
+  let raw = editor.value.getText();
+
+  console.log(Base64.encode(text));
 
   console.log(text);
+  let data = {
+    text: text,
+    speaker: "",
+    audioType: "mp3",
+    rawText: raw,
+    speed: 1,
+    convert: "",
+    rate: 0,
+    volume: 0,
+    pitch: 0,
+    symbolSil: "",
+    ignoreLimit: true,
+    genSrt: true,
+    mergeSymbol: true,
+  };
 
-  tts(text).then((res) => {
+  tts(data).then((res) => {
     console.log(res);
     const audio = new Audio("/dev-api/moyin/tts/audition/" + res.data);
     audio.play();

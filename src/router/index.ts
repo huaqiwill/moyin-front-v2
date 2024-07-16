@@ -18,6 +18,7 @@ const routes = [
     path: '/',
     component: Layout,
     name: 'index',
+    redirect: '/dubbing',
     meta: {
       title: '首页',
       icon: 'dashboard',
@@ -40,6 +41,12 @@ const routes = [
         name: 'member',
         component: () => import('@/views/moyin-member'),
         meta: { title: '会员管理', icon: 'dashboard', affix: true },
+      },
+      {
+        path: '/profile',
+        name: 'profile',
+        component: () => import('@/views/moyin-profile'),
+        meta: { title: '我的账户', icon: 'dashboard', affix: true },
       },
     ],
   },

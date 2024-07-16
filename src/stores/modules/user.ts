@@ -1,9 +1,13 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
+import { login as userLogin, logout as userLogout } from '@/api/login'
+import { setToken, removeToken } from '@/utils/auth'
+import router from '@/router'
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore('user', {
   state: () => {
     return {
-      token: "",
+      token: '',
+      isLogin: false,
       isPlaying: false,
       currentSong: {},
       currentSongIndex: 0,
@@ -17,8 +21,27 @@ export const useUserStore = defineStore("user", {
       isShowMvList: false,
       isShowMvDetail: false,
       isShowMvPlay: false,
-    };
+    }
   },
   getters: {},
-  actions: {},
-});
+  actions: {
+    login(loginForm: object) {
+      userLogin(loginForm).then((res: any) => {
+        setToken(res.token)
+        router.push({ path: '/' }).catch(() => {})
+        this.isLogin = true
+        this.token = res.token
+      })
+    },
+    logout() {
+      userLogout().then(() => {
+        this.isLogin = false
+        this.token = ''
+        removeToken()
+        router.push({
+          name: 'login',
+        })
+      })
+    },
+  },
+})

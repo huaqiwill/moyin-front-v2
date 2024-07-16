@@ -3,47 +3,26 @@ import { ref, reactive, onMounted, computed } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { moyinCategoryList, moyinDubbingList, moyinEmotionList } from "@/api";
 import { ElLoading } from "element-plus";
+import { DubbingInfo } from "./index";
 import {
   getSpeakerEmotionList,
   getStoreSearchCriteria,
   searchSpeakers,
 } from "@/api/moyin";
+import { useDubbingStore } from "@/stores";
+import { storeToRefs } from "pinia";
 
+const dubbingStore = useDubbingStore();
+const {
+  speakerEmotionList,
+  storeSearchCriteria,
+  searchCriteriaList,
+  searchSpeakerList,
+} = storeToRefs(dubbingStore);
+const speakerInfo = ref();
 const dialogShow = ref(false);
-const onShowSpeakerInfo = () => {
-  dialogShow.value = true;
-};
-
 const loading = ref(false);
-
 const showAllCriteria = ref(false); // 控制是否显示所有搜索条件
-
-const hasMoreCriteria = computed(() => {
-  return searchCriteriaList.value.length > 3 && !showAllCriteria.value;
-});
-
-// 计算属性，用于决定显示哪些搜索条件
-const displayedSearchCriteria = computed(() => {
-  if (showAllCriteria.value) {
-    return searchCriteriaList.value;
-  }
-  // 假设我们只显示前3个，您可以根据需要调整这个数量
-  return searchCriteriaList.value.slice(0, 3);
-});
-
-const toggleCriteriaDisplay = () => {
-  showAllCriteria.value = !showAllCriteria.value;
-};
-
-const currentSpeaker = ref("");
-const handleSpeakerClicked = (item) => {
-  currentSpeaker.value = item.name;
-};
-
-const speakerEmotionList = ref([]);
-const storeSearchCriteria = ref([]);
-const searchCriteriaList = ref([]);
-const searchSpeakerList = ref([]);
 const queryParams = reactive({
   keyWord: "",
   domainId: "",
@@ -61,56 +40,107 @@ const queryParams = reactive({
 onMounted(async () => {
   loading.value = true;
 
-  const speakerEmotionPromise = getSpeakerEmotionList().then((res) => {
-    speakerEmotionList.value = res.data;
-  });
+  await dubbingStore.getSpeakerEmotionList();
+  await dubbingStore.getStoreSearchCriteria();
+  await dubbingStore.searchSpeakers(queryParams);
 
-  const storeSearchCriteriaPromise = getStoreSearchCriteria().then((res) => {
-    storeSearchCriteria.value = res.data;
-    let keys = Object.keys(storeSearchCriteria.value);
-    let list = [];
-    for (let key of keys) {
-      list.push({
-        raw: key,
-        name: key.split(":")[0],
-        value: key.split(":")[1],
-      });
-    }
-    searchCriteriaList.value = list;
-  });
+  console.log("情绪集合", speakerEmotionList.value);
+  console.log("搜索条件", storeSearchCriteria.value);
+  
+  // const speakerEmotionPromise = getSpeakerEmotionList().then((res) => {
+  //   speakerEmotionList.value = res.data;
+  // });
 
-  const searchSpeakersPromise = getSearchSpeakers();
+  // const storeSearchCriteriaPromise = getStoreSearchCriteria().then((res) => {
+  //   storeSearchCriteria.value = res.data;
+  //   let keys = Object.keys(storeSearchCriteria.value);
+  //   let list = [];
+  //   for (let key of keys) {
+  //     list.push({
+  //       raw: key,
+  //       name: key.split(":")[0],
+  //       value: key.split(":")[1],
+  //     });
+  //   }
+  //   searchCriteriaList.value = list;
+  // });
 
-  await Promise.all([
-    speakerEmotionPromise,
-    storeSearchCriteriaPromise,
-    searchSpeakersPromise,
-  ]);
+  // const searchSpeakersPromise = getSearchSpeakers();
+
+  // await Promise.all([
+  //   speakerEmotionPromise,
+  //   storeSearchCriteriaPromise,
+  //   searchSpeakersPromise,
+  // ]);
 
   loading.value = false;
 });
 
+// 展示配音员信息
+const onShowSpeakerInfo = (item) => {
+  speakerInfo.value = item;
+  dialogShow.value = true;
+};
+
+//
+const hasMoreCriteria = computed(() => {
+  return searchCriteriaList.value.length > 3 && !showAllCriteria.value;
+});
+
+// 计算属性，用于决定显示哪些搜索条件
+const displayedSearchCriteria = computed(() => {
+  if (showAllCriteria.value) {
+    return searchCriteriaList.value;
+  }
+  // 假设我们只显示前3个，您可以根据需要调整这个数量
+  return searchCriteriaList.value.slice(0, 3);
+});
+
+//
+const toggleCriteriaDisplay = () => {
+  showAllCriteria.value = !showAllCriteria.value;
+};
+
+//
+const currentSpeaker = ref("");
+const handleSpeakerClicked = (item) => {
+  currentSpeaker.value = item.name;
+};
+
+// const speakerEmotionList = ref([]);
+// const storeSearchCriteria = ref([]);
+// const searchCriteriaList = ref([]);
+// const searchSpeakerList = ref([]);
+
 const getSearchSpeakers = () => {
   return searchSpeakers(queryParams).then((res) => {
     searchSpeakerList.value = res.data.results;
-    console.log(searchSpeakerList.value);
   });
 };
 
+/**
+ *
+ */
 const currentTag = ref("热榜");
+/**
+ *
+ */
 const handleTagClicked = (value) => {
   currentTag.value = value.name;
 };
 
+//
 // const searchContent = ref("");
 const onSearchSpeaker = () => {
   getSearchSpeakers();
 };
 
+//
 const handleTagSelect = (tag, index) => {
   console.log(tag, index);
 };
 
+// 对话框点击确定后
 const handleOk = () => {
   dialogShow.value = false;
 };
@@ -120,6 +150,7 @@ const handleOk = () => {
   <a-card class="dubbing-list-1" v-loading="loading">
     <!-- 搜索 -->
     <a-input
+      class="dubbing-search"
       v-model="queryParams.keyWord"
       placeholder="共763款配音师，输入名称搜索"
       allow-clear
@@ -169,7 +200,7 @@ const handleOk = () => {
         class="speaker-item"
         v-for="(item, index) in searchSpeakerList"
         :key="index"
-        @click="onShowSpeakerInfo"
+        @click="onShowSpeakerInfo(item)"
       >
         <a-badge text="VIP">
           <div class="speaker-img">
@@ -204,30 +235,7 @@ const handleOk = () => {
     </ul> -->
   </a-card>
 
-  <el-dialog v-model="dialogShow" title="配音员详情">
-    <!-- 信息 -->
-    <div class="d-flex">
-      <div style="width: 40px; height: 40px; background-color: red">
-        <img src="" alt="" />
-      </div>
-      <div class="ms-2">
-        <div class="" style="font-size: 18px">百变华帅</div>
-        <div class="mt-1">真实自然，朗朗动听</div>
-      </div>
-    </div>
-    <div class="mt-1">名人 小说 方言 影视 情感 纪录片 游戏 动漫</div>
-    <!-- 情绪 -->
-    <div class="mt-1">默认 旅游 漫画 体育 严肃</div>
-    <div>
-      语速
-      <el-slider />
-    </div>
-    <div>
-      语调
-      <el-slider />
-    </div>
-    <el-button @click="handleOk">确定</el-button>
-  </el-dialog>
+  <DubbingInfo v-model="dialogShow" :info="speakerInfo"></DubbingInfo>
 </template>
 
 <style scoped lang="scss">
@@ -246,15 +254,20 @@ const handleOk = () => {
   overflow-y: auto;
   // border-radius: 6px;
 
-  ::v-deep .el-input {
-    margin-bottom: 15px;
-    .el-input__wrapper {
-      background-color: #4e76b4 !important;
-      // border-radius: 16px !important;
-      input {
-        caret-color: white;
-      }
-    }
+  // ::v-deep .el-input {
+  //   margin-bottom: 15px;
+  //   .el-input__wrapper {
+  //     background-color: #4e76b4 !important;
+  //     // border-radius: 16px !important;
+  //     input {
+  //       caret-color: white;
+  //     }
+  //   }
+  // }
+
+  .dubbing-search {
+    margin: 0 3px;
+    width: calc(100% - 8px);
   }
 
   .search-tag {
@@ -287,8 +300,9 @@ const handleOk = () => {
 
 .speaker-list {
   width: 100%;
-  padding: 5px;
-  border: 1px solid #d3dee7;
+  // padding: 5px;
+  // border: 1px solid #d3dee7;
+  padding-left: 3px;
 
   .speaker-item {
     position: relative;

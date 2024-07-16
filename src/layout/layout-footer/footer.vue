@@ -17,6 +17,7 @@ const endYear = ref("2024");
   padding: 10px;
   box-sizing: border-box;
   background-color: #fff;
+  border-top: 1px solid #e5e6eb;
 
   p {
     text-align: center;

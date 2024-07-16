@@ -7,7 +7,7 @@
     @click="okClicked"
   ></DubbingButton>
 
-  <el-dialog v-model="dialogShow" title="配音配置">
+  <el-dialog v-model="dialogShow" title="配音配置" draggable>
     <div class="stress">
       <ul>
         <li>重读</li>

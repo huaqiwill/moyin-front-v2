@@ -25,9 +25,10 @@ const { position } = useDraggable(boxRef, {
 const { style } = useConstrainDragBounds(boxRef, dragContainerBoxRef, position)
 
 onMounted(() => {
+  // 初始位置
   const point = {
-    x: editorViewBoxBounds.x.value + (editorViewBoxBounds.width.value - 90 - 5),
-    y: editorViewBoxBounds.y.value + (editorViewBoxBounds.height.value - 90) / 2,
+    x: editorViewBoxBounds.x.value + editorViewBoxBounds.width.value - 10,
+    y: editorViewBoxBounds.y.value ,
   }
   position.value = point
 })
@@ -73,7 +74,7 @@ function isPlayButtonClick(event: MouseEvent) {
   <div
     v-show="visible"
     ref="boxRef"
-    class="try-play-circel user-select-none rounded-circle overflow-hidden"
+    class="try-play-circel user-select-none overflow-hidden"
     :style="style"
     style="position: fixed"
     @mousedown="handleMousedown"
@@ -81,7 +82,7 @@ function isPlayButtonClick(event: MouseEvent) {
   >
     <div class="avatar d-flex flex-column justify-content-center align-items-center">
       <PlayButton ref="playButtonRef" @click.capture.stop :size="40"></PlayButton>
-      <div class="text-white" style="font-size: 0.65rem">
+      <div class="text-black mt-2" style="font-size: 0.65rem">
         {{ tryPlayStore.speaker.displayName }}
       </div>
     </div>
@@ -90,9 +91,11 @@ function isPlayButtonClick(event: MouseEvent) {
 
 <style lang="scss" scoped>
 .try-play-circel {
-  height: 90px;
-  width: 90px;
-  background-color: #2254a1;
+  height: 80px;
+  width: 60px;
+  background-color: #cfc5c52d;
+  border-radius: 8px;
+  // border: 1px solid #f53f3f;
 
   display: flex;
   flex-direction: row;

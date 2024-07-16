@@ -1,7 +1,7 @@
 <template>
   <!-- 音量 -->
   <el-popover
-    placement="bottom"
+    placement="left"
     trigger="click"
     popper-style="width:auto;"
     :show-arrow="false"
@@ -13,6 +13,7 @@
         content="从光标处开始试听"
         icon="volume"
         @click="handleClicked"
+        placement="left"
       />
     </template>
     <div class="volume">
@@ -22,7 +23,7 @@
         v-model="dubbingVolume"
         :formatter="formatPercentage"
         :parser="parsePercentage"
-      ></el-input>
+      />
     </div>
   </el-popover>
 </template>

@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import { defaultAvatar } from '@/config'
-import type { StyleAvatarData } from './data'
+import { defaultAvatar } from "@/config";
+import type { StyleAvatarData } from "./data";
 
-defineEmits<{ click: [value: string] }>()
+defineEmits<{ click: [value: string] }>();
 withDefaults(defineProps<{ activate?: boolean; data?: StyleAvatarData }>(), {
   activate: false,
-  data: () => ({ label: '', value: '' }),
-})
+  data: () => ({ label: "", value: "" }),
+});
 
 function getRandomColor() {
   const mainstreamColors = [
-    '#2ecc71',
-    '#3498db',
-    '#9b59b6',
-    '#e74c3c',
-    '#1abc9c',
-    '#e67e22',
-    '#d35400',
-    '#c0392b',
-    '#16a085',
-    '#27ae60',
-    '#ff1493',
-  ]
+    "#2ecc71",
+    "#3498db",
+    "#9b59b6",
+    "#e74c3c",
+    "#1abc9c",
+    "#e67e22",
+    "#d35400",
+    "#c0392b",
+    "#16a085",
+    "#27ae60",
+    "#ff1493",
+  ];
 
-  const randomIndex = Math.floor(Math.random() * mainstreamColors.length)
-  return mainstreamColors[randomIndex]
+  const randomIndex = Math.floor(Math.random() * mainstreamColors.length);
+  return mainstreamColors[randomIndex];
 }
 
-const bgColor = getRandomColor()
+const bgColor = getRandomColor();
 </script>
 
 <template>
@@ -51,7 +51,12 @@ const bgColor = getRandomColor()
       style="height: 30px; width: 30px"
       :class="{ 'border border-2 border-warning': activate }"
     />
-    <div class="anchor-avatar-name text-white" style="font-size: 0.65rem">{{ data.label }}</div>
+    <div
+      class="anchor-avatar-name text-white"
+      style="font-size: 0.65rem; margin-top: 5px"
+    >
+      {{ data.label }}
+    </div>
   </div>
 </template>
 

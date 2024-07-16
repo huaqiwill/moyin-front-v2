@@ -40,7 +40,9 @@ defineExpose({
     :style="styleObject"
     @click="handleClick"
   >
-    <button class="btn w-100 h-100 bg-black bg-opacity-50 text-white rounded-circle border-0">
+    <button
+      class="btn w-100 h-100 bg-black bg-opacity-50 text-white rounded-circle border-0"
+    >
       <ElIcon v-if="tryPlayStore.isLoading" class="is-loading" color="white">
         <Loading></Loading>
       </ElIcon>

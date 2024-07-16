@@ -6,12 +6,14 @@
     icon="SensitiveWords"
     @click="handleFindSensitiveWords"
   />
-  <el-dialog v-model="dialogShow" title="查敏感词">
+  <el-dialog v-model="dialogShow" title="查敏感词" draggable>
     <p>包含多个短视频敏感词，让创作者少违规、少限流。如果存在敏感词，会标红。</p>
     <div style="margin-top: 15px">
       <el-input type="textarea" v-model="text"></el-input>
     </div>
-    <a-button class="mt-2" type="primary" @click="handleFind">查敏感词</a-button>
+    <template #footer>
+      <a-button type="primary" @click="handleFind">查敏感词</a-button>
+    </template>
   </el-dialog>
 </template>
 

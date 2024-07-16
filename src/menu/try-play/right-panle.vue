@@ -141,18 +141,28 @@ function handleSpeakerDetailShow() {
   <div class="right-panle w-100 px-3 text-white" style="font-size: 0.65rem">
     <div class="mt-2 d-flex text-center justify-content-between align-items-center">
       <div class="me-auto d-flex flex-row align-items-center">
-        <PlayButton></PlayButton>
-        <div class="ms-2 d-flex flex-column justify-content-between" style="height: 50px">
+        <PlayButton :size="42"></PlayButton>
+        <div
+          class="ms-2 d-flex flex-column justify-content-between"
+          style="height: 42px; font-size: 14px"
+        >
           <div class="d-flex dlex-row column-gap-2 align-items-end">
             <span class="fs-6">{{ tryPlayStore.speaker.displayName }}</span>
             <span>{{ speed }}x</span>
           </div>
           <div class="d-flex flex-row column-gap-2 align-items-center">
-            <ElIcon @click="handleStar" class="fs-6" :style="{ color: isStar ? 'red' : 'white' }">
+            <ElIcon
+              @click="handleStar"
+              class="fs-6"
+              :style="{ color: isStar ? 'red' : 'white' }"
+            >
               <StarFilled v-if="isStar"></StarFilled>
               <Star v-else></Star>
             </ElIcon>
-            <span v-if="tryPlayStore.speaker.isSupper24K" class="badge text-bg-primary px-2">
+            <span
+              v-if="tryPlayStore.speaker.isSupper24K"
+              class="badge text-bg-primary px-2"
+            >
               24K
             </span>
           </div>
@@ -160,21 +170,25 @@ function handleSpeakerDetailShow() {
       </div>
       <div class="d-flex flex-column align-items-end">
         <div class="text-info">音频时长，请以生成后的为准</div>
-        <div class="mt-1">
-          <span>{{ timeText }}</span>
-          <span>/</span>
-          <span>{{ timeMaxText }}</span>
+        <div class="d-flex flex-row align-items-end">
+          <a-slider
+            style="width: 100px"
+            :max="timeMax"
+            v-model="time"
+            size="small"
+            @input="handleTimeInput"
+            @change="handleTimeChange"
+            :format-tooltip="formatTime"
+          ></a-slider>
+          <div class="mt-1 ms-1">
+            <span>{{ timeText }}</span>
+            <span>/</span>
+            <span>{{ timeMaxText }}</span>
+          </div>
         </div>
-        <ElSlider
-          :max="timeMax"
-          v-model="time"
-          size="small"
-          @input="handleTimeInput"
-          @change="handleTimeChange"
-          :format-tooltip="formatTime"
-        ></ElSlider>
       </div>
     </div>
+    <!-- 标签 -->
     <div
       class="role-list mt-2 d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-2 column-gap-3"
     >
@@ -189,6 +203,7 @@ function handleSpeakerDetailShow() {
         {{ item.label }}
       </SimpleTag>
     </div>
+    <!-- 情绪 -->
     <ul
       class="mt-2 d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-1 column-gap-2"
     >
@@ -205,48 +220,60 @@ function handleSpeakerDetailShow() {
       </li>
     </ul>
     <div class="my-3">
-      <SimpleTag activate @click="handleSpeakerDetailShow">配音师详情</SimpleTag>
+      <SimpleTag
+        activate
+        @click="handleSpeakerDetailShow"
+        style="background-color: #5a92f4; padding: 0 3px; border: none !important"
+        >配音师详情</SimpleTag
+      >
     </div>
     <div class="right-box">
       <div>
         <span>语速：{{ speed }}x</span>
       </div>
-      <ElSlider
+      <a-slider
+        class="mt-2"
         v-model="speed"
         :min="speedRange[0]"
         :max="speedRange[1]"
         :step="0.05"
-        :marks="speedMarks"
-      ></ElSlider>
+      ></a-slider>
     </div>
     <div class="right-box">
       <div>
         <span>语调：{{ pitch }}</span>
       </div>
-      <ElSlider
+      <a-slider
+        class="mt-2"
         v-model="pitch"
         :min="pitchRange[0]"
         :max="pitchRange[1]"
         :step="0.2"
-        :marks="pitchMarks"
-      ></ElSlider>
+      ></a-slider>
     </div>
     <div>
-      <div class="d-flex flex-row gap-3 my-3">
+      <div class="d-flex flex-row gap-3 my-3" style="margin: 0 0 16px 0 !important">
         <SimpleTag
-          small
           custom-class="gap-3"
           @click="handleCategoryClick"
           v-for="(item, index) in category"
           :key="index"
           :value="item.value"
           :activate="item.value === flag"
+          style="background-color: #5a92f4"
         >
           {{ item.label }}
         </SimpleTag>
       </div>
-      <ul class="d-flex flex-row flex-wrap row-gap-2 column-gap-3 mb-3" style="min-height: 100px">
-        <li @click="handleSpeakerClick(item)" v-for="(item, index) in speakerList" :key="index">
+      <ul
+        class="d-flex flex-row flex-wrap row-gap-2 column-gap-3 mb-3"
+        style="min-height: 100px"
+      >
+        <li
+          @click="handleSpeakerClick(item)"
+          v-for="(item, index) in speakerList"
+          :key="index"
+        >
           <SpeakerAvatar
             :activate="item.name === tryPlayStore.speaker.name"
             :data="{
@@ -264,6 +291,6 @@ function handleSpeakerDetailShow() {
 
 <style lang="scss" scoped>
 .right-box {
-  height: 75px;
+  height: 50px;
 }
 </style>

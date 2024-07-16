@@ -26,7 +26,7 @@ withDefaults(defineProps<{ activate?: boolean; data?: SpeakerAvatarData }>(), {
       style="height: 40px; width: 40px"
       :class="{ 'border border-2 border-warning': activate }"
     />
-    <div class="anchor-avatar-name text-white">{{ data.label }}</div>
+    <div class="anchor-avatar-name text-white mt-2">{{ data.label }}</div>
   </div>
 </template>
 

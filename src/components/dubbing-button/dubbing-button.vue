@@ -17,6 +17,10 @@ const props = defineProps({
     default: "play", //默认值
     required: true, //是否必传
   },
+  placement: {
+    type: String,
+    default: "bottom-start",
+  },
 });
 
 const hasContent = ref(true);
@@ -36,7 +40,7 @@ const handleAudition = () => {
     </div>
     <el-popover
       v-else
-      placement="bottom-start"
+      :placement="placement"
       trigger="hover"
       :content="content"
       effect="light"
