@@ -41,11 +41,11 @@
     </div>
     <!-- 语速、语调 -->
     <div class="mt-3">
-      语速
+      语速 {{ speed }} px
       <a-slider v-model="speed" class="mt-2" :min="0" :max="2" :step="0.05" />
     </div>
     <div class="mt-3">
-      语调
+      语调 {{ intonation }}
       <a-slider v-mdeol="intonation" class="mt-2" :min="-10" :max="10" :step="0.2" />
     </div>
     <template #footer>
@@ -80,12 +80,25 @@ const props = defineProps({
   },
 });
 
+/**
+ * 
+ */
 const speakerEmotionCacheVOList = ref([]);
+/**
+ * 情绪列表
+ */
 const emotionSet = ref([]);
+/**
+ * 领域列表
+ */
 const domainSet = ref([]);
-// 语速
+/**
+ * 语速
+ */
 const speed = ref(1);
-// 语调
+/**
+ * 语调
+ */
 const intonation = ref(0);
 
 onBeforeUpdate(async () => {

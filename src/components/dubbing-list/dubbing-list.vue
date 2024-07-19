@@ -46,7 +46,7 @@ onMounted(async () => {
 
   console.log("情绪集合", speakerEmotionList.value);
   console.log("搜索条件", storeSearchCriteria.value);
-  
+
   // const speakerEmotionPromise = getSpeakerEmotionList().then((res) => {
   //   speakerEmotionList.value = res.data;
   // });
@@ -144,6 +144,20 @@ const handleTagSelect = (tag, index) => {
 const handleOk = () => {
   dialogShow.value = false;
 };
+
+const bottom = ref(false);
+
+/**
+ *
+ * @param event
+ */
+const handleScroll = async () => {
+  bottom.value = false;
+  console.log("符合条件");
+  queryParams.pageNum++;
+  await dubbingStore.searchSpeakers(queryParams, true);
+  bottom.value = true;
+};
 </script>
 
 <template>
@@ -195,7 +209,14 @@ const handleOk = () => {
     <div style="margin-top: 15px"></div>
 
     <!-- 配音员 -->
-    <a-list class="speaker-list" :gridProps="{ gutter: 0, span: 6 }" :bordered="false">
+    <a-list
+      class="speaker-list"
+      :gridProps="{ gutter: 0, span: 6 }"
+      :bordered="false"
+      @reach-bottom="handleScroll"
+      :scrollbar="true"
+      :max-height="586"
+    >
       <a-list-item
         class="speaker-item"
         v-for="(item, index) in searchSpeakerList"
@@ -215,6 +236,10 @@ const handleOk = () => {
           </div> -->
         </a-badge>
       </a-list-item>
+      <template #scroll-loading>
+        <div v-if="bottom">No more data</div>
+        <a-spin v-else />
+      </template>
     </a-list>
 
     <!-- <ul class="speaker-list">
@@ -251,7 +276,7 @@ const handleOk = () => {
   height: 100%;
   max-width: 400px;
   min-width: 400px;
-  overflow-y: auto;
+  // overflow-y: auto;
   // border-radius: 6px;
 
   // ::v-deep .el-input {
@@ -267,7 +292,7 @@ const handleOk = () => {
 
   .dubbing-search {
     margin: 0 3px;
-    width: calc(100% - 8px);
+    width: calc(100% - 12px);
   }
 
   .search-tag {

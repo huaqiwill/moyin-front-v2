@@ -26,7 +26,21 @@ export function tnList(word: any) {
 
 export function downloadAudio(url: string) {
   return request({
-    url: '/dev-api/moyin/tts/audition/' + url,
+    url: '/moyin/tts/audition/' + url,
+    method: 'get',
+  })
+}
+
+export function downloadVideo(url: string) {
+  return request({
+    url: '/moyin/tts/video/' + url,
+    method: 'get',
+  })
+}
+
+export function downloadSrt(url: string) {
+  return request({
+    url: '/moyin/tts/srt/' + url,
     method: 'get',
   })
 }

@@ -5,6 +5,8 @@ import { computed, inject, ref } from "vue";
 import xmlFormat from "xml-formatter";
 import { serializeToSSML } from "@/serialize";
 import { useEditorStore } from "@/stores";
+import { downloadAudio, downloadSrt, downloadVideo } from "@/api/tts";
+import { IconDelete } from "@arco-design/web-vue/es/icon";
 
 const dialogVisible = ref(false);
 const ssml = ref("");
@@ -27,24 +29,49 @@ const onGenerater = () => {
   });
 };
 
+/**
+ * 下载配音
+ */
 const onDownload = () => {
   ElMessage({
     message: "下载配音",
   });
+  let url = "";
+  downloadAudio(url).then((res) => {
+    console.log(res);
+  });
 };
 
+/**
+ * 下载视频
+ */
 const onDownloadVedio = () => {
   ElMessage({
     message: "下载视频",
   });
+  let url = "";
+  downloadVideo(url).then((res) => {
+    console.log(res);
+  });
 };
 
+/**
+ * 下载字幕
+ */
 const onDownloadSrt = () => {
   ElMessage({
     message: "下载字幕",
   });
+  let url = "";
+  downloadSrt(url).then((res) => {
+    console.log(res);
+  });
 };
 
+/**
+ *
+ * @param isFormat 复制SSML
+ */
 const onCopySSML = async (isFormat: boolean) => {
   console.log(ssml.value);
 
@@ -53,11 +80,17 @@ const onCopySSML = async (isFormat: boolean) => {
   ElMessage.success({ message: "复制成功!", grouping: true });
 };
 
+/**
+ * 显示SSML
+ */
 const onShowSSML = () => {
   ssml.value = serializeToSSML();
   dialogVisible.value = true;
 };
 
+/**
+ * 保存SSML
+ */
 const onSaveSSML = async () => {
   const editor = editorStore.editor;
   if (editor) {
@@ -74,16 +107,28 @@ const onSaveSSML = async () => {
 <template>
   <div class="dubbing-footer">
     <a-button style="width: 100%" type="outline" status="danger" @click="onGenerater">
+      <template #icon>
+        <icon-delete />
+      </template>
       生成配音
     </a-button>
     <a-button style="width: 100%" type="outline" status="danger" @click="onDownload">
+      <template #icon>
+        <icon-delete />
+      </template>
       下载配音
     </a-button>
     <a-button style="width: 100%" type="outline" status="danger" @click="onDownloadVedio">
+      <template #icon>
+        <icon-delete />
+      </template>
       下载视频
     </a-button>
-    <a-button style="width: 100%" type="outline" status="danger" @click="onDownloadSrt"
-      >下载字幕
+    <a-button style="width: 100%" type="outline" status="danger" @click="onDownloadSrt">
+      <template #icon>
+        <icon-delete />
+      </template>
+      下载字幕
     </a-button>
     <a-button
       style="width: 100%"
@@ -91,13 +136,22 @@ const onSaveSSML = async () => {
       status="danger"
       @click="onCopySSML(false)"
     >
+      <template #icon>
+        <icon-delete />
+      </template>
       复制 SSML
     </a-button>
-    <a-button style="width: 100%" type="outline" status="danger" @click="onShowSSML"
-      >显示 SSML
+    <a-button style="width: 100%" type="outline" status="danger" @click="onShowSSML">
+      <template #icon>
+        <icon-delete />
+      </template>
+      显示 SSML
     </a-button>
-    <a-button style="width: 100%" type="outline" status="danger" @click="onSaveSSML"
-      >保存到浏览器
+    <a-button style="width: 100%" type="outline" status="danger" @click="onSaveSSML">
+      <template #icon>
+        <icon-delete />
+      </template>
+      保存到浏览器
     </a-button>
     <el-dialog v-model="dialogVisible" title="查看SSML" width="80%">
       <div

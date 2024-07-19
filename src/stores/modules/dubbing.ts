@@ -42,16 +42,20 @@ export const useDubbingStore = defineStore('dubbing', {
   actions: {
     async getStoreSearchCriteria() {
       const res = await getStoreSearchCriteriaApi()
-      this.storeSearchCriteria = res.data      
-      this.domainList = res.data['全部领域:domainId']      
+      this.storeSearchCriteria = res.data
+      this.domainList = res.data['全部领域:domainId']
     },
     async getSpeakerEmotionList() {
       const res = await getSpeakerEmotionListApi()
       this.speakerEmotionList = res.data
     },
-    async searchSpeakers(queryParams: any) {
+    async searchSpeakers(queryParams: any, isAppend: boolean = false) {
       return searchSpeakersApi(queryParams).then((res) => {
-        this.searchSpeakerList = res.data.results
+        if (isAppend) {
+          this.searchSpeakerList.push(...res.data.results)
+        } else {
+          this.searchSpeakerList = res.data.results
+        }
       })
     },
   },
