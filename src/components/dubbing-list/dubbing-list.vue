@@ -215,7 +215,7 @@ const handleScroll = async () => {
       :bordered="false"
       @reach-bottom="handleScroll"
       :scrollbar="true"
-      :max-height="586"
+      :max-height="500"
     >
       <a-list-item
         class="speaker-item"

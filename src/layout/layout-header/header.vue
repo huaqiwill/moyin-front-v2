@@ -8,7 +8,6 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const userStore = useUserStore();
-// const { token, isLogin } = userStore;
 const { token, isLogin } = storeToRefs(userStore);
 
 onMounted(() => {
@@ -21,12 +20,20 @@ const handleSelect = (key, keyPath) => {
   console.log(key, keyPath);
 };
 
-// 用户登录弹窗
+/**
+ * 用户登录弹窗
+ */
 const loginOrRegisterDialogShow = ref(false);
+/**
+ * 用户登录
+ */
 const handleUserLogin = () => {
   loginOrRegisterDialogShow.value = true;
 };
 
+/**
+ * 菜单列表
+ */
 const menus = [
   {
     path: "/dubbing",
@@ -46,6 +53,9 @@ const menus = [
   },
 ];
 
+/**
+ * 退出登录
+ */
 const handleLogout = () => {
   ElMessageBox.confirm("确定要退出登录吗？", "提示", {
     confirmButtonText: "确认",
@@ -57,11 +67,19 @@ const handleLogout = () => {
   });
 };
 
+/**
+ * 账户管理
+ */
 const handleAccount = () => {
   router.push({
     name: "profile",
   });
 };
+
+/**
+ * 布局管理
+ */
+const handleLayout = () => {};
 </script>
 
 <template>
@@ -113,6 +131,7 @@ const handleAccount = () => {
       <template #content>
         <a-doption @click="handleAccount">我的账户</a-doption>
         <a-doption>绑定手机号 15576364885</a-doption>
+        <a-doption @click="handleLayout">布局管理</a-doption>
         <a-doption @click="handleLogout">退出登录</a-doption>
       </template>
     </a-dropdown>

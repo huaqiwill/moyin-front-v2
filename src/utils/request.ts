@@ -2,21 +2,21 @@ import axios from 'axios'
 import { saveAs } from 'file-saver'
 import { ElMessage, ElMessageBox, ElNotification, ElLoading } from 'element-plus'
 import { getToken } from '@/utils/auth'
-// import errorCode from '@/utils/errorCode'
-// import { tansParams, blobValidate } from '@/utils/ruoyi'
 import cache from './cache'
-// import { useUserStore } from '@/stores'
-// import { useRouter } from 'vue-router'
-
-// const store = useUserStore()
-// const router = useRouter()
 import router from '@/router'
 
-// 验证是否为blob格式
+/**
+ * 验证是否为blob格式
+ * @param data
+ * @returns
+ */
 export function blobValidate(data: any) {
   return data.type !== 'application/json'
 }
 
+/**
+ * 错误码
+ */
 export const errorCode = {
   401: '认证失败，无法访问系统资源',
   403: '当前操作没有权限',
@@ -54,21 +54,29 @@ export function tansParams(params: any) {
   return result
 }
 
-// 是否显示重新登录
+/**
+ * 是否显示重新登录
+ */
 export const isRelogin = { show: false }
-
+/**
+ * 默认请求头
+ */
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
-// 创建axios实例
+/**
+ * 创建axios实例
+ */
 const request = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
   // baseURL: import.meta.env.VITE_APP_BASE_API,
-  baseURL: "/dev-api",
+  baseURL: '/dev-api',
   // 超时
   timeout: 10000,
 })
 
-// request拦截器
+/**
+ * request拦截器
+ */
 request.interceptors.request.use(
   (config) => {
     // 是否需要设置 token
@@ -126,13 +134,15 @@ request.interceptors.request.use(
   },
 )
 
-// 响应拦截器
+/**
+ * 响应拦截器
+ */
 request.interceptors.response.use(
   (res) => {
     // 未设置状态码则默认成功状态
     const code = (res.data.code as keyof typeof errorCode) || 200
     // 获取错误信息
-    const msg = errorCode[code] || res.data.msg || errorCode['default']
+    const msg = res.data.msg || errorCode[code] || errorCode['default']
     // 二进制数据则直接返回
     if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
       return res.data
@@ -192,7 +202,14 @@ request.interceptors.response.use(
   },
 )
 
-// 通用下载方法
+/**
+ * 通用下载方法
+ * @param url
+ * @param params
+ * @param filename
+ * @param config
+ * @returns
+ */
 export function download(url: string, params: object, filename: string, config: object) {
   downloadLoadingInstance = ElLoading.service({
     text: '正在下载数据，请稍候',

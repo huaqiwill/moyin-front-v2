@@ -46,7 +46,7 @@
     </div>
     <div class="mt-3">
       语调 {{ intonation }}
-      <a-slider v-mdeol="intonation" class="mt-2" :min="-10" :max="10" :step="0.2" />
+      <a-slider v-model="intonation" class="mt-2" :min="-10" :max="10" :step="0.2" />
     </div>
     <template #footer>
       <a-button @click="handleOk" type="primary">确定</a-button>
@@ -68,12 +68,25 @@ import { useDubbingStore } from "@/stores";
 import { storeToRefs } from "pinia";
 
 const dubbingStore = useDubbingStore();
-const { speakerEmotionList, domainList } = storeToRefs(dubbingStore);
+const {
+  speakerEmotionList,
+  domainList,
+  globalSpeaker,
+  globalSpeed,
+  globalIntonation,
+} = storeToRefs(dubbingStore);
 
+/**
+ * 用来控制dialog是否显示
+ */
 const model = defineModel({
   type: Boolean,
   required: true,
 });
+
+/**
+ * 传递配音员信息
+ */
 const props = defineProps({
   info: {
     type: Object,
@@ -81,7 +94,7 @@ const props = defineProps({
 });
 
 /**
- * 
+ *
  */
 const speakerEmotionCacheVOList = ref([]);
 /**
@@ -124,6 +137,10 @@ onBeforeUpdate(async () => {
 
 const handleOk = () => {
   model.value = false;
+  globalSpeaker.value = props.info;
+  globalSpeed.value = speed.value;
+  globalIntonation.value = intonation.value;
+  console.log(globalSpeaker.value, globalSpeed.value, globalIntonation.value);
 };
 
 const onEmotionSelect = (item) => {

@@ -1,5 +1,10 @@
 import request from '@/utils/request'
 
+/**
+ * 生成配音、播放
+ * @param data
+ * @returns
+ */
 export function tts(data: any) {
   return request({
     url: '/moyin/tts',
@@ -8,6 +13,11 @@ export function tts(data: any) {
   })
 }
 
+/**
+ * 获取多音字
+ * @param word
+ * @returns
+ */
 export function getWords(word: any) {
   return request({
     url: '/moyin/tts/tnList',
@@ -16,6 +26,11 @@ export function getWords(word: any) {
   })
 }
 
+/**
+ * 数值读法
+ * @param word
+ * @returns
+ */
 export function tnList(word: any) {
   return request({
     url: '/moyin/tts/tnList',
@@ -24,6 +39,9 @@ export function tnList(word: any) {
   })
 }
 
+/**
+ * 下载音频
+ */
 export function downloadAudio(url: string) {
   return request({
     url: '/moyin/tts/audition/' + url,
@@ -31,6 +49,11 @@ export function downloadAudio(url: string) {
   })
 }
 
+/**
+ * 下载视频
+ * @param url 
+ * @returns 
+ */
 export function downloadVideo(url: string) {
   return request({
     url: '/moyin/tts/video/' + url,
@@ -38,6 +61,11 @@ export function downloadVideo(url: string) {
   })
 }
 
+/**
+ * 下载字幕
+ * @param url 
+ * @returns 
+ */
 export function downloadSrt(url: string) {
   return request({
     url: '/moyin/tts/srt/' + url,
@@ -45,6 +73,11 @@ export function downloadSrt(url: string) {
   })
 }
 
+/**
+ * tts记录
+ * @param params 
+ * @returns 
+ */
 export function ttsRecordList(params: any) {
   return request({
     url: '/moyin/tts/ttsRecordList',
@@ -53,9 +86,15 @@ export function ttsRecordList(params: any) {
   })
 }
 
+/**
+ * 删除tts记录
+ * @param id 
+ * @returns 
+ */
 export function ttsRecordDelete(id: any) {
   return request({
     url: '/moyin/tts/ttsRecordDelete/' + id,
     method: 'delete',
   })
 }
+

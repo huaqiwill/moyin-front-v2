@@ -6,7 +6,12 @@ import xmlFormat from "xml-formatter";
 import { serializeToSSML } from "@/serialize";
 import { useEditorStore } from "@/stores";
 import { downloadAudio, downloadSrt, downloadVideo } from "@/api/tts";
-import { IconDelete } from "@arco-design/web-vue/es/icon";
+import {
+  IconDelete,
+  IconToBottom,
+  IconEye,
+  IconUpload,
+} from "@arco-design/web-vue/es/icon";
 
 const dialogVisible = ref(false);
 const ssml = ref("");
@@ -106,53 +111,93 @@ const onSaveSSML = async () => {
 
 <template>
   <div class="dubbing-footer">
-    <a-button style="width: 100%" type="outline" status="danger" @click="onGenerater">
-      <template #icon>
-        <icon-delete />
+    <el-dropdown>
+      <a-button style="width: 100%" type="outline" status="normal" @click="onGenerater">
+        <template #icon>
+          <icon-upload />
+        </template>
+        生成配音
+      </a-button>
+      <template #dropdown>
+        <div class="p-3 d-flex flex-column" style="width: 100px">
+          <a-button type="outline" status="warning" @click="onGenerater">
+            <template #icon>
+              <icon-delete />
+            </template>
+            生成 MP3
+          </a-button>
+          <a-button type="outline" status="warning" @click="onGenerater" class="mt-2">
+            <template #icon>
+              <icon-delete />
+            </template>
+            生成 WAV
+          </a-button>
+        </div>
       </template>
-      生成配音
-    </a-button>
-    <a-button style="width: 100%" type="outline" status="danger" @click="onDownload">
-      <template #icon>
-        <icon-delete />
+    </el-dropdown>
+
+    <el-dropdown>
+      <a-button style="width: 100%" type="outline" status="success" @click="onDownload">
+        <template #icon>
+          <icon-to-bottom />
+        </template>
+        下载配音
+      </a-button>
+      <template #dropdown>
+        <div class="p-3 d-flex flex-column">
+          <a-button type="outline" status="warning" @click="onDownloadVedio">
+            <template #icon>
+              <icon-delete />
+            </template>
+            下载音频
+          </a-button>
+          <a-button class="mt-2" type="outline" status="danger" @click="onDownloadVedio">
+            <template #icon>
+              <icon-delete />
+            </template>
+            下载视频
+          </a-button>
+          <a-button class="mt-2" type="outline" status="danger" @click="onDownloadSrt">
+            <template #icon>
+              <icon-delete />
+            </template>
+            下载字幕
+          </a-button>
+        </div>
       </template>
-      下载配音
-    </a-button>
-    <a-button style="width: 100%" type="outline" status="danger" @click="onDownloadVedio">
-      <template #icon>
-        <icon-delete />
+    </el-dropdown>
+
+    <el-dropdown>
+      <a-button style="width: 100%" type="outline" status="warning" @click="onDownload">
+        <template #icon>
+          <icon-eye />
+        </template>
+        查看 SSML
+      </a-button>
+      <template #dropdown>
+        <div class="p-3 d-flex flex-column">
+          <a-button type="outline" status="danger" @click="onCopySSML(false)">
+            <template #icon>
+              <icon-delete />
+            </template>
+            复制 SSML
+          </a-button>
+          <a-button type="outline" status="danger" @click="onShowSSML" class="mt-2">
+            <template #icon>
+              <icon-delete />
+            </template>
+            显示 SSML
+          </a-button>
+          <a-button type="outline" status="danger" @click="onSaveSSML" class="mt-2">
+            <template #icon>
+              <icon-delete />
+            </template>
+            保存到浏览器
+          </a-button>
+        </div>
       </template>
-      下载视频
-    </a-button>
-    <a-button style="width: 100%" type="outline" status="danger" @click="onDownloadSrt">
-      <template #icon>
-        <icon-delete />
-      </template>
-      下载字幕
-    </a-button>
-    <a-button
-      style="width: 100%"
-      type="outline"
-      status="danger"
-      @click="onCopySSML(false)"
-    >
-      <template #icon>
-        <icon-delete />
-      </template>
-      复制 SSML
-    </a-button>
-    <a-button style="width: 100%" type="outline" status="danger" @click="onShowSSML">
-      <template #icon>
-        <icon-delete />
-      </template>
-      显示 SSML
-    </a-button>
-    <a-button style="width: 100%" type="outline" status="danger" @click="onSaveSSML">
-      <template #icon>
-        <icon-delete />
-      </template>
-      保存到浏览器
-    </a-button>
+    </el-dropdown>
+
     <el-dialog v-model="dialogVisible" title="查看SSML" width="80%">
       <div
         class="border border-secondary-subtle rounded-2 scrollbar overflow-y-auto"
@@ -184,6 +229,6 @@ const onSaveSSML = async () => {
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  justify-content: start;
+  justify-content: end;
 }
 </style>
