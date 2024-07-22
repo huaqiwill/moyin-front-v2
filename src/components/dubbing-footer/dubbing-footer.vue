@@ -12,6 +12,7 @@ import {
   IconEye,
   IconUpload,
 } from "@arco-design/web-vue/es/icon";
+import { GenerateLogging2 } from "@/components/dubbing-tools";
 
 const dialogVisible = ref(false);
 const ssml = ref("");
@@ -19,15 +20,27 @@ const editorStore = useEditorStore();
 const editorKey = inject<symbol>("editorKey")!;
 // const { ssmlRef, ssmlFormatRef } = storeToRefs(useDubbingStore());
 
+/**
+ * SSML格式化
+ */
 const ssmlFormat = computed(() => {
+  console.log(ssml.value);
+
   return xmlFormat(ssml.value, {
+    // 缩进
     indentation: "    ",
+    // 过滤条件
     filter: (node: any) => node.type !== "Comment",
-    collapseContent: true,
+    // 内容折叠
+    collapseContent: false,
+    // 行分隔符
     lineSeparator: "\n",
   });
 });
 
+/**
+ * 生成配音
+ */
 const onGenerater = () => {
   ElMessage({
     message: "生成配音",
@@ -107,12 +120,25 @@ const onSaveSSML = async () => {
     }
   }
 };
+
+const generaterLoggingDialogShow = ref(false);
+function onGeneraterLogging() {
+  generaterLoggingDialogShow.value = true;
+}
 </script>
 
 <template>
   <div class="dubbing-footer">
+    <GenerateLogging2 v-model="generaterLoggingDialogShow"></GenerateLogging2>
+    <a-button type="primary" status="danger" @click="onGeneraterLogging">
+      <template #icon>
+        <icon-upload />
+      </template>
+      生成记录
+    </a-button>
+
     <el-dropdown>
-      <a-button style="width: 100%" type="outline" status="normal" @click="onGenerater">
+      <a-button style="width: 100%" type="primary" status="normal" @click="onGenerater">
         <template #icon>
           <icon-upload />
         </template>
@@ -120,13 +146,13 @@ const onSaveSSML = async () => {
       </a-button>
       <template #dropdown>
         <div class="p-3 d-flex flex-column" style="width: 100px">
-          <a-button type="outline" status="warning" @click="onGenerater">
+          <a-button type="primary" status="normal" @click="onGenerater">
             <template #icon>
               <icon-delete />
             </template>
             生成 MP3
           </a-button>
-          <a-button type="outline" status="warning" @click="onGenerater" class="mt-2">
+          <a-button type="primary" status="normal" @click="onGenerater" class="mt-2">
             <template #icon>
               <icon-delete />
             </template>
@@ -136,28 +162,23 @@ const onSaveSSML = async () => {
       </template>
     </el-dropdown>
 
-    <el-dropdown>
-      <a-button style="width: 100%" type="outline" status="success" @click="onDownload">
-        <template #icon>
-          <icon-to-bottom />
-        </template>
-        下载配音
-      </a-button>
+    <!-- <el-dropdown>
+      
       <template #dropdown>
         <div class="p-3 d-flex flex-column">
-          <a-button type="outline" status="warning" @click="onDownloadVedio">
+          <a-button type="primary" status="warning" @click="onDownloadVedio">
             <template #icon>
               <icon-delete />
             </template>
             下载音频
           </a-button>
-          <a-button class="mt-2" type="outline" status="danger" @click="onDownloadVedio">
+          <a-button class="mt-2" type="primary" status="danger" @click="onDownloadVedio">
             <template #icon>
               <icon-delete />
             </template>
             下载视频
           </a-button>
-          <a-button class="mt-2" type="outline" status="danger" @click="onDownloadSrt">
+          <a-button class="mt-2" type="primary" status="danger" @click="onDownloadSrt">
             <template #icon>
               <icon-delete />
             </template>
@@ -165,10 +186,16 @@ const onSaveSSML = async () => {
           </a-button>
         </div>
       </template>
-    </el-dropdown>
+    </el-dropdown> -->
+    <a-button type="primary" status="success" @click="onDownload">
+      <template #icon>
+        <icon-to-bottom />
+      </template>
+      下载配音
+    </a-button>
 
     <el-dropdown>
-      <a-button style="width: 100%" type="outline" status="warning" @click="onDownload">
+      <a-button style="width: 100%" type="primary" status="warning" @click="onDownload">
         <template #icon>
           <icon-eye />
         </template>
@@ -176,22 +203,13 @@ const onSaveSSML = async () => {
       </a-button>
       <template #dropdown>
         <div class="p-3 d-flex flex-column">
-          <a-button type="outline" status="danger" @click="onCopySSML(false)">
-            <template #icon>
-              <icon-delete />
-            </template>
+          <a-button type="primary" status="warning" @click="onCopySSML(false)">
             复制 SSML
           </a-button>
-          <a-button type="outline" status="danger" @click="onShowSSML" class="mt-2">
-            <template #icon>
-              <icon-delete />
-            </template>
+          <a-button type="primary" status="warning" @click="onShowSSML" class="mt-2">
             显示 SSML
           </a-button>
-          <a-button type="outline" status="danger" @click="onSaveSSML" class="mt-2">
-            <template #icon>
-              <icon-delete />
-            </template>
+          <a-button type="primary" status="warning" @click="onSaveSSML" class="mt-2">
             保存到浏览器
           </a-button>
         </div>

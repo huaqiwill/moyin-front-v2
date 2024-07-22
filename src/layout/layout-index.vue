@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { Header } from "./layout-header";
-import { Footer } from "./layout-footer";
+// import { Header } from "./layout-header";
+// import { Footer } from "./layout-footer";
 </script>
 
 <template>
   <div class="common-layout">
-    <Header />
+    <!-- <Header /> -->
     <div class="content">
       <router-view />
     </div>
-    <Footer />
+    <div style="height: 3px; background-color: #f4f6f7"></div>
+    <!-- <Footer /> -->
   </div>
 </template>
 
@@ -27,7 +28,8 @@ import { Footer } from "./layout-footer";
   .content {
     // padding: 4px 6px;
     display: flex;
-    height: calc(100% - 140px);
+    // height: calc(100% - 140px);
+    height: calc(100% - 3px);
   }
 
   .footer {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 音标 moyin
 import { type IDomEditor } from '@wangeditor/editor'
 import { inject, ref, shallowRef } from 'vue'
 import { BarButton, BarPopover } from '@/components'
@@ -14,16 +15,26 @@ const fn = shallowRef<EnglishFn>()
 const englishList = ref<LabelValue[]>([])
 const visible = ref(false)
 
+/**
+ * 
+ */
 function show() {
   if (visible.value) return
   visible.value = true
 }
 
+/**
+ * 
+ */
 function hide() {
   if (!visible.value) return
   visible.value = false
 }
 
+/**
+ * 
+ * @param editor 
+ */
 async function handleClick(editor: IDomEditor) {
   fn.value ??= new EnglishFn(editor)
   selectionTrimEnd(editor)
@@ -43,6 +54,10 @@ async function handleClick(editor: IDomEditor) {
   }
 }
 
+/**
+ * 
+ * @param item 
+ */
 function handleItemClick(item: LabelValue) {
   fn.value?.exec({ ...item })
   hide()
@@ -52,7 +67,7 @@ function handleItemClick(item: LabelValue) {
 <template>
   <BarPopover v-model:visible="visible">
     <template #reference>
-      <BarButton icon="english" @click="handleClick" class="disabled">音标</BarButton>
+      <BarButton icon="english" @click="handleClick">音标</BarButton>
     </template>
     <div class="d-flex flex-column">
       <div

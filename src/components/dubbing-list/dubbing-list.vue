@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, computed, onUpdated } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { moyinCategoryList, moyinDubbingList, moyinEmotionList } from "@/api";
 import { ElLoading } from "element-plus";
@@ -147,6 +147,13 @@ const handleOk = () => {
 
 const bottom = ref(false);
 
+const list = ref();
+
+onMounted(() => {
+  if (list.value) {
+    console.log("高度", list.value.offsetHeight); // 获取元素的高度
+  }
+});
 /**
  *
  * @param event
@@ -158,6 +165,8 @@ const handleScroll = async () => {
   await dubbingStore.searchSpeakers(queryParams, true);
   bottom.value = true;
 };
+
+const maxHeight = ref("calc(100vh - 50px)");
 </script>
 
 <template>
@@ -170,100 +179,48 @@ const handleScroll = async () => {
       allow-clear
       @input="onSearchSpeaker"
     />
-    <!-- <el-input
-      class="dubbing-search"
-      v-model="searchContent"
-      placeholder="共763款配音师，输入名称搜索"
-      :suffix-icon="Search"
-    /> -->
-    <div style="margin-top: 15px"></div>
-
-    <data class="search-criteria-wrapper">
-      <!-- <a-space wrap v-for="(tag, index) in searchCriteriaList" :key="index">
-        <a-tag bordered>{{ tag.name }}</a-tag>
-        <a-tag
-          class="selected"
-          v-for="item in storeSearchCriteria[tag.raw]"
-          :key="item.name"
-          bordered
-          @click="handleTagSelect(item, index)"
-        >
-          {{ item.name }}
-        </a-tag>
-      </a-space> -->
-      <!-- <a-button v-if="hasMoreCriteria" @click="toggleCriteriaDisplay">更多</a-button> -->
-    </data>
-
-    <!-- 搜索条件 -->
-    <!-- <ul class="search-tag" v-for="tag in searchCriteriaList" :key="tag.name">
-      <div class="label">{{ tag.name }}</div>
-      <li
-        :class="currentTag === item.name ? 'selected' : ''"
-        v-for="item in storeSearchCriteria[tag.raw]"
-        :key="item.name"
-        @click="handleTagClicked(item)"
-      >
-        <span>{{ item.name }}</span>
-      </li>
-    </ul> -->
-    <div style="margin-top: 15px"></div>
 
     <!-- 配音员 -->
     <a-list
-      class="speaker-list"
-      :gridProps="{ gutter: 0, span: 6 }"
+      class="speaker-list mt-2"
+      style="width: 100%; padding-left: 3px"
+      :gridProps="{ span: 6 }"
       :bordered="false"
       @reach-bottom="handleScroll"
       :scrollbar="true"
-      :max-height="500"
+      :max-height="maxHeight"
     >
       <a-list-item
-        class="speaker-item"
+        class="d-flex align-items-center"
+        style="padding: 0px"
         v-for="(item, index) in searchSpeakerList"
         :key="index"
         @click="onShowSpeakerInfo(item)"
       >
-        <a-badge text="VIP">
-          <div class="speaker-img">
+        <div class="speaker-item">
+          <div class="speaker-img mt-3 circle" style="width: 40px; height: 40px">
             <img :src="item.headerImage" alt="" />
           </div>
-          <div class="speaker-info">
+          <div class="text-nowrap mt-1 text-center" style="font-size: 12px">
             <span>{{ item.name }}</span>
           </div>
-          <!-- <div class="speaker-count">16种风格</div> -->
-          <!-- <div class="speaker-style" style="margin-top: 8px">
-            {{ item.behavior.replace("，", "\n") }}
-          </div> -->
-        </a-badge>
+        </div>
       </a-list-item>
       <template #scroll-loading>
-        <div v-if="bottom">No more data</div>
+        <div v-if="bottom">没有更多数据</div>
         <a-spin v-else />
       </template>
     </a-list>
-
-    <!-- <ul class="speaker-list">
-      <li
-        :class="currentSpeaker === item.name ? 'selected' : ''"
-        v-for="item in searchSpeakerList"
-        @click="handleSpeakerClicked(item)"
-        :key="item"
-      >
-        <div v-if="item.tags" class="speaker-tag">{{ item.tags }}</div>
-        <div class="speaker-img">
-          <img :src="item.headerImage" alt="" />
-        </div>
-        <div class="speaker-info">
-          <span>{{ item.name }}</span>
-        </div>
-      </li>
-    </ul> -->
   </a-card>
 
   <DubbingInfo v-model="dialogShow" :info="speakerInfo"></DubbingInfo>
 </template>
 
 <style scoped lang="scss">
+.arco-list-wrapper .arco-spin .arco-scrollbar .arco-scrollbar-container {
+  max-height: 700px !important;
+}
+
 .arco-tag {
   cursor: pointer;
 }
@@ -272,10 +229,19 @@ const handleScroll = async () => {
   color: red;
 }
 
+// .arco-list-wrapper {
+//   ::deep .arco-list-content-wrapper {
+//     max-height: 500px;
+//     height: 500px;
+//   }
+// }
+
 .dubbing-list-1 {
   height: 100%;
   max-width: 400px;
   min-width: 400px;
+  padding: 0;
+  background-color: #e4e8eb;
   // overflow-y: auto;
   // border-radius: 6px;
 
@@ -292,7 +258,7 @@ const handleScroll = async () => {
 
   .dubbing-search {
     margin: 0 3px;
-    width: calc(100% - 12px);
+    width: calc(100% - 10px);
   }
 
   .search-tag {
@@ -324,16 +290,11 @@ const handleScroll = async () => {
 }
 
 .speaker-list {
-  width: 100%;
-  // padding: 5px;
-  // border: 1px solid #d3dee7;
-  padding-left: 3px;
-
   .speaker-item {
     position: relative;
     width: 80px;
     height: 90px;
-    border-radius: 5px;
+    // border-radius: 5px;
     // padding: 14px 10px;
     border: 1px solid #d3dee7;
     margin-bottom: 8px;

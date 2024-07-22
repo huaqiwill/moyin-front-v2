@@ -2,7 +2,7 @@
   <div class="home">
     <DubbingList />
     <EditorView style="width: 100%" :config="config">
-      <template v-slot:sidebar>
+      <!-- <template v-slot:sidebar>
         <div
           style="
             padding: 0 5px;
@@ -20,7 +20,7 @@
           <LocalVoiceChange></LocalVoiceChange>
           <Volume />
         </div>
-      </template>
+      </template> -->
     </EditorView>
   </div>
 </template>

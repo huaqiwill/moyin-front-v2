@@ -251,6 +251,18 @@ function handleSpeakerDetailShow() {
         :step="0.2"
       ></a-slider>
     </div>
+    <div class="right-box">
+      <div>
+        <span>音量：{{ pitch }}</span>
+      </div>
+      <a-slider
+        class="mt-2"
+        v-model="pitch"
+        :min="pitchRange[0]"
+        :max="pitchRange[1]"
+        :step="0.2"
+      ></a-slider>
+    </div>
     <div>
       <div class="d-flex flex-row gap-3 my-3" style="margin: 0 0 16px 0 !important">
         <SimpleTag

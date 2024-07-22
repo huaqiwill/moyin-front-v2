@@ -149,7 +149,7 @@ function serializeSayAs(node: SayAs, children: string) {
  */
 function serializeMoyinW(node: MoyinW, children: string) {
   const phoneme = node.phoneme ? ` phoneme="${node.phoneme}"` : ''
-  return `<w${phoneme}>${children}</w$>`
+  return `<w${phoneme}>${children}</w>`
 }
 
 /**
@@ -266,7 +266,7 @@ function mergeParagraphNodes(editor: IDomEditor): SlateNode[] {
 }
 
 /**
- *
+ * createDefaultSpeakDataHandler
  * @param pushParent
  * @returns
  */
@@ -296,7 +296,7 @@ function createDefaultSpeakDataHandler(pushParent: (item: SpeakData) => void) {
 }
 
 /**
- *
+ * customManagmentToSpeakData
  */
 function customManagmentToSpeakData(customNode: CustomManagement): SpeakData {
   const speakNode = defaultSpeakNode()

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 别名 v1
 import { onMounted, onUnmounted, ref, shallowRef, nextTick } from "vue";
 import { BarButton, BarInput, BarPopover } from "@/components";
 import { AliasFn } from "./alias-fn";
@@ -7,6 +8,7 @@ import { getEmitter } from "@/core/emitter";
 import type { SSMLBaseElement } from "@/core/base";
 import { emitter } from "@/event-bus";
 import { useEditorStore } from "@/stores";
+import { ElMessage } from "element-plus";
 
 const fn = shallowRef<AliasFn>();
 const inputRef = ref<InstanceType<typeof BarInput>>();
@@ -26,11 +28,17 @@ onUnmounted(() => {
   getEmitter(editor)?.off("ssml-remark-click", handleSSMLRemarkClick);
 });
 
+/**
+ *
+ */
 function handleEditorCreated(editor: IDomEditor) {
   getEmitter(editor).off("ssml-remark-click", handleSSMLRemarkClick);
   getEmitter(editor).on("ssml-remark-click", handleSSMLRemarkClick);
 }
 
+/**
+ *
+ */
 function handleSSMLRemarkClick(editor: IDomEditor, elem: SSMLBaseElement) {
   if (elem.type === "ssml-sub") {
     fn.value = undefined;
@@ -38,11 +46,17 @@ function handleSSMLRemarkClick(editor: IDomEditor, elem: SSMLBaseElement) {
   }
 }
 
+/**
+ *
+ */
 function show() {
   if (visible.value) return;
   visible.value = true;
 }
 
+/**
+ *
+ */
 function hide() {
   if (!visible.value) return;
   visible.value = false;
@@ -55,20 +69,37 @@ async function handleClick(editor: IDomEditor) {
   inputRef.value?.focus();
 }
 
+/**
+ * 提交表单
+ * @param text
+ */
 function handleSubmit(text: string | null) {
   hide();
   if (text) {
     fn.value?.exec({ value: text, label: text });
   }
 }
+
+function onTryListen() {
+  ElMessage.warning({ message: "试听" });
+}
 </script>
 
 <template>
-  <BarPopover v-model:visible="visible" placement="right-end" :width="200">
+  <BarPopover v-model:visible="visible" placement="bottom" :width="200">
     <template #reference>
       <BarButton icon="alias" @click="handleClick" class="disabled">别名</BarButton>
     </template>
-    <BarInput ref="inputRef" @submit="handleSubmit"></BarInput>
+    <div class="alias">
+      <BarInput ref="inputRef" @submit="handleSubmit" placeholder="请输入别名"></BarInput>
+      <div class="mt-2" style="font-size: 12px; color: #666">
+        例如：例如：设置「YYDS」为「永远的神」
+      </div>
+      <div class="d-flex flex-row justify-content-between mt-2">
+        <el-button type="primary" @click="onTryListen">试听</el-button>
+        <el-button type="success" @click="handleSubmit">确定</el-button>
+      </div>
+    </div>
   </BarPopover>
 </template>
 

@@ -176,7 +176,13 @@ request.interceptors.response.use(
           })
       }
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
-    } else if (code === 500) {
+    }
+
+    // else if (code === 410) {
+    //   const { token } = res.data
+    //   setToken(token) // 重置token
+    // }
+    else if (code === 500) {
       ElMessage.error({ message: msg })
       return Promise.reject(new Error(msg))
     } else if (code === 601) {

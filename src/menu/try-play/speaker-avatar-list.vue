@@ -64,7 +64,7 @@ async function handleFetchData() {
 
 <template>
   <div
-    style="height: 170px"
+    style="height: 280px"
     class="w-100 d-flex flex-row flex-wrap justify-content-start overflow-x-hidden overflow-y-auto scrollbar-none"
   >
     <div style="margin: 8px 11px" v-for="(item, index) in dataList" :key="index">

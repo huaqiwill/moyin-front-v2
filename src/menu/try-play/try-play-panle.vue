@@ -80,7 +80,7 @@ function handleMinimize() {
 
 <style lang="scss" scoped>
 $width: 890px;
-$height: 420px;
+$height: 520px;
 
 .dubbing-title {
   text-align: left;
@@ -90,7 +90,8 @@ $height: 420px;
 
 .try-play {
   width: $width;
-  background-color: #2254a1;
+  // background-color: #2254a1;
+  background-color: #00273b;
 
   .try-play-body {
     border-top: 1px solid #3463ab;

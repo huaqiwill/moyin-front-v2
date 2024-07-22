@@ -27,3 +27,5 @@ export { default as DownloadSrt } from './DownloadSrt.vue'
 export { default as GenerateLogging } from './GenerateLogging.vue'
 export { default as ClearText } from './bar-clear-text.vue'
 export { default as DubbingConfig } from './DubbingConfig.vue'
+
+export { default as GenerateLogging2 } from './GenerateLogging2.vue'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BarWrapper, BarWrapperMenus } from '../components'
+import { BarWrapper, BarWrapperMenus } from "../components";
 import {
   PlayMenu,
   PinyinMenu,
@@ -15,8 +15,9 @@ import {
   BgmMenu,
   ConversionMenu,
   ManagementMenu,
+  VolumnMenu,
   TryPlay,
-} from '../menu'
+} from "../menu";
 </script>
 
 <template>
@@ -35,16 +36,19 @@ import {
       </BarWrapperMenus>
       <BarWrapperMenus>
         <ChangespeedMenu></ChangespeedMenu>
-        <ManagementMenu></ManagementMenu>
+        <!-- <ManagementMenu></ManagementMenu> -->
         <ConversionMenu></ConversionMenu>
       </BarWrapperMenus>
       <BarWrapperMenus>
         <RhythmMenu></RhythmMenu>
         <MuteMenu></MuteMenu>
       </BarWrapperMenus>
-      <BarWrapperMenus>
+      <!-- <BarWrapperMenus>
         <SpecialMenu></SpecialMenu>
         <BgmMenu></BgmMenu>
+      </BarWrapperMenus> -->
+      <BarWrapperMenus>
+        <VolumnMenu />
       </BarWrapperMenus>
     </BarWrapper>
   </div>
