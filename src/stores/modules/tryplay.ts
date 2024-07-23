@@ -2,15 +2,18 @@ import { defineStore } from 'pinia'
 import { computed, readonly, ref, shallowRef } from 'vue'
 import { defaultSpeaker, type Speaker } from '@/model'
 import { useSSMLStore } from './ssml'
+import { useDubbingStore } from './dubbing'
 import AudioPlayer from '@/menu/conversion-menu/audio-player'
-import { serializeToSSML } from '@/serialize'
+// import { serializeToSSML } from '@/serialize'
 import { sleep } from '@/utils'
 import { emitter } from '@/event-bus'
-import type { AudioInfo } from '@/menu/conversion-menu/data'
+// import type { AudioInfo } from '@/menu/conversion-menu/data'
 import { getConfig } from '@/config'
+import { tts } from '@/api/tts'
 
 export const useTryPlayStore = defineStore('--editor-try-play', () => {
   const ssmlStore = useSSMLStore()
+  const dubbingStore = useDubbingStore()
   const _audioPlayer = shallowRef(new AudioPlayer())
   const _speaker = ref<Speaker>(defaultSpeaker())
   const _isLoading = ref(false)
@@ -41,7 +44,7 @@ export const useTryPlayStore = defineStore('--editor-try-play', () => {
     emitter.emit('tryplay-speaker-update-star', _speaker.value.id, resIsStar)
   }
 
-  async function play(fetchAudio: (ssmlGetter: () => string) => Promise<AudioInfo>) {
+  async function play() {
     if (isLoading.value) {
       _isLoading.value = false
       audioPlayer.value.cancel()
@@ -53,8 +56,14 @@ export const useTryPlayStore = defineStore('--editor-try-play', () => {
     }
     try {
       _isLoading.value = true
-      const audio = await fetchAudio(serializeToSSML)
-      await audioPlayer.value.load(audio.src)
+      const { submitTtsData } = dubbingStore
+      const audio = await tts(submitTtsData)
+      // const audio = await fetchAudio(serializeToSSML)
+      dubbingStore.setLastPlayUrl(audio.data)
+      const src = dubbingStore.getLastPlayUrl()
+      console.log('当前的音频地址：' + src)
+
+      await audioPlayer.value.load(src)
       await sleep(200)
       if (isLoading.value) {
         _isLoading.value = false

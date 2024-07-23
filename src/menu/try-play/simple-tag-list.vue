@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// tag-list v1 item
 import SimpleTag from "./simple-tag.vue";
 import { inject, onMounted, ref, toRaw } from "vue";
 import type { FilterSpeaker, LabelValue } from "@/model";
@@ -11,10 +12,43 @@ const editorKey = inject<symbol>("editorKey")!;
 const ssmlEditorConfig = getConfig(editorKey);
 const { topFlag, gender, featchTag } = ssmlEditorConfig.tryPlay;
 
+import { useDubbingStore } from "@/stores";
+
+const dubbingStore = useDubbingStore();
+
 const tags = ref<LabelValue[]>([]);
+const domains = ref<LabelValue[]>([]);
+const languages = ref<LabelValue[]>([]);
 
 onMounted(async () => {
-  tags.value = await featchTag();
+  // tags.value = await featchTag();
+  await dubbingStore.getEmotionList();
+  await dubbingStore.getDomainNameList();
+  await dubbingStore.getLanguageNameList();
+
+  const { emotionList, domainList, languageList } = dubbingStore;
+
+  tags.value = emotionList.map((item: any) => {
+    return {
+      label: item.name,
+      value: item.id,
+    };
+  });
+
+  domains.value = domainList.map((item: any) => {
+    return {
+      label: item.name,
+      value: item.id,
+    };
+  });
+
+  languages.value = languageList.map((item: any) => {
+    return {
+      label: item.name,
+      value: item.id,
+    };
+  });
+  //
 });
 
 function handleTopFlagClick(value: string) {
@@ -34,21 +68,7 @@ function handleTagsClick(value: string) {
   <div class="tag-list w-100 mt-2">
     <div
       class="w-100 d-flex flex-row border-secondary align-items-center"
-      style="height: 40px"
-    >
-      <SimpleTag
-        @click="handleTopFlagClick"
-        v-for="(item, index) in topFlag"
-        :key="index"
-        :value="item.value"
-        :activate="filter.topFlag === item.value"
-      >
-        {{ item.label }}
-      </SimpleTag>
-    </div>
-    <div
-      class="w-100 d-flex flex-row border-secondary align-items-center"
-      style="height: 40px"
+      style="height: 40px; border-bottom: 1px solid #3463ab"
     >
       <SimpleTag
         @click="handleGenderClick"
@@ -61,7 +81,35 @@ function handleTagsClick(value: string) {
       </SimpleTag>
     </div>
     <div
-      style="height: 100px"
+      style="height: 60px; border-bottom: 1px solid #3463ab"
+      class="w-100 pt-2 d-flex flex-row flex-wrap align-content-start row-gap-2 overflow-y-auto overflow-x-hidden scrollbar-none"
+    >
+      <SimpleTag
+        @click="handleTagsClick"
+        v-for="(item, index) in languages"
+        :key="index"
+        :value="item.value"
+        :activate="filter.tag === item.value"
+      >
+        {{ item.label }}
+      </SimpleTag>
+    </div>
+    <div
+      style="height: 60px; border-bottom: 1px solid #3463ab"
+      class="w-100 pt-2 d-flex flex-row flex-wrap align-content-start row-gap-2 overflow-y-auto overflow-x-hidden scrollbar-none"
+    >
+      <SimpleTag
+        @click="handleTagsClick"
+        v-for="(item, index) in domains"
+        :key="index"
+        :value="item.value"
+        :activate="filter.tag === item.value"
+      >
+        {{ item.label }}
+      </SimpleTag>
+    </div>
+    <div
+      style="height: 60px"
       class="w-100 pt-2 d-flex flex-row flex-wrap align-content-start row-gap-2 overflow-y-auto overflow-x-hidden scrollbar-none"
     >
       <SimpleTag

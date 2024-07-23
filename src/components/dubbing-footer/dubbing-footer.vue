@@ -4,8 +4,9 @@ import { ElMessage } from "element-plus";
 import { computed, inject, ref } from "vue";
 import xmlFormat from "xml-formatter";
 import { serializeToSSML } from "@/serialize";
-import { useEditorStore } from "@/stores";
+import { useEditorStore, useDubbingStore } from "@/stores";
 import { downloadAudio, downloadSrt, downloadVideo } from "@/api/tts";
+import { emitter } from "@/event-bus";
 import {
   IconDelete,
   IconToBottom,
@@ -13,13 +14,16 @@ import {
   IconUpload,
 } from "@arco-design/web-vue/es/icon";
 import { GenerateLogging2 } from "@/components/dubbing-tools";
-
+import { storeToRefs } from "pinia";
+const dubbingStore = useDubbingStore();
 const dialogVisible = ref(false);
 const ssml = ref("");
 const editorStore = useEditorStore();
 const editorKey = inject<symbol>("editorKey")!;
 // const { ssmlRef, ssmlFormatRef } = storeToRefs(useDubbingStore());
+// import { useRouter } from "vue-router";
 
+// const router = useRouter();
 /**
  * SSML格式化
  */
@@ -38,27 +42,25 @@ const ssmlFormat = computed(() => {
   });
 });
 
-/**
- * 生成配音
- */
-const onGenerater = () => {
-  ElMessage({
-    message: "生成配音",
-  });
-};
+function handleGenerater(formatter: string) {
+  const { submitTtsData } = storeToRefs(dubbingStore);
+  submitTtsData.value.audioType = formatter;
+  emitter.emit("tryplay-generator");
+}
 
-/**
- * 下载配音
- */
-const onDownload = () => {
-  ElMessage({
-    message: "下载配音",
-  });
-  let url = "";
-  downloadAudio(url).then((res) => {
-    console.log(res);
-  });
-};
+function handleDownload() {
+  // ElMessage({
+  //   message: "下载配音",
+  // });
+  // let url = "";
+  // downloadAudio(url).then((res) => {
+  //   console.log(res);
+  // });
+  let lastPlayUrl = dubbingStore.getLastPlayUrl();
+  if (lastPlayUrl) {
+    window.location.href = lastPlayUrl;
+  }
+}
 
 /**
  * 下载视频
@@ -136,9 +138,8 @@ function onGeneraterLogging() {
       </template>
       生成记录
     </a-button>
-
-    <el-dropdown>
-      <a-button style="width: 100%" type="primary" status="normal" @click="onGenerater">
+    <el-dropdown trigger="click">
+      <a-button style="width: 100%" type="primary" status="normal" @click.prevent="">
         <template #icon>
           <icon-upload />
         </template>
@@ -146,17 +147,16 @@ function onGeneraterLogging() {
       </a-button>
       <template #dropdown>
         <div class="p-3 d-flex flex-column" style="width: 100px">
-          <a-button type="primary" status="normal" @click="onGenerater">
-            <template #icon>
-              <icon-delete />
-            </template>
-            生成 MP3
+          <a-button type="primary" status="normal" @click="handleGenerater('mp3')">
+            生成MP3格式
           </a-button>
-          <a-button type="primary" status="normal" @click="onGenerater" class="mt-2">
-            <template #icon>
-              <icon-delete />
-            </template>
-            生成 WAV
+          <a-button
+            type="primary"
+            status="normal"
+            @click="handleGenerater('wav')"
+            class="mt-2"
+          >
+            生成WAV格式
           </a-button>
         </div>
       </template>
@@ -187,15 +187,15 @@ function onGeneraterLogging() {
         </div>
       </template>
     </el-dropdown> -->
-    <a-button type="primary" status="success" @click="onDownload">
+    <a-button type="primary" status="success" @click="handleDownload">
       <template #icon>
         <icon-to-bottom />
       </template>
       下载配音
     </a-button>
 
-    <el-dropdown>
-      <a-button style="width: 100%" type="primary" status="warning" @click="onDownload">
+    <el-dropdown trigger="click">
+      <a-button style="width: 100%" type="primary" status="warning" @click.prevent="">
         <template #icon>
           <icon-eye />
         </template>
@@ -207,7 +207,7 @@ function onGeneraterLogging() {
             复制 SSML
           </a-button>
           <a-button type="primary" status="warning" @click="onShowSSML" class="mt-2">
-            显示 SSML
+            查看 SSML
           </a-button>
           <a-button type="primary" status="warning" @click="onSaveSSML" class="mt-2">
             保存到浏览器

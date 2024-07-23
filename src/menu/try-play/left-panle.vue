@@ -3,8 +3,14 @@ import { ElForm, ElInput } from 'element-plus'
 import { defaultFilterSpeaker, type FilterSpeaker } from '@/model'
 import SpeakerAvatarList from './speaker-avatar-list.vue'
 import SimpleTagList from './simple-tag-list.vue'
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, computed } from 'vue'
 import { useElementVisibility } from '@vueuse/core'
+import { useDubbingStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+
+const dubbingStore = useDubbingStore()
+
+const {speakerTotal} = storeToRefs(dubbingStore);
 
 const boxRef = ref<HTMLDivElement>()
 const searchInput = ref('')
@@ -26,6 +32,10 @@ function searchInputFocus() {
     searchInputRef.value?.input?.focus()
   })
 }
+
+const speakerCountString = computed(()=>{
+  return `共${speakerTotal.value}款配音师，输入名称搜索`
+})
 </script>
 
 <template>
@@ -36,7 +46,7 @@ function searchInputFocus() {
           :input-style="{ color: 'white' }"
           ref="searchInputRef"
           v-model="searchInput"
-          placeholder="共763款配音师，输入名称搜索"
+          :placeholder="speakerCountString"
         ></ElInput>
       </ElForm>
     </div>

@@ -28,17 +28,11 @@ onUnmounted(() => {
   getEmitter(editor)?.off("ssml-remark-click", handleSSMLRemarkClick);
 });
 
-/**
- *
- */
 function handleEditorCreated(editor: IDomEditor) {
   getEmitter(editor).off("ssml-remark-click", handleSSMLRemarkClick);
   getEmitter(editor).on("ssml-remark-click", handleSSMLRemarkClick);
 }
 
-/**
- *
- */
 function handleSSMLRemarkClick(editor: IDomEditor, elem: SSMLBaseElement) {
   if (elem.type === "ssml-sub") {
     fn.value = undefined;
@@ -46,17 +40,11 @@ function handleSSMLRemarkClick(editor: IDomEditor, elem: SSMLBaseElement) {
   }
 }
 
-/**
- *
- */
 function show() {
   if (visible.value) return;
   visible.value = true;
 }
 
-/**
- *
- */
 function hide() {
   if (!visible.value) return;
   visible.value = false;
@@ -69,14 +57,12 @@ async function handleClick(editor: IDomEditor) {
   inputRef.value?.focus();
 }
 
-/**
- * 提交表单
- * @param text
- */
-function handleSubmit(text: string | null) {
+const text = ref("");
+
+function handleSubmit() {
   hide();
-  if (text) {
-    fn.value?.exec({ value: text, label: text });
+  if (text.value) {
+    fn.value?.exec({ value: text.value, label: text.value });
   }
 }
 
@@ -88,10 +74,15 @@ function onTryListen() {
 <template>
   <BarPopover v-model:visible="visible" placement="bottom" :width="200">
     <template #reference>
-      <BarButton icon="alias" @click="handleClick" class="disabled">别名</BarButton>
+      <BarButton icon="alias" @click="handleClick" class="">别名</BarButton>
     </template>
     <div class="alias">
-      <BarInput ref="inputRef" @submit="handleSubmit" placeholder="请输入别名"></BarInput>
+      <BarInput
+        ref="inputRef"
+        v-model="text"
+        @submit="handleSubmit"
+        placeholder="请输入别名"
+      ></BarInput>
       <div class="mt-2" style="font-size: 12px; color: #666">
         例如：例如：设置「YYDS」为「永远的神」
       </div>

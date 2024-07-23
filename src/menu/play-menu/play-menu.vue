@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { useTryPlayStore } from "@/stores";
 import { ElIcon } from "element-plus";
 import { Loading } from "@element-plus/icons-vue";
 import { BarButton } from "@/components";
 import throttle from "lodash.throttle";
-import { getConfig } from "@/config";
-import { inject, ref } from "vue";
+// import { getConfig } from "@/config";
+// import { inject, ref } from "vue";
 import { serializeToSSML } from "@/serialize";
-import { useEditorStore } from "@/stores";
+import { useEditorStore, useTryPlayStore } from "@/stores";
 
 const editorStore = useEditorStore();
 const { editor } = storeToRefs(editorStore);
@@ -17,52 +16,47 @@ withDefaults(defineProps<{ disabled?: boolean }>(), { disabled: false });
 const tryPlayStore = useTryPlayStore();
 const { audioPlayer, play } = tryPlayStore;
 const playState = audioPlayer.playState;
-const editorKey = inject<symbol>("editorKey")!;
-const ssmlEditorConfig = getConfig(editorKey);
+// const editorKey = inject<symbol>("editorKey")!;
+// const ssmlEditorConfig = getConfig(editorKey);
 
 // import { useDubbingStore } from "@/stores";
 // import { storeToRefs } from "pinia";
 import { tts } from "@/api/tts";
 // const { ssmlRef } = storeToRefs(useDubbingStore());
-import { Base64 } from "js-base64";
+// import { Base64 } from "js-base64";
 import { storeToRefs } from "pinia";
+import { useDubbingStore } from "@/stores";
+
+const dubbingStore = useDubbingStore();
+
+const { submitTtsData } = storeToRefs(dubbingStore);
+
+import { emitter } from "@/event-bus";
+
+emitter.on("tryplay-generator", () => {
+  handleClick();
+});
 
 const handleClick = throttle(async () => {
-  // console.log(ssmlRef.value);
   if (!editor.value) {
     return;
   }
+
   let text = serializeToSSML();
-
-  // console.log(editor.getText());
-
-  // console.log(text2);
   let raw = editor.value.getText();
 
-  console.log(Base64.encode(text));
+  submitTtsData.value.text = text;
+  submitTtsData.value.rawText = raw;
 
-  console.log(text);
-  let data = {
-    text: text,
-    speaker: "",
-    audioType: "mp3",
-    rawText: raw,
-    speed: 1,
-    convert: "",
-    rate: 0,
-    volume: 0,
-    pitch: 0,
-    symbolSil: "",
-    ignoreLimit: true,
-    genSrt: true,
-    mergeSymbol: true,
-  };
+  console.log("提交数据", submitTtsData.value);
 
-  tts(data).then((res) => {
-    console.log(res);
-    const audio = new Audio("/dev-api/moyin/tts/audition/" + res.data);
-    audio.play();
-  });
+  // tts(submitTtsData.value).then((res) => {
+  //   console.log(res);
+  //   dubbingStore.setLastPlayUrl(res.data);
+  //   const audio = new Audio("/dev-api/moyin/tts/audition/" + res.data);
+  //   audio.play();
+  // });
+  play();
   // await play(ssmlEditorConfig.tryPlay.play);
 });
 </script>

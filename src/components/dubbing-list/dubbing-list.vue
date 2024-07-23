@@ -11,6 +11,7 @@ import {
 } from "@/api/moyin";
 import { useDubbingStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import { getSpeakerListApi } from "@/api/tts";
 
 const dubbingStore = useDubbingStore();
 const {
@@ -24,28 +25,44 @@ const dialogShow = ref(false);
 const loading = ref(false);
 const showAllCriteria = ref(false); // 控制是否显示所有搜索条件
 const queryParams = reactive({
-  keyWord: "",
-  domainId: "",
-  emotion: "",
-  specificLanguage: "",
-  gender: "",
-  age: "",
-  vipAuth: "",
-  sort: "",
-  mainEmotion: "",
+  // keyWord: "",
+  // domainId: "",
+  // emotion: "",
+  // specificLanguage: "",
+  // gender: "",
+  // age: "",
+  // vipAuth: "",
+  // sort: "",
+  // mainEmotion: "",
+  name: "",
   pageSize: 30,
   pageNum: 1,
 });
 
+const maxPageNum = ref(0);
+
+const speakerList = ref([]);
+
+const total = ref(0);
+
 onMounted(async () => {
-  loading.value = true;
+  // loading.value = true;
 
-  await dubbingStore.getSpeakerEmotionList();
-  await dubbingStore.getStoreSearchCriteria();
-  await dubbingStore.searchSpeakers(queryParams);
+  // await dubbingStore.getSpeakerEmotionList();
+  // await dubbingStore.getStoreSearchCriteria();
+  // await dubbingStore.searchSpeakers(queryParams);
 
-  console.log("情绪集合", speakerEmotionList.value);
-  console.log("搜索条件", storeSearchCriteria.value);
+  getSpeakerListApi(queryParams).then((res) => {
+    speakerList.value = res.rows;
+    total.value = res.total;
+    // console.log("拿到的结果", res);
+  });
+
+  // 异步加载情绪集合
+  // dubbingStore.getSpeakerEmotionList()
+
+  // console.log("情绪集合", speakerEmotionList.value);
+  // console.log("搜索条件", storeSearchCriteria.value);
 
   // const speakerEmotionPromise = getSpeakerEmotionList().then((res) => {
   //   speakerEmotionList.value = res.data;
@@ -73,7 +90,7 @@ onMounted(async () => {
   //   searchSpeakersPromise,
   // ]);
 
-  loading.value = false;
+  // loading.value = false;
 });
 
 // 展示配音员信息
@@ -132,7 +149,11 @@ const handleTagClicked = (value) => {
 //
 // const searchContent = ref("");
 const onSearchSpeaker = () => {
-  getSearchSpeakers();
+  // getSearchSpeakers();
+  getSpeakerListApi(queryParams).then((res) => {
+    speakerList.value = res.rows;
+    // console.log("拿到的结果", speakerList.value);
+  });
 };
 
 //
@@ -162,11 +183,21 @@ const handleScroll = async () => {
   bottom.value = false;
   console.log("符合条件");
   queryParams.pageNum++;
-  await dubbingStore.searchSpeakers(queryParams, true);
-  bottom.value = true;
+
+  getSpeakerListApi(queryParams).then((res) => {
+    speakerList.value.push(...res.rows);
+    // console.log("拿到的结果", speakerList.value);
+    bottom.value = true;
+  });
+
+  // await dubbingStore.searchSpeakers(queryParams, true);
 };
 
 const maxHeight = ref("calc(100vh - 50px)");
+
+const placeholderText = computed(() => {
+  return `共${total.value}款配音师，输入名称搜索`;
+});
 </script>
 
 <template>
@@ -174,10 +205,11 @@ const maxHeight = ref("calc(100vh - 50px)");
     <!-- 搜索 -->
     <a-input
       class="dubbing-search"
-      v-model="queryParams.keyWord"
-      placeholder="共763款配音师，输入名称搜索"
+      v-model="queryParams.name"
+      :placeholder="placeholderText"
       allow-clear
       @input="onSearchSpeaker"
+      @clear="onSearchSpeaker"
     />
 
     <!-- 配音员 -->
@@ -193,7 +225,7 @@ const maxHeight = ref("calc(100vh - 50px)");
       <a-list-item
         class="d-flex align-items-center"
         style="padding: 0px"
-        v-for="(item, index) in searchSpeakerList"
+        v-for="(item, index) in speakerList"
         :key="index"
         @click="onShowSpeakerInfo(item)"
       >

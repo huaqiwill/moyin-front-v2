@@ -6,7 +6,10 @@
         <img :src="info.headerImage" alt="" />
       </div>
       <div class="ms-2">
-        <div class="" style="font-size: 18px" v-if="info.name">{{ info.name }}</div>
+        <div class="" style="font-size: 18px" v-if="info.name">
+          {{ info.name }}
+          <span>{{ info.language }}</span>
+        </div>
         <div class="mt-1" v-if="info.behavior">{{ info.behavior }}</div>
       </div>
     </div>
@@ -20,22 +23,31 @@
         <div>{{ item.name }}</div>
       </div>
     </div>
+
     <!-- 情绪 -->
-    <div class="d-flex flex-wrap">
-      <div class="mt-1 d-flex flex-column align-items-center emotion-set">
-        <img :src="info.headerImage" alt="" syule="width:40px;height:40px;" />
+    <div class="d-flex flex-wrap emotion-list">
+      <div
+        class="mt-1 d-flex flex-column align-items-center emotion-item"
+        @click="handleDefaultEmotionSelect()"
+      >
+        <div class="emotion-image">
+          <img :src="info.headerImage" />
+        </div>
         <div>默认</div>
       </div>
       <div
-        class="mt-1 d-flex flex-column align-items-center emotion-set"
+        class="mt-1 d-flex flex-column align-items-center emotion-item"
         v-for="(item, index) in emotionSet"
         :key="index"
-        @click="onEmotionSelect(item)"
+        @click="handleEmotionSelect(item)"
       >
-        <img :src="item.imageUrl" alt="" syule="width:40px;height:40px;" />
-        <div>{{ item.emotionName }}</div>
+        <div class="emotion-image">
+          <img :src="item.imageUrl" />
+        </div>
+        <div>{{ item.name }}</div>
       </div>
     </div>
+
     <div class="mt-1">
       <div>配音师详情</div>
     </div>
@@ -45,11 +57,16 @@
       <a-slider v-model="speed" class="mt-2" :min="0" :max="2" :step="0.05" />
     </div>
     <div class="mt-3">
-      语调 {{ intonation }}
-      <a-slider v-model="intonation" class="mt-2" :min="-10" :max="10" :step="0.2" />
+      语调 {{ pitch }}
+      <a-slider v-model="pitch" class="mt-2" :min="-10" :max="10" :step="0.2" />
+    </div>
+    <div class="mt-3">
+      音量 {{ volume }}
+      <a-slider v-model="volume" class="mt-2" :min="0" :max="1" :step="0.01" />
     </div>
     <template #footer>
-      <a-button @click="handleOk" type="primary">确定</a-button>
+      <a-button @click="handleCancel">取消</a-button>
+      <a-button @click="handleOk" class="ms-2" type="primary">确定</a-button>
     </template>
   </el-dialog>
 </template>
@@ -66,14 +83,17 @@ import {
 } from "vue";
 import { useDubbingStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import { getSpeakerEmotionList } from "@/api/dict";
+import { ElMessage } from "element-plus";
 
 const dubbingStore = useDubbingStore();
 const {
-  speakerEmotionList,
   domainList,
   globalSpeaker,
   globalSpeed,
   globalIntonation,
+
+  submitTtsData,
 } = storeToRefs(dubbingStore);
 
 /**
@@ -93,63 +113,10 @@ const props = defineProps({
   },
 });
 
-/**
- *
- */
-const speakerEmotionCacheVOList = ref([]);
-/**
- * 情绪列表
- */
-const emotionSet = ref([]);
-/**
- * 领域列表
- */
-const domainSet = ref([]);
-/**
- * 语速
- */
-const speed = ref(1);
-/**
- * 语调
- */
-const intonation = ref(0);
-
-onBeforeUpdate(async () => {
-  if (model.value) {
-    console.log("得到的参数3", props.info);
-
-    speakerEmotionCacheVOList.value = props.info?.speakerEmotionCacheVOList || [];
-    // await dubbingStore.getSpeakerEmotionList();
-    // await dubbingStore.getStoreSearchCriteria();
-
-    const emotionNameSet = props.info?.emotionSet || [];
-    emotionSet.value = speakerEmotionList.value.filter((emotion) =>
-      emotionNameSet.includes(emotion.emotion)
-    );
-
-    const domainIdSet = props.info.domainIdSet || [];
-    domainSet.value = domainList.value.filter((domain) =>
-      domainIdSet.includes(domain.value)
-    );
-    console.log("领域集合", domainIdSet, domainList.value, domainSet.value);
-  }
-});
-
-const handleOk = () => {
-  model.value = false;
-  globalSpeaker.value = props.info;
-  globalSpeed.value = speed.value;
-  globalIntonation.value = intonation.value;
-  console.log(globalSpeaker.value, globalSpeed.value, globalIntonation.value);
-};
-
-const onEmotionSelect = (item) => {
-  let speaker = props.info.name + "|" + item.emotionName;
-  let speakerEmotionCacheVOList = props.info.speakerEmotionCacheVOList;
-
+function handleDefaultEmotionSelect() {
   // 从情绪列表中筛选出符合条件的数据
-  let speakerInfoList = speakerEmotionCacheVOList.filter(
-    (speakerEmotion) => speakerEmotion.name == speaker
+  let speakerInfoList = speakerEmotionList.value.filter(
+    (speakerEmotion) => speakerEmotion.emotionId == 0
   );
 
   // 如果筛选的数据为空
@@ -159,11 +126,112 @@ const onEmotionSelect = (item) => {
 
   // 播放数据
   let speakerInfo = speakerInfoList[0];
-
   console.log(speakerInfo);
-  const audio = new Audio(speakerInfo.demoUrl);
-  audio.play();
-};
+
+  selectStyleCallName.value = speakerInfo.styleCallName;
+
+  ElMessage({
+    message: selectStyleCallName.value,
+  });
+}
+
+/**
+ * 情绪、领域列表
+ */
+const emotionSet = ref([]);
+const domainSet = ref([]);
+const languageSet = ref([]);
+const speakerEmotionCacheVOList = ref([]);
+
+/**
+ * 语速、语调、音量、选择的情绪
+ */
+const speed = ref(1);
+const pitch = ref(0);
+const volume = ref(1);
+const selectedEmotion = ref(null);
+
+function handleCancel() {
+  model.value = false;
+}
+
+const speakerEmotionList = ref([]);
+
+onBeforeUpdate(async () => {
+  if (model.value) {
+    const { emotionList, domainList, languageList } = dubbingStore;
+
+    speakerEmotionCacheVOList.value = props.info?.speakerEmotionCacheVOList || [];
+    // await dubbingStore.getSpeakerEmotionList();
+    // await dubbingStore.getStoreSearchCriteria();
+
+    const emotionIdSet = props.info?.emotionIdSet || [];
+    emotionSet.value = emotionList.filter((emotion) => emotionIdSet.includes(emotion.id));
+    console.log("情绪集合", emotionList, emotionIdSet, emotionSet.value);
+
+    const domainIdSet = props.info.domainIdSet || [];
+    domainSet.value = domainList.filter((domain) => domainIdSet.includes(domain.id));
+    console.log("领域集合", domainIdSet, domainList, domainSet.value);
+
+    const languageIdSet = props.info.languageIdSet || [];
+    languageSet.value = languageList.filter((language) =>
+      languageIdSet.includes(language.id)
+    );
+    console.log("语言集合", languageIdSet, languageList, languageSet.value);
+
+    let speakerId = props.info.id;
+    getSpeakerEmotionList(speakerId).then((res) => {
+      speakerEmotionList.value = res.rows;
+    });
+  }
+});
+
+const selectStyleCallName = ref(null);
+
+function handleOk() {
+  // console.log("拿到的数据222222====", props.info);
+  model.value = false;
+  // globalSpeaker.value = props.info;
+  // globalSpeed.value = speed.value;
+  // globalIntonation.value = intonation.value;
+
+  submitTtsData.value.speed = speed.value;
+  submitTtsData.value.volume = volume.value;
+  submitTtsData.value.pitch = pitch.value;
+  submitTtsData.value.speaker = selectStyleCallName.value;
+
+  console.log(submitTtsData.value);
+}
+
+function handleEmotionSelect(item) {
+  console.log("拿到的值：", item);
+
+  // let speaker = props.info.name + "|" + item.emotionNam;
+  // let speakerEmotionCacheVOList = props.info.speakerEmotionCacheVOList;
+
+  // 从情绪列表中筛选出符合条件的数据
+  let speakerInfoList = speakerEmotionList.value.filter(
+    (speakerEmotion) => speakerEmotion.emotionId == item.id
+  );
+
+  // 如果筛选的数据为空
+  if (speakerInfoList.length == 0) {
+    return;
+  }
+
+  // 播放数据
+  let speakerInfo = speakerInfoList[0];
+  console.log(speakerInfo);
+
+  // const audio = new Audio(speakerInfo.demoUrl);
+  // audio.play();
+
+  selectStyleCallName.value = speakerInfo.styleCallName;
+
+  ElMessage({
+    message: selectStyleCallName.value,
+  });
+}
 </script>
 
 <style lang="scss" scoped>
@@ -177,10 +245,27 @@ const onEmotionSelect = (item) => {
   }
 }
 
-.emotion-set {
-  img {
-    width: 40px;
-    height: 40px;
+.emotion-list {
+  .emotion-item {
+    margin-right: 15px;
+
+    &.selected .emotion-image {
+      border: 1px solid red;
+    }
+
+    .emotion-image {
+      width: 40px;
+      height: 40px;
+      overflow: hidden;
+      border-radius: 50%;
+      border: 1px solid red;
+
+      img {
+        transform: scale(1.2);
+        width: 40px;
+        height: 40px;
+      }
+    }
   }
 }
 </style>

@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { defaultAvatar } from '@/config'
-import type { SpeakerAvatarData } from './data'
+// 单个头像
+// label、avatar、isFree、value
 
-defineEmits<{ click: [value: string] }>()
+import { defaultAvatar } from "@/config";
+import type { SpeakerAvatarData } from "./data";
+
+defineEmits<{ click: [value: string] }>();
 withDefaults(defineProps<{ activate?: boolean; data?: SpeakerAvatarData }>(), {
   activate: false,
-  data: () => ({ label: '', value: '' }),
-})
+  data: () => ({ label: "", value: "" }),
+});
 </script>
 
 <template>
@@ -18,8 +21,9 @@ withDefaults(defineProps<{ activate?: boolean; data?: SpeakerAvatarData }>(), {
       v-if="!data.isFree"
       class="position-absolute top-0 start-100 translate-middle text-bg-danger text-nowrap rounded px-1"
       style="font-size: 0.65rem"
-      >付费</span
     >
+      付费
+    </span>
     <img
       :src="data.avatar || defaultAvatar()"
       class="rounded-circle"

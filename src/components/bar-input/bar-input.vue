@@ -5,7 +5,11 @@ import { ref, nextTick } from "vue";
 const emit = defineEmits<{ submit: [value: string] }>();
 defineProps<{ type?: string; placeholder?: string }>();
 
-const inputValue = ref("");
+const inputValue = defineModel({
+  type: String,
+  default: "",
+});
+
 const inputRef = ref<InstanceType<typeof ElInput>>();
 
 function focus() {

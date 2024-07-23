@@ -7,6 +7,7 @@ import type { CancellationToken } from '@/utils'
 import { defaultRecentUsageSpeaker, type RecentUsageSpeaker } from '@/menu/management-menu/data'
 import { emitter } from '@/event-bus'
 import mergeWith from 'lodash.mergewith'
+// import {} from '@/api'
 
 type Animation = { zoom: boolean; grayscale: boolean }
 type FetchFunction = () => Promise<LabelValue[]>
@@ -104,7 +105,9 @@ function defaultSSMLEditorConfig(): SSMLEditorConfig {
       ],
       fetchScene: resolveList(),
       fetchStyle: resolveList(),
-      fetchData: resolveList(),
+      fetchData: () => {
+        return new Promise((resolve, reject) => {})
+      },
     },
     conversion: {
       timeoutMilliseconds: 20000,

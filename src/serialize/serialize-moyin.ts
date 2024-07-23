@@ -51,7 +51,7 @@ function serializeBreak(node: Break) {
  * 多音字
  * 中文 <p phoneme="du1">都</p>
  * 英文 <p phoneme="hʌ`ləu">hello</p>
- * 
+ *
  * @param node
  * @param children
  * @returns
@@ -159,7 +159,8 @@ function serializeMoyinW(node: MoyinW, children: string) {
  * @returns
  */
 function serializeSub(node: Sub, children: string) {
-  return `<sub alias=${node.alias}>${children}</sub>`
+  // return `<sub alias=${node.alias}>${children}</sub>`
+  return `${node.alias}`
 }
 
 /**
@@ -313,7 +314,7 @@ function customManagmentToSpeakData(customNode: CustomManagement): SpeakData {
 }
 
 /**
- * 转换为 Speaker 
+ * 转换为 Speaker
  * @param editor
  * @returns
  */
@@ -357,10 +358,10 @@ export function serializeToSpeakDataList() {
 export default function serializeToSSML() {
   const list = serializeToSpeakDataList()
   function speakDataToXML(data: SpeakData) {
-    return `<with name="${data.name}" role="${data.role}" style="${data.style}" speed="${data.speed}" pitch="${data.pitch}">${data.ssml}</with>`
-    // return `${data.ssml}`
+    // return `<with name="${data.name}" role="${data.role}" style="${data.style}" speed="${data.speed}" pitch="${data.pitch}">${data.ssml}</with>`
+    return `${data.ssml}`
   }
   const ssml = list.map((v) => speakDataToXML(v)).join('')
-  return `<ssml>${ssml}</ssml>`
-  // return `${ssml}`
+  // return `<ssml>${ssml}</ssml>`
+  return `${ssml}`
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// tag v1 item
 import { computed } from "vue";
 
 defineEmits<{ click: [value: string] }>();

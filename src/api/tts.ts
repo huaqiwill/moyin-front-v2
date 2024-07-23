@@ -51,8 +51,8 @@ export function downloadAudio(url: string) {
 
 /**
  * 下载视频
- * @param url 
- * @returns 
+ * @param url
+ * @returns
  */
 export function downloadVideo(url: string) {
   return request({
@@ -63,8 +63,8 @@ export function downloadVideo(url: string) {
 
 /**
  * 下载字幕
- * @param url 
- * @returns 
+ * @param url
+ * @returns
  */
 export function downloadSrt(url: string) {
   return request({
@@ -75,8 +75,8 @@ export function downloadSrt(url: string) {
 
 /**
  * tts记录
- * @param params 
- * @returns 
+ * @param params
+ * @returns
  */
 export function ttsRecordList(params: any) {
   return request({
@@ -88,8 +88,8 @@ export function ttsRecordList(params: any) {
 
 /**
  * 删除tts记录
- * @param id 
- * @returns 
+ * @param id
+ * @returns
  */
 export function ttsRecordDelete(id: any) {
   return request({
@@ -98,3 +98,24 @@ export function ttsRecordDelete(id: any) {
   })
 }
 
+export function getSpeakerListApi(params: any) {
+  return request({
+    url: '/moyin/speaker/list',
+    method: 'get',
+    params: params,
+  })
+}
+
+export function getSpeakerListAllApi() {
+  return request({
+    url: '/moyin/speaker/listAll',
+    method: 'get',
+  })
+}
+
+export function getSpeakerEmotionListApi() {
+  return request({
+    url: '/moyin/speaker/listAll',
+    method: 'get',
+  })
+}

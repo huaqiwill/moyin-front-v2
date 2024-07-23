@@ -39,6 +39,9 @@ const speed = ref(1)
 const pitchRange = ref([-10, 10])
 const pitch = ref(0)
 
+const volumeRange = ref([0,1])
+const volume = ref(1)
+
 const timeMaxText = computed(() => formatTime(timeMax.value))
 const timeText = computed(() => formatTime(time.value))
 const isStar = computed(() => tryPlayStore.speaker.isStar)
@@ -253,14 +256,14 @@ function handleSpeakerDetailShow() {
     </div>
     <div class="right-box">
       <div>
-        <span>音量：{{ pitch }}</span>
+        <span>音量：{{ volume }}</span>
       </div>
       <a-slider
         class="mt-2"
-        v-model="pitch"
-        :min="pitchRange[0]"
-        :max="pitchRange[1]"
-        :step="0.2"
+        v-model="volume"
+        :min="volumeRange[0]"
+        :max="volumeRange[1]"
+        :step="0.01"
       ></a-slider>
     </div>
     <div>
