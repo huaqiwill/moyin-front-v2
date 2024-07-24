@@ -7,6 +7,12 @@ import { type IDomEditor } from '@wangeditor/editor'
 import { emitter } from '@/event-bus'
 import { ref, provide, onMounted, onUnmounted, toRaw } from 'vue'
 import { type PartialSSMLEditorConfig, setConfig } from '@/config'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useDubbingStore } from '@/stores'
+
+const router = useRouter()
+const dubbingStore = useDubbingStore()
 
 const emit = defineEmits<{ created: [editor: IDomEditor]; change: [editor: IDomEditor] }>()
 const props = withDefaults(
@@ -23,6 +29,9 @@ setConfig(props.editorKey, toRaw(props.config))
 // 设置拖拽容器盒子,如果想要在整个页面可拖拽,将boxRef换为ref(document.body)即可
 provide('dragContainerBox', boxRef)
 provide('editorKey', props.editorKey)
+
+console.log("editorKey",props.editorKey);
+dubbingStore.setGlobaleEditorKey(props.editorKey)
 
 onMounted(() => {
   document.addEventListener('keydown', handleKeyDown)
@@ -47,12 +56,86 @@ function handleClick(ev: MouseEvent) {
 function handleKeyDown(ev: KeyboardEvent) {
   emitter.emit('view-keydown', ev)
 }
+
+function handleLogin(){
+  router.push({
+    name:"login"
+  })
+}
+
+
+import { useUserStore } from '@/stores'
+import { ElMessageBox } from 'element-plus'
+import { getToken } from '@/utils/auth'
+// import { storeToRefs } from 'pinia'
+const userStore = useUserStore();
+// const { token, isLogin } = storeToRefs(userStore);
+
+const isLogin = ref(false)
+
+onMounted(()=>{
+  if(getToken()){
+    isLogin.value = true
+  }
+})
+
+const handleAccount = () => {
+  // router.push({
+  //   name: "profile",
+  // });
+  ElMessage({
+    message:"暂不需要"
+  })
+};
+const handleLogout = () => {
+  ElMessageBox.confirm("确定要退出登录吗？", "提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    userStore.logout();
+    isLogin.value = false;
+  });
+};
+
+const handleLayout = () => {
+  ElMessage({
+    message:"暂不需要"
+  })
+};
 </script>
 
 <template>
   <div ref="boxRef" class="ssml-editor-root editor-view" @click="handleClick">
     <div class="editor-box">
-      <EditorBar></EditorBar>
+      <div class="d-flex justify-content-between">
+        <EditorBar></EditorBar>
+
+        <a-dropdown v-if="isLogin" trigger="hover">
+          <div class="login-in d-flex flex-row me-2">
+            <img
+              src="https://peiyinshenqi-1254161078.cos.ap-shanghai.myqcloud.com/avatar/mFcMn2"
+              alt=""
+            />
+            <div class="ms-1">
+              <div class="">
+                <span>也不凡</span>
+                <el-tag class="ms-1">包终生VIP</el-tag>
+              </div>
+              <div class="mt-1">到期时间：永久</div>
+            </div>
+          </div>
+          <template #content>
+            <a-doption @click="handleAccount">我的账户</a-doption>
+            <a-doption>绑定手机号 15576364885</a-doption>
+            <a-doption @click="handleLayout">布局管理</a-doption>
+            <a-doption @click="handleLogout">退出登录</a-doption>
+          </template>
+        </a-dropdown>
+        <div class="d-flex align-items-center me-2" v-else>
+          <a-button type="primary" @click="handleLogin">登录</a-button>
+        </div>
+      </div>
       <div class="editor-core-container shadow pt-1">
         <EditorCore @change="handleChange" @created="handleCreated"></EditorCore>
         <slot name="sidebar"></slot>
@@ -66,6 +149,21 @@ function handleKeyDown(ev: KeyboardEvent) {
 </template>
 
 <style lang="scss" scoped>
+.login-in {
+  align-items: center;
+  padding: 0 10px;
+  margin: 10px 0;
+  img {
+    width: 44px;
+    height: 44px;
+    display: block;
+    line-height: 44px;
+  }
+  &:hover {
+    box-shadow: 0 10px 30px 0 rgba(12, 43, 66, 0.1);
+  }
+}
+
 .editor-view {
   background-color: var(--tool-bg-color);
   width: 100%;

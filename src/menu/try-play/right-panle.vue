@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ElSlider, ElIcon } from 'element-plus'
-import SpeakerAvatar from './speaker-avatar.vue'
+import { ElSlider, ElIcon, ElMessage } from 'element-plus'
+// import SpeakerAvatar from './speaker-avatar.vue'
 import PlayButton from './play-button.vue'
 import type { CSSProperties } from 'vue'
 import { reactive, ref, onUnmounted, computed, watch, onMounted, toRaw, inject } from 'vue'
@@ -10,11 +10,15 @@ import { getConfig } from '@/config'
 import StyleAvatar from './style-avatar.vue'
 import { defaultSpeed, defaultPitch } from './data'
 import { useSSMLStore, useTryPlayStore } from '@/stores'
-import { defaultFilterSpeaker, type Speaker } from '@/model'
+import { defaultFilterSpeaker, type LabelValue, type Speaker } from '@/model'
 import { emitter } from '@/event-bus'
 import type { Arrayable } from 'element-plus/lib/utils/typescript'
 import SimpleTag from './simple-tag.vue'
+// import { EmotionList } from '@/components'
+import { useDubbingStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
+const dubbingStore = useDubbingStore()
 interface Mark {
   style: CSSProperties
   label: string
@@ -24,7 +28,7 @@ type Marks = Record<number, Mark | string>
 
 const editorKey = inject<symbol>('editorKey')!
 const ssmlEditorConfig = getConfig(editorKey)
-const { rootProsody, rootExpressAs } = useSSMLStore()
+// const { rootProsody, rootExpressAs } = useSSMLStore()
 const { category, fetchData } = ssmlEditorConfig.tryPlay
 const tryPlayStore = useTryPlayStore()
 
@@ -33,7 +37,7 @@ const currentTime = tryPlayStore.audioPlayer.currentTime
 const time = ref(0)
 const isInput = ref(false)
 
-const speedRange = ref([0, 2.0])
+const speedRange = ref([0.5, 2.0])
 const speed = ref(1)
 
 const pitchRange = ref([-10, 10])
@@ -56,6 +60,31 @@ onMounted(async () => {
   await handleCategoryClick(category[0].value)
 })
 
+const emotions = ref<any>([])
+const domains = ref<any>([])
+
+const defaultStyleAvatar = ref({
+  id:0,
+  name:"默认",
+  imageUrl:""
+})
+
+import { getSpeakerEmotionList } from "@/api/dict";
+const speakerEmotionList = ref([])
+emitter.on('speaker:select',(speaker:any)=>{
+  const {emotionIdSet,domainIdSet} = speaker
+  const {emotionList,domainList} = dubbingStore
+  emotions.value = emotionList.filter((emotion:any)=>emotionIdSet.includes(emotion.id))
+  domains.value = domainList.filter((domain:any)=>domainIdSet.includes(domain.id))
+  // console.log("情绪",emotionIdSet,emotionList,emotions.value);
+  // console.log("领域",domainIdSet,domainList,domains.value);
+  defaultStyleAvatar.value.imageUrl = speaker.headerImage
+
+  getSpeakerEmotionList(speaker.id).then((res:any) => {
+    speakerEmotionList.value = res.rows;
+  });
+})
+
 onMounted(() => {
   emitter.on('tryplay-speaker-update-star', handleUpdateStarTheCache)
 })
@@ -64,37 +93,45 @@ onUnmounted(() => {
   emitter.off('tryplay-speaker-update-star', handleUpdateStarTheCache)
 })
 
+const {submitTtsData} = storeToRefs(dubbingStore)
+
 watch(
-  () => tryPlayStore.speaker,
-  (newValue) => {
-    newValue.roles.length > 0 && handleRoleClick(newValue.roles[0].value)
-    newValue.styles.length > 0 && handleStyleClick(newValue.styles[0].value)
+  volume,
+  (value) => {
+    // newValue.roles.length > 0 && handleRoleClick(newValue.roles[0].value)
+    // newValue.styles.length > 0 && handleStyleClick(newValue.styles[0].value)
+    submitTtsData.value.volume = value
   },
-  { immediate: true },
+  { immediate: false },
 )
 
 watch(
   pitch,
   (value) => {
-    rootProsody.pitch = value.toString()
+    submitTtsData.value.pitch = value
+    // rootProsody.pitch = value.toString()
   },
-  { immediate: true },
+  { immediate: false },
 )
 
 watch(
   speed,
   (value) => {
-    rootProsody.rate = value.toString()
+    submitTtsData.value.speed = value
+    // rootProsody.rate = value.toString()
   },
-  { immediate: true },
+  { immediate: false },
 )
 
 watch(currentTime, (newValue) => {
   if (!isInput.value) time.value = newValue
 })
 
-async function handleStar() {
-  await tryPlayStore.star(editorKey, !isStar.value)
+function handleStar() {
+  // await tryPlayStore.star(editorKey, !isStar.value)
+  ElMessage({
+    message:"Star"
+  })
 }
 
 function handleUpdateStarTheCache(speakerId: string, isStar: boolean) {
@@ -102,12 +139,27 @@ function handleUpdateStarTheCache(speakerId: string, isStar: boolean) {
   if (speakerCache) speakerCache.isStar = isStar
 }
 
-function handleRoleClick(value: string) {
-  rootExpressAs.role = value
-}
 
-function handleStyleClick(value: string) {
-  rootExpressAs.style = value
+// function handleRoleClick(value: string) {
+//   rootExpressAs.role = value
+// }
+
+const selectedEmotion = ref(0)
+function handleStyleClick(value: number) {
+  // rootExpressAs.style = value
+  selectedEmotion.value = value
+
+  // 注意此处不能使用全等
+  let filters:any = speakerEmotionList.value.filter((emotion:any)=>emotion.emotionId == value)
+  // console.log(speakerEmotionList.value, value,filters);
+  if(filters.length>0){
+    let styleCallName = filters[0].styleCallName;
+    submitTtsData.value.speaker = styleCallName
+
+    ElMessage({
+      message:styleCallName
+    })
+  }
 }
 
 async function handleCategoryClick(value: string) {
@@ -119,9 +171,9 @@ async function handleCategoryClick(value: string) {
   }
 }
 
-function handleSpeakerClick(value: Speaker) {
-  tryPlayStore.setSpeaker(editorKey, toRaw(value))
-}
+// function handleSpeakerClick(value: Speaker) {
+//   tryPlayStore.setSpeaker(editorKey, toRaw(value))
+// }
 
 function handleTimeInput() {
   isInput.value = true
@@ -135,13 +187,23 @@ function handleTimeChange(time: Arrayable<number>) {
   isInput.value = false
 }
 
-function handleSpeakerDetailShow() {
-  emitter.emit('tryplay-speaker-detail-show', tryPlayStore.speaker)
-}
+// function handleSpeakerDetailShow() {
+//   emitter.emit('tryplay-speaker-detail-show', tryPlayStore.speaker)
+// }
 </script>
 
 <template>
-  <div class="right-panle w-100 px-3 text-white" style="font-size: 0.65rem">
+  <div
+    class="mt-2 right-panle w-100 px-3 text-white overflow-x-hidden overflow-y-auto scrollbar-none"
+    style="
+      height: 400px;
+      font-size: 0.65rem;
+      border: 1px solid #3463ab;
+      border-left: none;
+      max-width: 328px;
+      min-width: 328px;
+    "
+  >
     <div class="mt-2 d-flex text-center justify-content-between align-items-center">
       <div class="me-auto d-flex flex-row align-items-center">
         <PlayButton :size="42"></PlayButton>
@@ -150,8 +212,7 @@ function handleSpeakerDetailShow() {
           style="height: 42px; font-size: 14px"
         >
           <div class="d-flex dlex-row column-gap-2 align-items-end">
-            <span class="fs-6">{{ tryPlayStore.speaker.displayName }}</span>
-            <span>{{ speed }}x</span>
+            <span style="font-size: 1rem">{{ tryPlayStore.speaker.name }}</span>
           </div>
           <div class="d-flex flex-row column-gap-2 align-items-center">
             <ElIcon
@@ -162,6 +223,7 @@ function handleSpeakerDetailShow() {
               <StarFilled v-if="isStar"></StarFilled>
               <Star v-else></Star>
             </ElIcon>
+            <span>{{ speed }}x</span>
             <span
               v-if="tryPlayStore.speaker.isSupper24K"
               class="badge text-bg-primary px-2"
@@ -173,7 +235,7 @@ function handleSpeakerDetailShow() {
       </div>
       <div class="d-flex flex-column align-items-end">
         <div class="text-info">音频时长，请以生成后的为准</div>
-        <div class="d-flex flex-row align-items-end">
+        <div class="mt-1 d-flex flex-row align-items-end">
           <a-slider
             style="width: 100px"
             :max="timeMax"
@@ -183,54 +245,56 @@ function handleSpeakerDetailShow() {
             @change="handleTimeChange"
             :format-tooltip="formatTime"
           ></a-slider>
-          <div class="mt-1 ms-1">
-            <span>{{ timeText }}</span>
-            <span>/</span>
-            <span>{{ timeMaxText }}</span>
-          </div>
+        </div>
+        <div class="mt-1">
+          <span class="ms-3">{{ timeText }}</span>
+          <span>/</span>
+          <span>{{ timeMaxText }}</span>
         </div>
       </div>
     </div>
+
     <!-- 标签 -->
-    <div
-      class="role-list mt-2 d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-2 column-gap-3"
-    >
-      <SimpleTag
-        small
-        @click="handleRoleClick"
-        v-for="(item, index) in tryPlayStore.speaker.roles"
-        :key="index"
-        :value="item.value"
-        :activate="item.value === (rootExpressAs.role || '')"
+    <div style="padding: 0 5px" class="mt-2 role-list">
+      <div
+        class="d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-2 column-gap-3"
       >
-        {{ item.label }}
-      </SimpleTag>
+        <div v-for="(item, index) in domains" :key="index">
+          {{ item.name }}
+        </div>
+      </div>
     </div>
+
     <!-- 情绪 -->
+    <!-- <EmotionList emotions="emotions"></EmotionList> -->
     <ul
-      class="mt-2 d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-1 column-gap-2"
+      class="mt-2 d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-1"
     >
-      <li
-        class="mx-2"
-        @click="handleStyleClick(item.value)"
-        v-for="(item, index) in tryPlayStore.speaker.styles"
-        :key="index"
-      >
+      <li @click="handleStyleClick(0)" style="padding: 5px 3px">
         <StyleAvatar
-          :activate="item.value === (rootExpressAs.style || '')"
-          :data="item"
+          :activate="0 === selectedEmotion"
+          :data="defaultStyleAvatar"
         ></StyleAvatar>
       </li>
+      <li
+        @click="handleStyleClick(item.id)"
+        v-for="(item, index) in emotions"
+        :key="index"
+        style="padding: 5px 3px"
+      >
+        <StyleAvatar :activate="item.id === selectedEmotion" :data="item"></StyleAvatar>
+      </li>
     </ul>
-    <div class="my-3">
+
+    <!-- <div class="my-3">
       <SimpleTag
         activate
         @click="handleSpeakerDetailShow"
         style="background-color: #5a92f4; padding: 0 3px; border: none !important"
         >配音师详情</SimpleTag
       >
-    </div>
-    <div class="right-box">
+    </div> -->
+    <div class="right-box mt-3">
       <div>
         <span>语速：{{ speed }}x</span>
       </div>
@@ -266,7 +330,9 @@ function handleSpeakerDetailShow() {
         :step="0.01"
       ></a-slider>
     </div>
-    <div>
+    <!-- <div style="width: 295px"></div> -->
+
+    <!-- <div>
       <div class="d-flex flex-row gap-3 my-3" style="margin: 0 0 16px 0 !important">
         <SimpleTag
           custom-class="gap-3"
@@ -300,7 +366,7 @@ function handleSpeakerDetailShow() {
           ></SpeakerAvatar>
         </li>
       </ul>
-    </div>
+    </div> -->
   </div>
 </template>
 

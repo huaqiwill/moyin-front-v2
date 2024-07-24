@@ -11,6 +11,9 @@ export interface Speaker {
   isSupper24K: boolean
   roles: (LabelValue & { avatar?: string; emoji?: string })[]
   styles: (LabelValue & { avatar?: string; emoji?: string })[]
+
+  //
+  headerImage: string
 }
 
 export function defaultSpeaker(): Speaker {
@@ -25,12 +28,15 @@ export function defaultSpeaker(): Speaker {
     styles: [],
     name: '',
     displayName: '',
+    headerImage: '',
   }
 }
 
 export interface FilterSpeaker {
   word: string
   topFlag: string
+  language: string
+  domain: string
   category: string
   gender: string
   tag: string
@@ -38,6 +44,8 @@ export interface FilterSpeaker {
 
 export function defaultFilterSpeaker(): FilterSpeaker {
   return {
+    domain: '',
+    language: '',
     word: '',
     topFlag: '',
     category: '',

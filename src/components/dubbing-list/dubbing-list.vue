@@ -12,7 +12,9 @@ import {
 import { useDubbingStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { getSpeakerListApi } from "@/api/tts";
+import { useTryPlayStore } from "@/stores";
 
+const tryPlayStore = useTryPlayStore();
 const dubbingStore = useDubbingStore();
 const {
   speakerEmotionList,
@@ -55,7 +57,10 @@ onMounted(async () => {
   getSpeakerListApi(queryParams).then((res) => {
     speakerList.value = res.rows;
     total.value = res.total;
-    // console.log("拿到的结果", res);
+
+    if (speakerList.value.length > 0) {
+      tryPlayStore.setSpeakerForce(speakerList.value[0]);
+    }
   });
 
   // 异步加载情绪集合

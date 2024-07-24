@@ -78,7 +78,7 @@ export function downloadSrt(url: string) {
  * @param params
  * @returns
  */
-export function ttsRecordList(params: any) {
+export function ttsRecordListApi(params: any) {
   return request({
     url: '/moyin/tts/ttsRecordList',
     method: 'get',
@@ -103,6 +103,13 @@ export function getSpeakerListApi(params: any) {
     url: '/moyin/speaker/list',
     method: 'get',
     params: params,
+  })
+}
+
+export function getSpeakerInfoApi(id: string) {
+  return request({
+    url: '/moyin/speaker/' + id,
+    method: 'get',
   })
 }
 

@@ -5,7 +5,8 @@ import { useTryPlayStore } from '@/stores'
 import { ElIcon } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 import throttle from 'lodash.throttle'
-import { getConfig } from '@/config'
+// import { getConfig } from '@/config'
+import { emitter } from '@/event-bus'
 
 const props = withDefaults(defineProps<{ size?: number }>(), { size: 50 })
 
@@ -14,17 +15,17 @@ const boxRef = ref<HTMLDivElement>()
 const tryPlayStore = useTryPlayStore()
 const { audioPlayer, play } = tryPlayStore
 const playState = audioPlayer.playState
-const editorKey = inject<symbol>('editorKey')!
-const ssmlEditorConfig = getConfig(editorKey)
+// const editorKey = inject<symbol>('editorKey')!
+// const ssmlEditorConfig = getConfig(editorKey)
 
 const styleObject = computed<CSSProperties>(() => ({
-  'background-image': `url(${tryPlayStore.speaker.avatar || defaultAvatar()})`,
+  'background-image': `url(${tryPlayStore.speaker.headerImage || defaultAvatar()})`,
   width: `${props.size}px`,
   height: `${props.size}px`,
 }))
 
 const handleClick = throttle(async () => {
-  await play(ssmlEditorConfig.tryPlay.play)
+  emitter.emit("tryplay-generator");
 })
 
 defineExpose({

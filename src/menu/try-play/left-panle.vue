@@ -9,15 +9,15 @@ import { useDubbingStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const dubbingStore = useDubbingStore()
-
 const {speakerTotal} = storeToRefs(dubbingStore);
-
 const boxRef = ref<HTMLDivElement>()
 const searchInput = ref('')
 const searchInputRef = ref<InstanceType<typeof ElInput>>()
 const filter = ref<FilterSpeaker>(defaultFilterSpeaker())
-
 const visible = useElementVisibility(boxRef)
+const speakerCountString = computed(()=>{
+  return `共${speakerTotal.value}款配音师，输入名称搜索`
+})
 
 watch(visible, (newValue) => {
   newValue && searchInputFocus()
@@ -32,26 +32,11 @@ function searchInputFocus() {
     searchInputRef.value?.input?.focus()
   })
 }
-
-const speakerCountString = computed(()=>{
-  return `共${speakerTotal.value}款配音师，输入名称搜索`
-})
 </script>
 
 <template>
-  <div class="left-panle" ref="boxRef">
-    <div class="pe-1">
-      <ElForm @submit.prevent="handleSearchInputSubmit">
-        <ElInput
-          :input-style="{ color: 'white' }"
-          ref="searchInputRef"
-          v-model="searchInput"
-          :placeholder="speakerCountString"
-        ></ElInput>
-      </ElForm>
-    </div>
+  <div class="left-panle d-flex" ref="boxRef">
     <SimpleTagList v-model:filter="filter"></SimpleTagList>
-    <div class="py-1 line"></div>
     <SpeakerAvatarList :filter="filter"></SpeakerAvatarList>
   </div>
 </template>

@@ -22,16 +22,25 @@ export const useTryPlayStore = defineStore('--editor-try-play', () => {
   const audioPlayer = computed(() => _audioPlayer.value)
   const isLoading = computed(() => _isLoading.value)
 
+  function setSpeakerForce(value: Speaker) {
+    _speaker.value = value
+    ssmlStore.rootVoice.name = value.name
+    emitter.emit('tryplay-speaker-select', value)
+  }
+
   const setSpeaker = (key: symbol, value: Speaker) => {
     function setter(value: Speaker) {
       _speaker.value = value
+
       ssmlStore.rootVoice.name = value.name
+
       emitter.emit('tryplay-speaker-select', value)
     }
     const config = getConfig(key)
     if (config.tryPlay.selectSpeaker) {
       config.tryPlay.selectSpeaker(value, setter)
     } else {
+      // 默认
       setter(value)
     }
   }
@@ -76,5 +85,5 @@ export const useTryPlayStore = defineStore('--editor-try-play', () => {
     }
   }
 
-  return { speaker, setSpeaker, star, audioPlayer, isLoading, play }
+  return { speaker, setSpeaker, setSpeakerForce, star, audioPlayer, isLoading, play }
 })

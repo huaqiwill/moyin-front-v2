@@ -2,11 +2,11 @@
 // tag v1 item
 import { computed } from "vue";
 
-defineEmits<{ click: [value: string] }>();
+defineEmits<{ click: [value: string | number] }>();
 const props = withDefaults(
   defineProps<{
     activate?: boolean;
-    value?: string;
+    value?: string | number;
     small?: boolean;
   }>(),
   {
@@ -23,10 +23,10 @@ const style = computed(() => {
       }
     : {
         height: "20px",
-        "line-height": "20px",
-        "font-size": "0.65rem",
-        "min-width": "60px",
-        "max-width": "160px",
+        lineHeight: "20px",
+        fontSize: "0.65rem",
+        minWidth: "50px",
+        maxWidth: "160px",
       };
 });
 </script>
@@ -34,9 +34,14 @@ const style = computed(() => {
 <template>
   <span
     class="tag-item d-inline-block text-white text-center text-nowrap text-truncate rounded-pill"
-    :class="{ 'border border-white selected': activate, 'px-1 small': small }"
+    :class="{ selected: activate, 'px-1 small': small }"
     @click="$emit('click', value)"
-    style="cursor: pointer; border: 1px solid transparent; box-sizing: content-box"
+    style="
+      cursor: pointer;
+      border: 1px solid transparent;
+      box-sizing: content-box;
+      padding: 0 5px;
+    "
     :style="style"
   >
     <slot></slot>

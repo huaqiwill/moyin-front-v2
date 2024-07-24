@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { DubbingButton } from "@/components";
-import { ttsRecordList, ttsRecordDelete } from "@/api/tts";
+import { ttsRecordListApi, ttsRecordDelete } from "@/api/tts";
 import { ElMessage, ElMessageBox } from "element-plus";
 
 const dialogVisible = ref(false);
@@ -27,7 +27,7 @@ const queryParams = reactive({
  */
 const getTtsRecordList = () => {
   loading.value = true;
-  ttsRecordList(queryParams).then((res) => {
+  ttsRecordListApi(queryParams).then((res) => {
     console.log(res);
     pageTotal.value = res.total;
     tableData.value = res.rows;
@@ -62,7 +62,7 @@ const loading = ref(false);
 
 onMounted(() => {});
 
-/**
+/** 
  * 分页总数
  */
 const pageTotal = ref(0);

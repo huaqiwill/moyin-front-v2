@@ -16,8 +16,8 @@
     </template>
     <div>
       <el-radio-group v-model="radio1" class="ml-4">
-        <el-radio value="1">所有段落</el-radio>
-        <el-radio value="2">当前段落</el-radio>
+        <el-radio :value="1">所有段落</el-radio>
+        <el-radio :value="2">当前段落</el-radio>
       </el-radio-group>
       <el-checkbox v-model="checked1" label="显示静音段落" />
     </div>

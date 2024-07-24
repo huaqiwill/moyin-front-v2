@@ -99,15 +99,26 @@ export const useDubbingStore = defineStore('dubbing', {
 
       lastPlayUrl: '',
 
+      // try play
       speakerListAll: [],
+      speakerListAllBackup: [],
       speakerListCount: 0,
+
+      globalEditorKey: null,
     }
   },
   getters: {},
   actions: {
+    setGlobaleEditorKey(globalEditorKey: any) {
+      this.globalEditorKey = globalEditorKey
+    },
+    getGlobaleEditorKey() {
+      return this.globalEditorKey
+    },
     async getSpeakerListAll() {
       return await getSpeakerListAllApi().then((res: any) => {
         this.speakerListAll = res.rows
+        this.speakerListAllBackup = res.rows
         this.speakerListCount = res.total
       })
     },

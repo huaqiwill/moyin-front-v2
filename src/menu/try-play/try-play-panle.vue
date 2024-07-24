@@ -1,115 +1,48 @@
 <script setup lang="ts">
-import RightPanle from './right-panle.vue'
-import LeftPanle from './left-panle.vue'
-import { onMounted, onUnmounted, ref, inject, type Ref } from 'vue'
-import { useConstrainDragBounds } from '@/components'
-import { useDraggable, useElementBounding } from '@vueuse/core'
-import { emitter } from '@/event-bus'
+import { ref } from "vue";
+import TryPlayDialog from "./try-play-dialog.vue";
+import LeftPanle from "./left-panle.vue";
+import RightPanle from "./right-panle.vue";
+import { useDubbingStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { emitter } from "@/event-bus";
 
-const emit = defineEmits<{ 'update:visible': [value: boolean] }>()
-const props = defineProps<{ visible: boolean }>()
+const dubbingStore = useDubbingStore();
+const panleVisible = ref(false);
+const searchName = ref("");
 
-const boxRef = ref<HTMLElement>()
-const handleRef = ref<HTMLElement>()
-const dragContainerBoxRef = inject<Ref<HTMLElement | undefined>>('dragContainerBox')
-const editorViewBoxBounds = useElementBounding(dragContainerBoxRef)
+const { speakerListAll } = storeToRefs(dubbingStore);
 
-onMounted(() => {
-  emitter.on('view-keydown', handleKeyDownEsc)
-})
-
-onUnmounted(() => {
-  emitter.off('view-keydown', handleKeyDownEsc)
-})
-
-function handleKeyDownEsc(event: KeyboardEvent) {
-  if (event.code === 'Escape') {
-    props.visible && handleMinimize()
+function handleInput() {
+  const { speakerListAllBackup } = dubbingStore;
+  speakerListAll.value = [...speakerListAllBackup];
+  if (searchName.value !== "") {
+    speakerListAll.value = speakerListAll.value.filter((speaker: any) =>
+      speaker.name.includes(searchName.value)
+    );
   }
-}
-
-const { position } = useDraggable(handleRef, {
-  initialValue: { x: 40, y: 40 },
-})
-const { style } = useConstrainDragBounds(boxRef, dragContainerBoxRef, position)
-
-onMounted(() => {
-  const point = {
-    x: editorViewBoxBounds.x.value + (editorViewBoxBounds.width.value - 890) / 2,
-    y: editorViewBoxBounds.y.value + (editorViewBoxBounds.height.value - 390) / 2,
-  }
-  position.value = point
-})
-
-function handleMinimize() {
-  emit('update:visible', false)
+  emitter.emit("speaker:loading:ok");
 }
 </script>
 
 <template>
-  <div
-    ref="boxRef"
-    v-show="visible"
-    :style="style"
-    style="position: fixed"
-    class="try-play user-select-none card z-3 shadow"
-  >
-    <div class="box ms-2">
-      <div
-        class="text-center d-flex flex-row justify-content-between"
-        style="height: 30px"
-      >
-        <div ref="handleRef" class="h-100 w-100 text-start" style="cursor: move">
-          <span class="dubbing-title">配音员列表</span>
-        </div>
-        <button @click="handleMinimize" class="btn btn-sm border-0" style="width: 45px">
-          <span class="iconfont icon-zuixiaohua text-white fs-6"></span>
-        </button>
+  <TryPlayDialog v-model:visible="panleVisible">
+    <div class="try-play-left w-100">
+      <div class="d-flex">
+        <LeftPanle></LeftPanle>
+        <RightPanle></RightPanle>
       </div>
-      <div class="try-play-body d-flex flex-row">
-        <div class="try-play-left w-50">
-          <LeftPanle></LeftPanle>
-        </div>
-        <div class="try-play-right w-50 overflow-x-hidden overflow-y-auto scrollbar-none">
-          <RightPanle></RightPanle>
-        </div>
+      <div class="d-flex mt-1">
+        <a-input
+          v-model="searchName"
+          placeholder="共663款配音师，输入名称搜索"
+          @input="handleInput"
+        ></a-input>
+        <a-button type="primary" class="ms-1">最近</a-button>
+        <a-button type="primary" class="ms-1">收藏</a-button>
       </div>
     </div>
-  </div>
+  </TryPlayDialog>
 </template>
 
-<style lang="scss" scoped>
-$width: 890px;
-$height: 520px;
-
-.dubbing-title {
-  text-align: left;
-  color: #fff;
-  line-height: 30px;
-}
-
-.try-play {
-  width: $width;
-  // background-color: #2254a1;
-  background-color: #00273b;
-
-  .try-play-body {
-    border-top: 1px solid #3463ab;
-    padding-top: 8px;
-    height: $height;
-
-    .try-play-left {
-      height: $height - 15px;
-    }
-    
-    .try-play-right {
-      height: $height - 15px;
-      border-left: 1px solid #3463ab;
-    }
-
-    :deep(.el-input__wrapper) {
-      background-color: transparent;
-    }
-  }
-}
-</style>
+<style lang="scss" scoped></style>

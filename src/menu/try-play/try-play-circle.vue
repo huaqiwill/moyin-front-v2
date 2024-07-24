@@ -4,6 +4,7 @@ import { useConstrainDragBounds } from '@/components'
 import { useDraggable, useElementBounding } from '@vueuse/core'
 import { useTryPlayStore } from '@/stores'
 import PlayButton from './play-button.vue'
+// import { storeToRefs } from 'pinia'
 
 const emit = defineEmits<{ 'update:visible': [value: boolean] }>()
 defineProps<{ visible: boolean }>()
@@ -23,6 +24,7 @@ const { position } = useDraggable(boxRef, {
   },
 })
 const { style } = useConstrainDragBounds(boxRef, dragContainerBoxRef, position)
+
 
 onMounted(() => {
   // 初始位置
@@ -85,13 +87,9 @@ function isPlayButtonClick(event: MouseEvent) {
     @mouseup="handleMouseup"
   >
     <div class="avatar d-flex flex-row justify-content-center align-items-center">
-      <PlayButton
-        ref="playButtonRef"
-        @click.capture.stop
-        :size="40"
-      ></PlayButton>
+      <PlayButton ref="playButtonRef" @click.capture.stop :size="40"></PlayButton>
       <div class="text-white ms-2" style="font-size: 14px">
-        {{ tryPlayStore.speaker.displayName }}
+        {{ tryPlayStore.speaker.name }}
       </div>
     </div>
   </div>
@@ -99,10 +97,11 @@ function isPlayButtonClick(event: MouseEvent) {
 
 <style lang="scss" scoped>
 .try-play-circel {
-  height: 40px;
+  height: 60px;
   width: auto;
+  padding: 0 8px;
   // background-color: #b3acac2d;
-  background-color: #81afc6;
+  background-color: #00273b;
   border-radius: 8px;
   // border: 1px solid #f53f3f;
 

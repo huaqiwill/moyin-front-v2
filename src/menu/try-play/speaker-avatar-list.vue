@@ -1,37 +1,30 @@
 <script setup lang="ts">
 // 头像列表部分
 
-import {
-  inject,
-  onMounted,
-  onUnmounted,
-  reactive,
-  ref,
-  shallowRef,
-  toRaw,
-  watch,
-} from "vue";
+import { inject, onMounted, onUnmounted, reactive, ref, shallowRef, watch } from "vue";
 import SpeakerAvatar from "./speaker-avatar.vue";
 import type { FilterSpeaker, Speaker } from "@/model";
 import { useTryPlayStore } from "@/stores";
 // import { getConfig } from "@/config";
 import type { SpeakerAvatarData } from "./data";
 import { emitter } from "@/event-bus";
-
 import { useDubbingStore } from "@/stores";
-import { getSpeakerListApi } from "@/api/tts";
+import { getSpeakerListApi, getSpeakerInfoApi } from "@/api/tts";
+// import { storeToRefs } from "pinia";
 
 const dubbingStore = useDubbingStore();
-
 const props = defineProps<{ filter: FilterSpeaker }>();
-
 const editorKey = inject<symbol>("editorKey")!;
 // const ssmlEditorConfig = getConfig(editorKey);
 // const { fetchData } = ssmlEditorConfig.tryPlay;
 const tryPlayStore = useTryPlayStore();
-
 const speakerAvatarList = ref<SpeakerAvatarData[]>([]);
 const speakerList = shallowRef([]);
+// const queryParams = reactive({
+//   pageSize: 50,
+//   pageNum: 1,
+// });
+const total = ref(0);
 
 watch(
   () => props.filter,
@@ -40,9 +33,35 @@ watch(
   }
 );
 
+emitter.on("speaker:loading:ok", () => {
+  const { speakerListAll, speakerListCount } = dubbingStore;
+  total.value = speakerListCount;
+  speakerAvatarList.value = speakerListAll.map((v: any) => ({
+    label: v.name,
+    value: v.id,
+    avatar: v.headerImage,
+    isFree: true,
+  }));
+  // if (speakerAvatarList.value.length > 0) handleClick(speakerAvatarList.value[0].value);
+});
+
+onMounted(async () => {
+  emitter.on("tryplay-speaker-update-star", handleUpdateStarTheCache);
+});
+
+onUnmounted(() => {
+  emitter.off("tryplay-speaker-update-star", handleUpdateStarTheCache);
+});
+
 function handleClick(value: string) {
-  const speaker = speakerList.value.find((v: any) => v.name === value);
-  speaker && tryPlayStore.setSpeaker(editorKey, speaker);
+  console.log(value);
+  getSpeakerInfoApi(value).then((res: any) => {
+    let speaker = res.data;
+    // console.log(speaker);
+    tryPlayStore.setSpeaker(editorKey, speaker);
+    emitter.emit("speaker:select", speaker);
+    // speaker && tryPlayStore.setSpeaker(editorKey, speaker);
+  });
 }
 
 function handleUpdateStarTheCache(speakerId: string, isStar: boolean) {
@@ -51,38 +70,6 @@ function handleUpdateStarTheCache(speakerId: string, isStar: boolean) {
     item.isStar = isStar;
   }
 }
-
-const queryParams = reactive({
-  pageSize: 50,
-  pageNum: 1,
-});
-
-const total = ref(0);
-
-onMounted(async () => {
-  emitter.on("tryplay-speaker-update-star", handleUpdateStarTheCache);
-
-  await dubbingStore.getSpeakerList(queryParams);
-  const { speakerList, speakerTotal } = dubbingStore;
-  total.value = speakerTotal;
-  // speakerList.value = speakerListAll;
-  // await dubbingStore.getSpeakerList();
-
-  // await handleFetchData();
-
-  speakerAvatarList.value = speakerList.map((v: any) => ({
-    label: v.name,
-    value: v.id,
-    avatar: v.headerImage,
-    isFree: true,
-  }));
-
-  // if (speakerAvatarList.value.length > 0) handleClick(speakerAvatarList.value[0].value);
-});
-
-onUnmounted(() => {
-  emitter.off("tryplay-speaker-update-star", handleUpdateStarTheCache);
-});
 
 async function handleFetchData() {
   // try {
@@ -115,15 +102,27 @@ async function handleFetchData() {
 
 <template>
   <div
-    style="height: 280px"
-    class="w-100 d-flex flex-row flex-wrap justify-content-start overflow-x-hidden overflow-y-auto scrollbar-none"
+    style="
+      height: 400px;
+      max-width: 273px;
+      min-width: 273px;
+      border: 1px solid #3463ab;
+      border-left: none;
+    "
+    class="mt-2 overflow-x-hidden overflow-y-auto scrollbar-none"
   >
-    <div style="margin: 8px 11px" v-for="(item, index) in speakerAvatarList" :key="index">
-      <SpeakerAvatar
-        :data="item"
-        :activate="item.value === tryPlayStore.speaker.name"
-        @click="handleClick(item.value)"
-      ></SpeakerAvatar>
+    <div class="d-flex flex-row flex-wrap justify-content-start">
+      <div
+        style="margin: 8px 0; flex: 0 0 68px; height: 68px"
+        v-for="(item, index) in speakerAvatarList"
+        :key="index"
+      >
+        <SpeakerAvatar
+          :data="item"
+          :activate="item.value === tryPlayStore.speaker.id"
+          @click="handleClick(item.value)"
+        ></SpeakerAvatar>
+      </div>
     </div>
   </div>
 </template>

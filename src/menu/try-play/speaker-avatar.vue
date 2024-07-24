@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// 单个头像
+// 单个头像 v2
 // label、avatar、isFree、value
 
 import { defaultAvatar } from "@/config";
@@ -26,16 +26,22 @@ withDefaults(defineProps<{ activate?: boolean; data?: SpeakerAvatarData }>(), {
     </span>
     <img
       :src="data.avatar || defaultAvatar()"
-      class="rounded-circle"
-      style="height: 40px; width: 40px"
-      :class="{ 'border border-2 border-warning': activate }"
+      class="rounded-circle border border-3"
+      style="height: 40px; width: 40px; border-color: transparent"
+      :class="{ 'border border-3 border-warning': activate }"
     />
-    <div class="anchor-avatar-name text-white mt-2">{{ data.label }}</div>
+    <div class="anchor-avatar-name text-white mt-1">{{ data.label }}</div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .anchor-avatar {
+  img {
+    cursor: pointer;
+    pointer-events: all;
+    -webkit-user-drag: none; /* Safari */
+    user-select: none; /* Standard syntax */
+  }
   .anchor-avatar-name {
     font-size: 12px;
   }

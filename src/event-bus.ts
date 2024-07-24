@@ -17,6 +17,8 @@ interface EmitterEventMap {
   'tryplay-speaker-update-star': [speakerId: string, isStar: boolean]
   'tryplay-speaker-detail-show': [speaker: DeepReadonly<UnwrapNestedRefs<Speaker>>]
   'tryplay-generator': []
+  'speaker:select': [speaker: any]
+  'speaker:loading:ok': []
 }
 
 type EmitterMethod<K extends keyof EmitterEventMap> = (...args: EmitterEventMap[K]) => void

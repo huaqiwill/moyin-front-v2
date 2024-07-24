@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 查敏感词 v1
 import { type IDomEditor } from '@wangeditor/editor'
 import { ref, shallowRef } from 'vue'
 import { BarButton, BarInput, BarPopover } from '@/components'
@@ -36,7 +37,7 @@ function handleSubmit(text: string | null) {
 <template>
   <BarPopover v-model:visible="visible" :width="200">
     <template #reference>
-      <BarButton icon="mute" @click="handleClick">查敏感词</BarButton>
+      <BarButton icon="mute" @click="handleClick" class="disabled">查敏感词</BarButton>
     </template>
     <div class="d-flex flex-column">
       <div

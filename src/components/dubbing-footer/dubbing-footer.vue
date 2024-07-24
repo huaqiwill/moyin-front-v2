@@ -131,13 +131,7 @@ function onGeneraterLogging() {
 
 <template>
   <div class="dubbing-footer">
-    <GenerateLogging2 v-model="generaterLoggingDialogShow"></GenerateLogging2>
-    <a-button type="primary" status="danger" @click="onGeneraterLogging">
-      <template #icon>
-        <icon-upload />
-      </template>
-      生成记录
-    </a-button>
+    <GenerateLogging2></GenerateLogging2>
     <el-dropdown trigger="click">
       <a-button style="width: 100%" type="primary" status="normal" @click.prevent="">
         <template #icon>
