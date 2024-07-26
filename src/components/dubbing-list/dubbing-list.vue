@@ -53,6 +53,7 @@ onMounted(async () => {
   // await dubbingStore.getSpeakerEmotionList();
   // await dubbingStore.getStoreSearchCriteria();
   // await dubbingStore.searchSpeakers(queryParams);
+  
 
   getSpeakerListApi(queryParams).then((res) => {
     speakerList.value = res.rows;
@@ -254,6 +255,8 @@ const placeholderText = computed(() => {
 </template>
 
 <style scoped lang="scss">
+$width: 400px;
+
 .arco-list-wrapper .arco-spin .arco-scrollbar .arco-scrollbar-container {
   max-height: 700px !important;
 }
@@ -275,8 +278,8 @@ const placeholderText = computed(() => {
 
 .dubbing-list-1 {
   height: 100%;
-  max-width: 400px;
-  min-width: 400px;
+  max-width: $width;
+  min-width: $width;
   padding: 0;
   background-color: #e4e8eb;
   // overflow-y: auto;

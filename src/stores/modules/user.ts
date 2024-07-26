@@ -25,8 +25,8 @@ export const useUserStore = defineStore('user', {
   },
   getters: {},
   actions: {
-    login(loginForm: object) {
-      userLogin(loginForm).then((res: any) => {
+    async login(loginForm: object) {
+      return await userLogin(loginForm).then((res: any) => {
         setToken(res.token)
         router.push({ path: '/' }).catch(() => {})
         this.isLogin = true
