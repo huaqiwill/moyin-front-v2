@@ -1,246 +1,81 @@
-<script setup lang="ts">
-import { ElMessage } from "element-plus";
-
-import { computed, inject, ref } from "vue";
-import xmlFormat from "xml-formatter";
-import { serializeToSSML } from "@/serialize";
-import { useEditorStore, useDubbingStore } from "@/stores";
-import { downloadAudio, downloadSrt, downloadVideo } from "@/api/tts";
-import { emitter } from "@/event-bus";
-import {
-  IconDelete,
-  IconToBottom,
-  IconEye,
-  IconUpload,
-} from "@arco-design/web-vue/es/icon";
-import { GenerateLogging2 } from "@/components/dubbing-tools";
-import { storeToRefs } from "pinia";
-const dubbingStore = useDubbingStore();
-const dialogVisible = ref(false);
-const ssml = ref("");
-const editorStore = useEditorStore();
-const editorKey = inject<symbol>("editorKey")!;
-// const { ssmlRef, ssmlFormatRef } = storeToRefs(useDubbingStore());
-// import { useRouter } from "vue-router";
-
-// const router = useRouter();
-/**
- * SSML格式化
- */
-const ssmlFormat = computed(() => {
-  console.log(ssml.value);
-
-  return xmlFormat(ssml.value, {
-    // 缩进
-    indentation: "    ",
-    // 过滤条件
-    filter: (node: any) => node.type !== "Comment",
-    // 内容折叠
-    collapseContent: false,
-    // 行分隔符
-    lineSeparator: "\n",
-  });
-});
-
-function handleGenerater(formatter: string) {
-  const { submitTtsData } = storeToRefs(dubbingStore);
-  submitTtsData.value.audioType = formatter;
-  emitter.emit("tryplay-generator");
-}
-
-function handleDownload() {
-  // ElMessage({
-  //   message: "下载配音",
-  // });
-  // let url = "";
-  // downloadAudio(url).then((res) => {
-  //   console.log(res);
-  // });
-  let lastPlayUrl = dubbingStore.getLastPlayUrl();
-  if (lastPlayUrl) {
-    window.location.href = lastPlayUrl;
-  }
-}
-
-/**
- * 下载视频
- */
-const onDownloadVedio = () => {
-  ElMessage({
-    message: "下载视频",
-  });
-  let url = "";
-  downloadVideo(url).then((res) => {
-    console.log(res);
-  });
-};
-
-/**
- * 下载字幕
- */
-const onDownloadSrt = () => {
-  ElMessage({
-    message: "下载字幕",
-  });
-  let url = "";
-  downloadSrt(url).then((res) => {
-    console.log(res);
-  });
-};
-
-/**
- *
- * @param isFormat 复制SSML
- */
-const onCopySSML = async (isFormat: boolean) => {
-  console.log(ssml.value);
-
-  await navigator.clipboard.writeText(isFormat ? ssmlFormat.value : ssml.value);
-  dialogVisible.value = false;
-  ElMessage.success({ message: "复制成功!", grouping: true });
-};
-
-/**
- * 显示SSML
- */
-const onShowSSML = () => {
-  ssml.value = serializeToSSML();
-  dialogVisible.value = true;
-};
-
-/**
- * 保存SSML
- */
-const onSaveSSML = async () => {
-  const editor = editorStore.editor;
-  if (editor) {
-    try {
-      await editorStore.saveEditorHtml(editorKey, editor.getHtml, false);
-      ElMessage.success({ message: "保存成功!", grouping: true });
-    } catch (error) {
-      ElMessage.error({ message: "保存失败!", grouping: true });
-    }
-  }
-};
-
-const generaterLoggingDialogShow = ref(false);
-function onGeneraterLogging() {
-  generaterLoggingDialogShow.value = true;
-}
-</script>
-
 <template>
-  <div class="dubbing-footer">
-    <GenerateLogging2></GenerateLogging2>
-    <el-dropdown trigger="click">
-      <a-button style="width: 100%" type="primary" status="normal" @click.prevent="">
+  <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
+    <div>0 / 6000</div>
+    <div class="d-flex">
+      <GenerateLogging2></GenerateLogging2>
+      <a-button class="ms-2" type="primary" status="success" @click="handleDownload">
         <template #icon>
-          <icon-upload />
+          <icon-to-bottom />
         </template>
-        生成配音
+        下载配音
       </a-button>
-      <template #dropdown>
-        <div class="p-3 d-flex flex-column" style="width: 100px">
-          <a-button type="primary" status="normal" @click="handleGenerater('mp3')">
-            生成MP3格式
-          </a-button>
-          <a-button
-            type="primary"
-            status="normal"
-            @click="handleGenerater('wav')"
-            class="mt-2"
-          >
-            生成WAV格式
-          </a-button>
-        </div>
-      </template>
-    </el-dropdown>
-
-    <!-- <el-dropdown>
-      
-      <template #dropdown>
-        <div class="p-3 d-flex flex-column">
-          <a-button type="primary" status="warning" @click="onDownloadVedio">
-            <template #icon>
-              <icon-delete />
-            </template>
-            下载音频
-          </a-button>
-          <a-button class="mt-2" type="primary" status="danger" @click="onDownloadVedio">
-            <template #icon>
-              <icon-delete />
-            </template>
-            下载视频
-          </a-button>
-          <a-button class="mt-2" type="primary" status="danger" @click="onDownloadSrt">
-            <template #icon>
-              <icon-delete />
-            </template>
-            下载字幕
-          </a-button>
-        </div>
-      </template>
-    </el-dropdown> -->
-    <a-button type="primary" status="success" @click="handleDownload">
-      <template #icon>
-        <icon-to-bottom />
-      </template>
-      下载配音
-    </a-button>
-
-    <el-dropdown trigger="click">
-      <a-button style="width: 100%" type="primary" status="warning" @click.prevent="">
-        <template #icon>
-          <icon-eye />
-        </template>
-        查看 SSML
-      </a-button>
-      <template #dropdown>
-        <div class="p-3 d-flex flex-column">
-          <a-button type="primary" status="warning" @click="onCopySSML(false)">
-            复制 SSML
-          </a-button>
-          <a-button type="primary" status="warning" @click="onShowSSML" class="mt-2">
-            查看 SSML
-          </a-button>
-          <a-button type="primary" status="warning" @click="onSaveSSML" class="mt-2">
-            保存到浏览器
-          </a-button>
-        </div>
-      </template>
-    </el-dropdown>
-
-    <el-dialog v-model="dialogVisible" title="查看SSML" width="80%">
-      <div
-        class="border border-secondary-subtle rounded-2 scrollbar overflow-y-auto"
-        style="white-space: pre-wrap; max-height: 50vh"
-      >
-        <highlightjs language="xml" :code="ssmlFormat" />
-      </div>
-      <template #header>
-        <span style="font-size: 18px">预览SSML</span>
-      </template>
-      <template #footer>
-        <span class="dialog-footer">
-          <ElButton type="info" @click="onCopySSML(true)">复制+关闭</ElButton>
-          <ElButton type="primary" @click="onCopySSML(false)"
-            >压缩+复制+关闭(推荐)</ElButton
-          >
-        </span>
-      </template>
-    </el-dialog>
+    </div>
   </div>
 </template>
 
-<style>
-.dubbing-footer {
-  height: 100%;
-  width: 100%;
-  padding: 0 10px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  justify-content: end;
+<style lang="scss" scoped></style>
+
+<script setup lang="ts">
+import { ElMessage } from 'element-plus'
+import { computed, inject, ref } from 'vue'
+import xmlFormat from 'xml-formatter'
+import { serializeToSSML } from '@/serialize'
+import { useEditorStore, useDubbingStore } from '@/stores'
+import { IconToBottom } from '@arco-design/web-vue/es/icon'
+import { GenerateLogging2 } from '@/components/dubbing-tools'
+
+const dubbingStore = useDubbingStore()
+const dialogVisible = ref(false)
+const ssml = ref('')
+const editorStore = useEditorStore()
+const editorKey = inject<symbol>('editorKey')!
+const generaterLoggingDialogShow = ref(false)
+const ssmlFormat = computed(() => {
+  return xmlFormat(ssml.value, {
+    // 缩进
+    indentation: '    ',
+    // 过滤条件
+    filter: (node: any) => node.type !== 'Comment',
+    // 内容折叠
+    collapseContent: false,
+    // 行分隔符
+    lineSeparator: '\n',
+  })
+})
+
+function handleDownload() {
+  let lastPlayUrl = dubbingStore.getLastPlayUrl()
+  if (lastPlayUrl) {
+    window.location.href = lastPlayUrl
+  }
 }
-</style>
+
+async function onCopySSML(isFormat: boolean) {
+  console.log(ssml.value)
+
+  await navigator.clipboard.writeText(isFormat ? ssmlFormat.value : ssml.value)
+  dialogVisible.value = false
+  ElMessage.success({ message: '复制成功!', grouping: true })
+}
+
+function onShowSSML() {
+  ssml.value = serializeToSSML()
+  dialogVisible.value = true
+}
+
+async function onSaveSSML() {
+  const editor = editorStore.editor
+  if (editor) {
+    try {
+      await editorStore.saveEditorHtml(editorKey, editor.getHtml, false)
+      ElMessage.success({ message: '保存成功!', grouping: true })
+    } catch (error) {
+      ElMessage.error({ message: '保存失败!', grouping: true })
+    }
+  }
+}
+
+function onGeneraterLogging() {
+  generaterLoggingDialogShow.value = true
+}
+</script>

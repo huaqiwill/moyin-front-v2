@@ -59,7 +59,7 @@ const bgColor = getRandomColor();
       <img :src="data.imageUrl || defaultAvatar()" />
     </div>
     <div
-      class="anchor-avatar-name text-white"
+      class="anchor-avatar-name text-black"
       style="font-size: 0.65rem; margin-top: 5px"
     >
       {{ data.name }}

@@ -30,7 +30,7 @@ setConfig(props.editorKey, toRaw(props.config))
 provide('dragContainerBox', boxRef)
 provide('editorKey', props.editorKey)
 
-console.log("editorKey",props.editorKey);
+console.log('editorKey', props.editorKey)
 dubbingStore.setGlobaleEditorKey(props.editorKey)
 
 onMounted(() => {
@@ -57,24 +57,23 @@ function handleKeyDown(ev: KeyboardEvent) {
   emitter.emit('view-keydown', ev)
 }
 
-function handleLogin(){
+function handleLogin() {
   router.push({
-    name:"login"
+    name: 'login',
   })
 }
-
 
 import { useUserStore } from '@/stores'
 import { ElMessageBox } from 'element-plus'
 import { getToken } from '@/utils/auth'
 // import { storeToRefs } from 'pinia'
-const userStore = useUserStore();
+const userStore = useUserStore()
 // const { token, isLogin } = storeToRefs(userStore);
 
 const isLogin = ref(false)
 
-onMounted(()=>{
-  if(getToken()){
+onMounted(() => {
+  if (getToken()) {
     isLogin.value = true
   }
 })
@@ -84,29 +83,34 @@ const handleAccount = () => {
   //   name: "profile",
   // });
   ElMessage({
-    message:"暂不需要"
+    message: '暂不需要',
   })
-};
+}
 const handleLogout = () => {
-  ElMessageBox.confirm("确定要退出登录吗？", "提示", {
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-    type: "warning",
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
   }).then(() => {
-    userStore.logout();
-    isLogin.value = false;
-  });
-};
+    userStore.logout()
+    isLogin.value = false
+  })
+}
 
 const handleLayout = () => {
   ElMessage({
-    message:"暂不需要"
+    message: '暂不需要',
   })
-};
+}
 </script>
 
 <template>
-  <div ref="boxRef" class="ssml-editor-root editor-view" @click="handleClick">
+  <div
+    ref="boxRef"
+    class="ssml-editor-root editor-view"
+    @click="handleClick"
+    style="width: 100%; height: 100%"
+  >
     <div class="editor-box">
       <div class="d-flex justify-content-between">
         <EditorBar></EditorBar>
@@ -141,7 +145,6 @@ const handleLayout = () => {
         <slot name="sidebar"></slot>
       </div>
       <slot name="footer">
-        <!-- <EditorHeader></EditorHeader> -->
         <DubbingFooter />
       </slot>
     </div>
