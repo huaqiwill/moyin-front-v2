@@ -15,7 +15,7 @@ export const useTryPlayStore = defineStore('--editor-try-play', () => {
   const ssmlStore = useSSMLStore()
   const dubbingStore = useDubbingStore()
   const _audioPlayer = shallowRef(new AudioPlayer())
-  const _speaker = ref<Speaker>(defaultSpeaker())
+  const _speaker = ref<any>(defaultSpeaker())
   const _isLoading = ref(false)
 
   const speaker = computed(() => readonly(_speaker.value))

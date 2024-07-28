@@ -6,8 +6,8 @@
     <div class="d-flex flex-row flex-wrap justify-content-start">
       <div
         style="margin: 8px 0; flex: 0 0 68px; height: 68px"
-        v-for="(item, index) in speakerList"
-        :key="index"
+        v-for="item in speakerList"
+        :key="item.id"
       >
         <SpeakerAvatar
           :data="item"
@@ -20,8 +20,9 @@
 </template>
 
 <style lang="scss" scoped></style>
+
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import SpeakerAvatar from './speaker-avatar.vue'
 import { useTryPlayStore } from '@/stores'
 import { emitter } from '@/event-bus'
@@ -31,28 +32,16 @@ const dubbingStore = useDubbingStore()
 const tryPlayStore = useTryPlayStore()
 const speakerList = ref<any>([])
 
-emitter.on('speaker:loading:ok', () => {
-  const { speakerListAll } = dubbingStore
-  speakerList.value = speakerListAll
-})
-
-onMounted(async () => {
-  emitter.on('tryplay-speaker-update-star', handleUpdateStarTheCache)
-})
-
-onUnmounted(() => {
-  emitter.off('tryplay-speaker-update-star', handleUpdateStarTheCache)
+onMounted(() => {
+  emitter.on('speaker:loading:ok', () => {
+    const { speakerListAll } = dubbingStore
+    speakerList.value.splice(0)
+    speakerList.value = [...speakerListAll]
+  })
 })
 
 function handleClick(speaker: any) {
   tryPlayStore.setSpeakerForce(speaker)
   emitter.emit('speaker:select', speaker)
-}
-
-function handleUpdateStarTheCache(speakerId: string, isStar: boolean) {
-  const item: any = speakerList.value.find((v: any) => v.id === speakerId)
-  if (item) {
-    item.isStar = isStar
-  }
 }
 </script>

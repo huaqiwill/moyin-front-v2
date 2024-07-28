@@ -11,20 +11,32 @@
           style="height: 42px; font-size: 14px"
         >
           <div class="d-flex dlex-row column-gap-2 align-items-end">
-            <span style="font-size: 1rem">{{ tryPlayStore.speaker.name }}</span>
+            <span style="font-size: 1rem">
+              {{ speakerInfo.name }}
+              <span v-if="speakerNotes">({{ speakerNotes }})</span>
+            </span>
             <span>{{ speed }}x</span>
           </div>
           <div class="d-flex flex-row column-gap-2 align-items-center">
             <ElIcon @click="handleStar" class="fs-6" :style="{ color: isStar ? 'red' : 'black' }">
+              <Star v-if="!isStar"></Star>
               <StarFilled v-if="isStar"></StarFilled>
-              <Star v-else></Star>
             </ElIcon>
             <span v-if="isSupper48K" class="badge text-bg-primary px-2"> 48K </span>
             <span v-else class="badge text-bg-primary px-2"> 24K </span>
-            <span class="px-2"> {{ tryPlayStore.speaker.behavior }} </span>
+            <span class="px-2"> {{ speakerInfo.behavior }} </span>
           </div>
         </div>
       </div>
+
+      <el-dialog title="" v-model="dialogVisible" width="200">
+        <el-input v-model="speakerNotes" placeholder="请输入备注"></el-input>
+        <template #footer>
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleStarOk">确 定</el-button>
+        </template>
+      </el-dialog>
+
       <div class="d-flex flex-column align-items-end">
         <div class="text-info">音频时长，请以生成后的为准</div>
         <div class="d-flex">
@@ -69,30 +81,27 @@
     <!-- 情绪 -->
     <!-- <EmotionList emotions="emotions"></EmotionList> -->
     <div
-      class="mt-2 d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-1 overflow-y-scroll scrollbar-none"
-      style="max-height: 130px"
+      class="mt-2 d-flex me-4 flex-row flex-wrap justify-content-start align-items-center row-gap-1 overflow-y-scroll scrollbar-none"
+      style="max-height: 130px; background-color: #f5f5f5; border-radius: 4px"
     >
-      <div @click="handleStyleClick(0)" style="padding: 5px 3px">
+      <div @click="handleStyleClick(0)" style="padding: 5px 6px">
         <StyleAvatar :activate="0 === selectedEmotion" :data="defaultStyleAvatar"></StyleAvatar>
       </div>
       <div
         @click="handleStyleClick(item.id)"
         v-for="(item, index) in emotions"
         :key="index"
-        style="padding: 5px 3px"
+        style="padding: 5px 6px"
       >
         <StyleAvatar :activate="item.id === selectedEmotion" :data="item"></StyleAvatar>
       </div>
     </div>
 
     <!-- 参数 -->
-    <div
-      class="d-flex border flex-wrap position-absolute"
-      style="left: 10px; right: 10px; bottom: 120px"
-    >
+    <div class="d-flex flex-wrap position-absolute" style="left: 10px; right: 10px; bottom: 120px">
       <div class="w-50">
         <span style="width: 60px">语速：</span>
-        <el-select style="width: calc(100% - 60px)" v-model="speed">
+        <el-select style="width: calc(100% - 60px)" v-model="speed" @change="handleSpeedChange">
           <el-option
             v-for="(item, index) in speedList"
             :key="index"
@@ -103,7 +112,7 @@
       </div>
       <div class="w-50">
         <span style="width: 60px">语调：</span>
-        <el-select style="width: calc(100% - 60px)" v-model="pitch">
+        <el-select style="width: calc(100% - 60px)" v-model="pitch" @change="handlePitchChange">
           <el-option
             v-for="(item, index) in pitchList"
             :key="index"
@@ -123,6 +132,7 @@
             border-radius: 4px;
           "
           v-model="volume"
+          @change="handleVolumeChange"
           :min="0"
           :max="1"
           :step="0.01"
@@ -130,9 +140,13 @@
       </div>
       <div class="w-50 mt-2">
         <span style="width: 60px">格式：</span>
-        <el-select style="width: calc(100% - 60px)" v-model="pitch">
+        <el-select
+          style="width: calc(100% - 60px)"
+          v-model="foramtter"
+          @change="handleFormatChange"
+        >
           <el-option
-            v-for="(item, index) in pitchList"
+            v-for="(item, index) in foramtterList"
             :key="index"
             :label="item.label"
             :value="item.value"
@@ -188,8 +202,17 @@ const defaultStyleAvatar = ref({
   imageUrl: '',
 })
 const isSupper48K = ref(false)
+const foramtterList = ref<any>([])
+const foramtter = ref('mp3')
+const speakerNotes = ref('')
 
-emitter.on('speaker:select', (speaker: any) => {
+const speakerInfo = ref({
+  name: '暂未选择',
+  behavior: '行为暂时为空',
+})
+
+function handleSpeakerSelect(speaker: any) {
+  speakerInfo.value = speaker
   const { emotionIdSet, domainIdSet } = speaker
   const { emotionList, domainList } = dubbingStore
   emotions.value = emotionList.filter((emotion: any) => emotionIdSet.includes(emotion.id))
@@ -200,15 +223,32 @@ emitter.on('speaker:select', (speaker: any) => {
 
   getSpeakerEmotionList(speaker.id).then((res: any) => {
     speakerEmotionList.value = res.rows
+
+    // 默认选择首个Emotion
+    if (res.rows.length > 0) {
+      handleStyleClick(res.rows[0].emotionId)
+    }
+
     let emotion = res.rows.find((em: any) => em.emotionId == 0)
     if (emotion) {
       isSupper48K.value = emotion.styleCallName.includes('48k')
     }
   })
-})
+
+  // 计算是否为star
+  const { userCollectList } = dubbingStore
+  console.log('用户收藏列表：', userCollectList, speaker.id)
+  let collect: any = userCollectList.find((collect: any) => collect.speakerId == speaker.id)
+  if (collect) {
+    isStar.value = true
+    speakerNotes.value = collect.speakerNotes
+  } else {
+    isStar.value = false
+  }
+}
 
 onMounted(() => {
-  emitter.on('tryplay-speaker-update-star', handleUpdateStarTheCache)
+  emitter.on('speaker:select', handleSpeakerSelect)
 
   speedList.value.push({ label: '0.5x', value: 0.5 })
   speedList.value.push({ label: '0.6x', value: 0.6 })
@@ -221,71 +261,50 @@ onMounted(() => {
   speedList.value.push({ label: '2.0x', value: 2.0 })
 
   for (let i = -10; i <= 10; i++) {
-    pitchList.value.push({ label: i, value: i })
+    if (i == 0) {
+      pitchList.value.push({ label: '默认', value: i })
+    } else {
+      pitchList.value.push({ label: i, value: i })
+    }
   }
+
+  foramtterList.value.push({ label: 'mp3', value: 'mp3' })
+  foramtterList.value.push({ label: 'wav', value: 'wav' })
 })
 
 onUnmounted(() => {
-  emitter.off('tryplay-speaker-update-star', handleUpdateStarTheCache)
+  emitter.off('speaker:select', handleSpeakerSelect)
 })
-
-watch(
-  volume,
-  (value) => {
-    // newValue.roles.length > 0 && handleRoleClick(newValue.roles[0].value)
-    // newValue.styles.length > 0 && handleStyleClick(newValue.styles[0].value)
-    submitTtsData.value.volume = value
-  },
-  { immediate: false },
-)
-
-watch(
-  pitch,
-  (value) => {
-    submitTtsData.value.pitch = value
-    // rootProsody.pitch = value.toString()
-  },
-  { immediate: false },
-)
-
-watch(
-  speed,
-  (value) => {
-    submitTtsData.value.speed = value
-    // rootProsody.rate = value.toString()
-  },
-  { immediate: false },
-)
 
 watch(currentTime, (newValue) => {
   if (!isInput.value) time.value = newValue
 })
 
+const dialogVisible = ref(false)
 function handleStar() {
-  // await tryPlayStore.star(editorKey, !isStar.value)
-  ElMessage({
-    message: 'Star',
-  })
-  isStar.value = !isStar.value
+  if (isStar.value) {
+    // 直接取消
+    dubbingStore.setStarNone(speakerInfo.value.id)
+    isStar.value = false
+  } else {
+    // 打开对话框
+    dialogVisible.value = true
+  }
 }
 
-function handleUpdateStarTheCache(speakerId: string, isStar: boolean) {
-  // const speakerCache = speakerList.value.find((v) => v.id === speakerId)
-  // if (speakerCache) speakerCache.isStar = isStar
+function handleStarOk() {
+  isStar.value = true
+  dialogVisible.value = false
+  dubbingStore.setStarOk(speakerInfo.value.id, speakerNotes.value)
 }
 
-function handleStyleClick(value: number) {
-  selectedEmotion.value = value
+function handleStyleClick(emotionId: number) {
+  selectedEmotion.value = emotionId
   // 注意此处不能使用全等
-  let filters: any = speakerEmotionList.value.filter((emotion: any) => emotion.emotionId == value)
-  // console.log(speakerEmotionList.value, value,filters);
-  if (filters.length > 0) {
-    let styleCallName = filters[0].styleCallName
+  let emotion: any = speakerEmotionList.value.find((emotion: any) => emotion.emotionId == emotionId)
+  if (emotion) {
+    let styleCallName = emotion.styleCallName
     submitTtsData.value.speaker = styleCallName
-
-    ElMessage({
-      message: styleCallName,
-    })
   }
 }
 
@@ -299,5 +318,21 @@ function handleTimeChange(time: Arrayable<number>) {
     tryPlayStore.audioPlayer.play()
   }
   isInput.value = false
+}
+
+function handleFormatChange() {
+  submitTtsData.value.audioType = foramtter.value
+}
+
+function handleSpeedChange() {
+  submitTtsData.value.speed = speed.value
+}
+
+function handlePitchChange() {
+  submitTtsData.value.pitch = pitch.value
+}
+
+function handleVolumeChange() {
+  submitTtsData.value.volume = volume.value
 }
 </script>

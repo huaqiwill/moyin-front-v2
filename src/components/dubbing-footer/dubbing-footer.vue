@@ -1,6 +1,14 @@
 <template>
-  <div class="d-flex align-items-center justify-content-between" style="padding: 10px">
-    <div>0 / 6000</div>
+  <div
+    class="d-flex align-items-center justify-content-between"
+    style="padding: 10px; border-top: 1px solid #dee2e6"
+  >
+    <div>
+      <span>0 / 6000</span>
+      <el-tag v-if="dubbingStore.submitTtsData.speaker" class="ms-2">{{
+        dubbingStore.submitTtsData.speaker
+      }}</el-tag>
+    </div>
     <div class="d-flex">
       <GenerateLogging2></GenerateLogging2>
       <a-button class="ms-2" type="primary" status="success" @click="handleDownload">

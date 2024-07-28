@@ -87,7 +87,6 @@ const bgColor = getRandomColor();
 
       display: block;
       scale: 1.2;
-      transform: translate(-1px, -1px);
       // &.active {
       // }
     }

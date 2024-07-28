@@ -126,3 +126,25 @@ export function getSpeakerEmotionListApi() {
     method: 'get',
   })
 }
+
+export function speakerCollectApi(data: any) {
+  return request({
+    url: '/moyin/speaker/memberCollectSpeaker',
+    method: 'post',
+    data: data,
+  })
+}
+
+export function speakerCollectListApi() {
+  return request({
+    url: '/moyin/speaker/memberCollectSpeaker/list',
+    method: 'get',
+  })
+}
+
+export function speakerCollectRemoveApi(id: number) {
+  return request({
+    url: '/moyin/speaker/memberCollectSpeaker/' + id,
+    method: 'delete',
+  })
+}

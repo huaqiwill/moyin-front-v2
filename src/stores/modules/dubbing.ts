@@ -10,7 +10,14 @@ import {
   getDomainNameListApi,
   getEmotionListApi,
 } from '@/api/dict'
-import { getSpeakerListApi, getSpeakerEmotionListApi, getSpeakerListAllApi } from '@/api/tts'
+import {
+  getSpeakerListApi,
+  getSpeakerEmotionListApi,
+  getSpeakerListAllApi,
+  speakerCollectListApi,
+  speakerCollectRemoveApi,
+  speakerCollectApi,
+} from '@/api/tts'
 
 export const useDubbingStore = defineStore('dubbing', {
   state: () => {
@@ -105,10 +112,29 @@ export const useDubbingStore = defineStore('dubbing', {
       speakerListCount: 0,
 
       globalEditorKey: null,
+
+      // 用户收藏列表
+      userCollectList: [],
+      tempUseSpeakerList: [],
     }
   },
   getters: {},
   actions: {
+    setStarOk(speakerId: number, speakerNotes: string) {
+      speakerCollectApi({ speakerId, speakerNotes }).then(() => {
+        this.getStarList()
+      })
+    },
+    setStarNone(speakerId: number) {
+      speakerCollectRemoveApi(speakerId)
+      this.userCollectList = this.userCollectList.filter((item: any) => item.id !== speakerId)
+    },
+    getStarList() {
+      speakerCollectListApi().then((res: any) => {
+        this.userCollectList = res.rows
+        console.log('获取的收藏列表：', this.userCollectList)
+      })
+    },
     setGlobaleEditorKey(globalEditorKey: any) {
       this.globalEditorKey = globalEditorKey
     },
@@ -187,6 +213,10 @@ export const useDubbingStore = defineStore('dubbing', {
       //     this.searchSpeakerList = res.data.results
       //   }
       // })
+    },
+    setSpeakerListAll(speakerListAll: []) {
+      this.speakerListAll.slice(0)
+      this.speakerListAll = [...speakerListAll]
     },
   },
 })

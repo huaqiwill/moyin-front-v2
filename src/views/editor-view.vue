@@ -1,109 +1,3 @@
-<script setup lang="ts">
-// import EditorHeader from './editor-header.vue'
-import { DubbingFooter } from '@/components'
-import EditorCore from './editor-core.vue'
-import EditorBar from './editor-bar.vue'
-import { type IDomEditor } from '@wangeditor/editor'
-import { emitter } from '@/event-bus'
-import { ref, provide, onMounted, onUnmounted, toRaw } from 'vue'
-import { type PartialSSMLEditorConfig, setConfig } from '@/config'
-import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
-import { useDubbingStore } from '@/stores'
-
-const router = useRouter()
-const dubbingStore = useDubbingStore()
-
-const emit = defineEmits<{ created: [editor: IDomEditor]; change: [editor: IDomEditor] }>()
-const props = withDefaults(
-  defineProps<{ config?: PartialSSMLEditorConfig; editorKey?: symbol }>(),
-  {
-    editorKey: () => Symbol('editorKey'),
-  },
-)
-
-const boxRef = ref<HTMLDivElement>()
-
-setConfig(props.editorKey, toRaw(props.config))
-
-// 设置拖拽容器盒子,如果想要在整个页面可拖拽,将boxRef换为ref(document.body)即可
-provide('dragContainerBox', boxRef)
-provide('editorKey', props.editorKey)
-
-console.log('editorKey', props.editorKey)
-dubbingStore.setGlobaleEditorKey(props.editorKey)
-
-onMounted(() => {
-  document.addEventListener('keydown', handleKeyDown)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeyDown)
-})
-
-function handleCreated(editor: IDomEditor) {
-  emit('created', editor)
-}
-
-function handleChange(editor: IDomEditor) {
-  emit('change', editor)
-}
-
-function handleClick(ev: MouseEvent) {
-  emitter.emit('view-click', ev)
-}
-
-function handleKeyDown(ev: KeyboardEvent) {
-  emitter.emit('view-keydown', ev)
-}
-
-function handleLogin() {
-  router.push({
-    name: 'login',
-  })
-}
-
-import { useUserStore } from '@/stores'
-import { ElMessageBox } from 'element-plus'
-import { getToken } from '@/utils/auth'
-// import { storeToRefs } from 'pinia'
-const userStore = useUserStore()
-// const { token, isLogin } = storeToRefs(userStore);
-
-const isLogin = ref(false)
-
-onMounted(() => {
-  if (getToken()) {
-    isLogin.value = true
-  }
-})
-
-const handleAccount = () => {
-  // router.push({
-  //   name: "profile",
-  // });
-  ElMessage({
-    message: '暂不需要',
-  })
-}
-const handleLogout = () => {
-  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(() => {
-    userStore.logout()
-    isLogin.value = false
-  })
-}
-
-const handleLayout = () => {
-  ElMessage({
-    message: '暂不需要',
-  })
-}
-</script>
-
 <template>
   <div
     ref="boxRef"
@@ -130,17 +24,17 @@ const handleLayout = () => {
             </div>
           </div>
           <template #content>
-            <a-doption @click="handleAccount">我的账户</a-doption>
-            <a-doption>绑定手机号 15576364885</a-doption>
-            <a-doption @click="handleLayout">布局管理</a-doption>
-            <a-doption @click="handleLogout">退出登录</a-doption>
+            <!-- <a-doption @click="handleAccount">我的账户</a-doption> -->
+            <!-- <a-doption>绑定手机号 15576364885</a-doption> -->
+            <!-- <a-doption @click="handleLayout">布局管理</a-doption> -->
+            <a-doption @click="handleLogout" style="padding: 0 66px">退出登录</a-doption>
           </template>
         </a-dropdown>
         <div class="d-flex align-items-center me-2" v-else>
           <a-button type="primary" @click="handleLogin">登录</a-button>
         </div>
       </div>
-      <div class="editor-core-container shadow pt-1">
+      <div class="editor-core-container pt-1">
         <EditorCore @change="handleChange" @created="handleCreated"></EditorCore>
         <slot name="sidebar"></slot>
       </div>
@@ -193,3 +87,101 @@ const handleLayout = () => {
   }
 }
 </style>
+
+<script setup lang="ts">
+import { DubbingFooter } from '@/components'
+import EditorCore from './editor-core.vue'
+import EditorBar from './editor-bar.vue'
+import { type IDomEditor } from '@wangeditor/editor'
+import { emitter } from '@/event-bus'
+import { ref, provide, onMounted, onUnmounted, toRaw } from 'vue'
+import { type PartialSSMLEditorConfig, setConfig } from '@/config'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useDubbingStore } from '@/stores'
+import { useUserStore } from '@/stores'
+import { ElMessageBox } from 'element-plus'
+import { getToken } from '@/utils/auth'
+
+const userStore = useUserStore()
+const isLogin = ref(false)
+const router = useRouter()
+const dubbingStore = useDubbingStore()
+const boxRef = ref<HTMLDivElement>()
+const props = withDefaults(
+  defineProps<{ config?: PartialSSMLEditorConfig; editorKey?: symbol }>(),
+  {
+    editorKey: () => Symbol('editorKey'),
+  },
+)
+setConfig(props.editorKey, toRaw(props.config))
+console.log('editorKey', props.editorKey)
+dubbingStore.setGlobaleEditorKey(props.editorKey)
+
+// 设置拖拽容器盒子,如果想要在整个页面可拖拽,将boxRef换为ref(document.body)即可
+provide('dragContainerBox', boxRef)
+provide('editorKey', props.editorKey)
+
+const emit = defineEmits<{ created: [editor: IDomEditor]; change: [editor: IDomEditor] }>()
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown)
+})
+
+function handleCreated(editor: IDomEditor) {
+  emit('created', editor)
+}
+
+function handleChange(editor: IDomEditor) {
+  emit('change', editor)
+}
+
+function handleClick(ev: MouseEvent) {
+  emitter.emit('view-click', ev)
+}
+
+function handleKeyDown(ev: KeyboardEvent) {
+  emitter.emit('view-keydown', ev)
+}
+
+function handleLogin() {
+  router.push({
+    name: 'login',
+  })
+}
+
+onMounted(() => {
+  if (getToken()) {
+    isLogin.value = true
+  }
+})
+
+const handleAccount = () => {
+  // router.push({
+  //   name: "profile",
+  // });
+  ElMessage({
+    message: '暂不需要',
+  })
+}
+const handleLogout = () => {
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    userStore.logout()
+    isLogin.value = false
+  })
+}
+
+const handleLayout = () => {
+  ElMessage({
+    message: '暂不需要',
+  })
+}
+</script>

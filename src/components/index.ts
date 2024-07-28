@@ -7,7 +7,7 @@ export * from './drag-box'
 export * from './play-tag'
 
 export * from './dubbing-button'
-export * from './dubbing-list'
+export * from './speaker-left'
 export * from './dubbing-svg-icon'
 export * from './dubbing-tools'
 export * from './dubbing-editor'

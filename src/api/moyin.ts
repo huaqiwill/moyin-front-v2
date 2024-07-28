@@ -75,3 +75,4 @@ export function tnList(word: string) {
     params: { word: word, ww_token: '1581ca2346e72c2a2bd3f6a1b72e67c0' },
   })
 }
+

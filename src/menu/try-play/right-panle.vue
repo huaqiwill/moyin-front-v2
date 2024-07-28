@@ -43,7 +43,7 @@ const speed = ref(1)
 const pitchRange = ref([-10, 10])
 const pitch = ref(0)
 
-const volumeRange = ref([0,1])
+const volumeRange = ref([0, 1])
 const volume = ref(1)
 
 const timeMaxText = computed(() => formatTime(timeMax.value))
@@ -64,25 +64,25 @@ const emotions = ref<any>([])
 const domains = ref<any>([])
 
 const defaultStyleAvatar = ref({
-  id:0,
-  name:"默认",
-  imageUrl:""
+  id: 0,
+  name: '默认',
+  imageUrl: '',
 })
 
-import { getSpeakerEmotionList } from "@/api/dict";
+import { getSpeakerEmotionList } from '@/api/dict'
 const speakerEmotionList = ref([])
-emitter.on('speaker:select',(speaker:any)=>{
-  const {emotionIdSet,domainIdSet} = speaker
-  const {emotionList,domainList} = dubbingStore
-  emotions.value = emotionList.filter((emotion:any)=>emotionIdSet.includes(emotion.id))
-  domains.value = domainList.filter((domain:any)=>domainIdSet.includes(domain.id))
+emitter.on('speaker:select', (speaker: any) => {
+  const { emotionIdSet, domainIdSet } = speaker
+  const { emotionList, domainList } = dubbingStore
+  emotions.value = emotionList.filter((emotion: any) => emotionIdSet.includes(emotion.id))
+  domains.value = domainList.filter((domain: any) => domainIdSet.includes(domain.id))
   // console.log("情绪",emotionIdSet,emotionList,emotions.value);
   // console.log("领域",domainIdSet,domainList,domains.value);
   defaultStyleAvatar.value.imageUrl = speaker.headerImage
 
-  getSpeakerEmotionList(speaker.id).then((res:any) => {
-    speakerEmotionList.value = res.rows;
-  });
+  getSpeakerEmotionList(speaker.id).then((res: any) => {
+    speakerEmotionList.value = res.rows
+  })
 })
 
 onMounted(() => {
@@ -93,7 +93,7 @@ onUnmounted(() => {
   emitter.off('tryplay-speaker-update-star', handleUpdateStarTheCache)
 })
 
-const {submitTtsData} = storeToRefs(dubbingStore)
+const { submitTtsData } = storeToRefs(dubbingStore)
 
 watch(
   volume,
@@ -130,7 +130,7 @@ watch(currentTime, (newValue) => {
 function handleStar() {
   // await tryPlayStore.star(editorKey, !isStar.value)
   ElMessage({
-    message:"Star"
+    message: 'Star',
   })
 }
 
@@ -138,7 +138,6 @@ function handleUpdateStarTheCache(speakerId: string, isStar: boolean) {
   const speakerCache = speakerList.value.find((v) => v.id === speakerId)
   if (speakerCache) speakerCache.isStar = isStar
 }
-
 
 // function handleRoleClick(value: string) {
 //   rootExpressAs.role = value
@@ -150,14 +149,14 @@ function handleStyleClick(value: number) {
   selectedEmotion.value = value
 
   // 注意此处不能使用全等
-  let filters:any = speakerEmotionList.value.filter((emotion:any)=>emotion.emotionId == value)
+  let filters: any = speakerEmotionList.value.filter((emotion: any) => emotion.emotionId == value)
   // console.log(speakerEmotionList.value, value,filters);
-  if(filters.length>0){
-    let styleCallName = filters[0].styleCallName;
+  if (filters.length > 0) {
+    let styleCallName = filters[0].styleCallName
     submitTtsData.value.speaker = styleCallName
 
     ElMessage({
-      message:styleCallName
+      message: styleCallName,
     })
   }
 }
@@ -215,19 +214,12 @@ function handleTimeChange(time: Arrayable<number>) {
             <span style="font-size: 1rem">{{ tryPlayStore.speaker.name }}</span>
           </div>
           <div class="d-flex flex-row column-gap-2 align-items-center">
-            <ElIcon
-              @click="handleStar"
-              class="fs-6"
-              :style="{ color: isStar ? 'red' : 'white' }"
-            >
+            <ElIcon @click="handleStar" class="fs-6" :style="{ color: isStar ? 'red' : 'white' }">
               <StarFilled v-if="isStar"></StarFilled>
               <Star v-else></Star>
             </ElIcon>
             <span>{{ speed }}x</span>
-            <span
-              v-if="tryPlayStore.speaker.isSupper24K"
-              class="badge text-bg-primary px-2"
-            >
+            <span v-if="tryPlayStore.speaker.isSupper24K" class="badge text-bg-primary px-2">
               24K
             </span>
           </div>
@@ -259,7 +251,7 @@ function handleTimeChange(time: Arrayable<number>) {
       <div
         class="d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-2 column-gap-3"
       >
-        <div v-for="(item, index) in domains" :key="index">
+        <div v-for="item in domains" :key="item.id">
           {{ item.name }}
         </div>
       </div>
@@ -267,14 +259,9 @@ function handleTimeChange(time: Arrayable<number>) {
 
     <!-- 情绪 -->
     <!-- <EmotionList emotions="emotions"></EmotionList> -->
-    <ul
-      class="mt-2 d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-1"
-    >
+    <ul class="mt-2 d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-1">
       <li @click="handleStyleClick(0)" style="padding: 5px 3px">
-        <StyleAvatar
-          :activate="0 === selectedEmotion"
-          :data="defaultStyleAvatar"
-        ></StyleAvatar>
+        <StyleAvatar :activate="0 === selectedEmotion" :data="defaultStyleAvatar"></StyleAvatar>
       </li>
       <li
         @click="handleStyleClick(item.id)"
