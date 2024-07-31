@@ -212,7 +212,7 @@ const searchContent = ref("");
   padding: 15px;
   // border-radius: 6px;
 
-  ::v-deep .el-input {
+  :depp(.el-input) {
     margin-bottom: 15px;
     .el-input__wrapper {
       background-color: #4e76b4 !important;

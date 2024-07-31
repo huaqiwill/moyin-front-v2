@@ -1,30 +1,30 @@
 <script setup>
-import { defineProps, onMounted } from "vue";
-import { ElMessageBox } from "element-plus";
+import { onMounted } from 'vue'
+import { ElMessageBox } from 'element-plus'
 
 onMounted(() => {
-  console.log(props);
-});
+  console.log(props)
+})
 
 const props = defineProps({
   data: {
     type: Object,
     default: () => {
-      return {};
+      return {}
     },
   },
-});
+})
 
 const handleBuy = () => {
-  ElMessageBox.alert("测试中... 会员暂不可购买", "提示", {
-    confirmButtonText: "确定",
+  ElMessageBox.alert('测试中... 会员暂不可购买', '提示', {
+    confirmButtonText: '确定',
     callback: (action) => {
-      if (action === "confirm") {
+      if (action === 'confirm') {
         //
       }
     },
-  });
-};
+  })
+}
 </script>
 <template>
   <div class="member-item">

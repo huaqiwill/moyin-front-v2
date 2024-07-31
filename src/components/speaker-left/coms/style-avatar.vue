@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { defaultAvatar } from "@/config";
+import { defaultAvatar } from '@/config'
 // import type { StyleAvatarData } from "./data";
-import { onMounted } from "vue";
+import { onMounted } from 'vue'
 
-defineEmits<{ click: [value: string] }>();
+defineEmits<{ click: [value: string] }>()
 
 const props = defineProps({
   activate: {
@@ -11,34 +11,32 @@ const props = defineProps({
     default: false,
   },
   data: Object,
-});
+})
 
-const data: any = props.data;
+const data: any = props.data
 
-onMounted(() => {
-  console.log("属性数据", props.data);
-});
+onMounted(() => {})
 
 function getRandomColor() {
   const mainstreamColors = [
-    "#2ecc71",
-    "#3498db",
-    "#9b59b6",
-    "#e74c3c",
-    "#1abc9c",
-    "#e67e22",
-    "#d35400",
-    "#c0392b",
-    "#16a085",
-    "#27ae60",
-    "#ff1493",
-  ];
+    '#2ecc71',
+    '#3498db',
+    '#9b59b6',
+    '#e74c3c',
+    '#1abc9c',
+    '#e67e22',
+    '#d35400',
+    '#c0392b',
+    '#16a085',
+    '#27ae60',
+    '#ff1493',
+  ]
 
-  const randomIndex = Math.floor(Math.random() * mainstreamColors.length);
-  return mainstreamColors[randomIndex];
+  const randomIndex = Math.floor(Math.random() * mainstreamColors.length)
+  return mainstreamColors[randomIndex]
 }
 
-const bgColor = getRandomColor();
+const bgColor = getRandomColor()
 </script>
 
 <template>
@@ -58,10 +56,7 @@ const bgColor = getRandomColor();
     <div class="img-box rounded-circle" :class="{ 'border-warning': activate }">
       <img :src="data.imageUrl || defaultAvatar()" />
     </div>
-    <div
-      class="anchor-avatar-name text-black"
-      style="font-size: 0.65rem; margin-top: 5px"
-    >
+    <div class="anchor-avatar-name text-black" style="font-size: 0.65rem; margin-top: 5px">
       {{ data.name }}
     </div>
   </div>

@@ -4,10 +4,9 @@
     style="padding: 10px; border-top: 1px solid #dee2e6"
   >
     <div>
-      <span>0 / 6000</span>
-      <el-tag v-if="dubbingStore.submitTtsData.speaker" class="ms-2">{{
-        dubbingStore.submitTtsData.speaker
-      }}</el-tag>
+      <span>当前字符数：{{ currentCount }}</span>
+      <span class="ms-3">今日剩余字符：{{ remainCount }} / 6000</span>
+      <el-tag v-if="submitParams.speaker" class="ms-2">{{ submitParams.speaker }}</el-tag>
     </div>
     <div class="d-flex">
       <GenerateLogging2></GenerateLogging2>
@@ -24,66 +23,36 @@
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
-import { computed, inject, ref } from 'vue'
-import xmlFormat from 'xml-formatter'
-import { serializeToSSML } from '@/serialize'
-import { useEditorStore, useDubbingStore } from '@/stores'
+import { useSpeakerStore } from '@/stores'
 import { IconToBottom } from '@arco-design/web-vue/es/icon'
 import { GenerateLogging2 } from '@/components/dubbing-tools'
+import { onMounted, ref } from 'vue'
+import { getRemainApi } from '@/api/tts'
+import { emitter } from '@/event-bus'
 
-const dubbingStore = useDubbingStore()
-const dialogVisible = ref(false)
-const ssml = ref('')
-const editorStore = useEditorStore()
-const editorKey = inject<symbol>('editorKey')!
-const generaterLoggingDialogShow = ref(false)
-const ssmlFormat = computed(() => {
-  return xmlFormat(ssml.value, {
-    // 缩进
-    indentation: '    ',
-    // 过滤条件
-    filter: (node: any) => node.type !== 'Comment',
-    // 内容折叠
-    collapseContent: false,
-    // 行分隔符
-    lineSeparator: '\n',
+const speakerStore = useSpeakerStore()
+const submitParams = speakerStore.getSubmitParams()
+const remainCount = ref(6000)
+const currentCount = ref(0)
+
+onMounted(() => {
+  emitter.on('remain:count', () => {
+    getRemainApi().then((res: any) => {
+      remainCount.value = 6000 - res.data
+    })
+  })
+
+  emitter.emit('remain:count')
+
+  emitter.on('editor:change:count', (count: number) => {
+    currentCount.value = count
   })
 })
 
 function handleDownload() {
-  let lastPlayUrl = dubbingStore.getLastPlayUrl()
+  let lastPlayUrl = speakerStore.getLastPlayUrl()
   if (lastPlayUrl) {
     window.location.href = lastPlayUrl
   }
-}
-
-async function onCopySSML(isFormat: boolean) {
-  console.log(ssml.value)
-
-  await navigator.clipboard.writeText(isFormat ? ssmlFormat.value : ssml.value)
-  dialogVisible.value = false
-  ElMessage.success({ message: '复制成功!', grouping: true })
-}
-
-function onShowSSML() {
-  ssml.value = serializeToSSML()
-  dialogVisible.value = true
-}
-
-async function onSaveSSML() {
-  const editor = editorStore.editor
-  if (editor) {
-    try {
-      await editorStore.saveEditorHtml(editorKey, editor.getHtml, false)
-      ElMessage.success({ message: '保存成功!', grouping: true })
-    } catch (error) {
-      ElMessage.error({ message: '保存失败!', grouping: true })
-    }
-  }
-}
-
-function onGeneraterLogging() {
-  generaterLoggingDialogShow.value = true
 }
 </script>

@@ -7,18 +7,10 @@
     <el-card class="card">
       <el-form label-width="auto" :model="form" :rules="formRules">
         <el-form-item size="large">
-          <el-input
-            :prefix-icon="User"
-            v-model="form.username"
-            placeholder="请输入用户名"
-          />
+          <el-input :prefix-icon="User" v-model="form.username" placeholder="请输入用户名" />
         </el-form-item>
         <el-form-item size="large">
-          <el-input
-            :prefix-icon="Lock"
-            v-model="form.password"
-            placeholder="请输入密码"
-          />
+          <el-input :prefix-icon="Lock" v-model="form.password" placeholder="请输入密码" />
         </el-form-item>
         <el-form-item size="large">
           <el-input :prefix-icon="Key" v-model="form.code" placeholder="请输入验证码">
@@ -31,9 +23,7 @@
           <el-button type="primary" class="full-width" @click="login" v-if="isLogin">
             登录
           </el-button>
-          <el-button type="primary" class="full-width" @click="register" v-else>
-            注册
-          </el-button>
+          <el-button type="primary" class="full-width" @click="register" v-else> 注册 </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -47,70 +37,70 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, computed, defineProps } from "vue";
-import { ElMessage } from "element-plus";
-import { User, Lock, Key } from "@element-plus/icons-vue";
+import { ref, reactive, watch, computed } from 'vue'
+import { ElMessage } from 'element-plus'
+import { User, Lock, Key } from '@element-plus/icons-vue'
 
 const userProtocol = () => {
-  ElMessage("用户协议");
-};
+  ElMessage('用户协议')
+}
 
 // 属性
 const props = defineProps({
   show: Boolean,
-});
+})
 
-const dialogShow = ref(props.show);
+const dialogShow = ref(props.show)
 watch(
   () => props.show,
   (newValue) => {
-    dialogShow.value = newValue;
-  }
-);
+    dialogShow.value = newValue
+  },
+)
 
-const isLogin = ref(true);
+const isLogin = ref(true)
 
 const handleLogin = () => {
-  isLogin.value = true;
-};
+  isLogin.value = true
+}
 
 const handleRegister = () => {
-  isLogin.value = false;
-};
+  isLogin.value = false
+}
 
 const login = () => {
-  ElMessage("登录");
-};
+  ElMessage('登录')
+}
 
 const form = reactive({
-  username: "",
-  password: "",
-  code: "",
-});
+  username: '',
+  password: '',
+  code: '',
+})
 
 const formRules = {
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
-  code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
-};
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+}
 
 const register = () => {
-  ElMessage("注册");
-};
+  ElMessage('注册')
+}
 
 // TabBar
-const userLoginActiveName = ref("login");
+const userLoginActiveName = ref('login')
 const handleUserLoginTabClick = (tab, event) => {
-  console.log(tab, event);
-};
+  console.log(tab, event)
+}
 
 const loginSelected = computed(() => {
-  return isLogin.value ? "selected" : "";
-});
+  return isLogin.value ? 'selected' : ''
+})
 
 const registerSelected = computed(() => {
-  return isLogin.value ? "" : "selected";
-});
+  return isLogin.value ? '' : 'selected'
+})
 </script>
 
 <style scoped lang="scss">

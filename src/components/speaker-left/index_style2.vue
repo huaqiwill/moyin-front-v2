@@ -1,11 +1,7 @@
 <template>
   <a-card class="dubbing-list-1">
     <!-- 搜索 -->
-    <a-input
-      v-model="searchContent"
-      placeholder="共763款配音师，输入名称搜索"
-      allow-clear
-    />
+    <a-input v-model="searchContent" placeholder="共763款配音师，输入名称搜索" allow-clear />
     <!-- <el-input
       class="dubbing-search"
       v-model="searchContent"
@@ -56,57 +52,53 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import { Search } from "@element-plus/icons-vue";
-import { moyinCategoryList, moyinDubbingList, moyinEmotionList } from "@/api";
-import { ElLoading } from "element-plus";
-import {
-  getSpeakerEmotionList,
-  getStoreSearchCriteria,
-  searchSpeakers,
-} from "@/api/moyin";
+import { ref, reactive, onMounted } from 'vue'
+import { Search } from '@element-plus/icons-vue'
+import { moyinCategoryList, moyinDubbingList, moyinEmotionList } from '@/api'
+import { ElLoading } from 'element-plus'
+import { getSpeakerEmotionList, getStoreSearchCriteria, searchSpeakers } from '@/api/moyin'
 
-const currentSpeaker = ref("");
+const currentSpeaker = ref('')
 const handleSpeakerClicked = (item) => {
-  currentSpeaker.value = item.name;
-};
+  currentSpeaker.value = item.name
+}
 
-const speakerEmotionList = ref([]);
-const storeSearchCriteria = ref([]);
-const searchCriteriaList = ref([]);
-const searchSpeakerList = ref([]);
+const speakerEmotionList = ref([])
+const storeSearchCriteria = ref([])
+const searchCriteriaList = ref([])
+const searchSpeakerList = ref([])
 
 onMounted(() => {
   getSpeakerEmotionList().then((res) => {
-    speakerEmotionList.value = res.data;
-  });
+    speakerEmotionList.value = res.data
+  })
 
   getStoreSearchCriteria().then((res) => {
-    storeSearchCriteria.value = res.data;
-    let keys = Object.keys(storeSearchCriteria.value);
-    let list = [];
+    storeSearchCriteria.value = res.data
+    let keys = Object.keys(storeSearchCriteria.value)
+    let list = []
     for (let key of keys) {
       list.push({
         raw: key,
-        name: key.split(":")[0],
-        value: key.split(":")[1],
-      });
+        name: key.split(':')[0],
+        value: key.split(':')[1],
+      })
     }
-    searchCriteriaList.value = list;
-  });
+    searchCriteriaList.value = list
+  })
 
   searchSpeakers().then((res) => {
-    searchSpeakerList.value = res.data.results;
-    console.log(searchSpeakerList.value);
-  });
-});
+    searchSpeakerList.value = res.data.results
+    console.log(searchSpeakerList.value)
+  })
+})
 
-const currentTag = ref("热榜");
+const currentTag = ref('热榜')
 const handleTagClicked = (value) => {
-  currentTag.value = value.name;
-};
+  currentTag.value = value.name
+}
 
-const searchContent = ref("");
+const searchContent = ref('')
 </script>
 
 <style scoped lang="scss">
@@ -120,7 +112,7 @@ const searchContent = ref("");
   overflow-y: auto;
   // border-radius: 6px;
 
-  ::v-deep .el-input {
+  :deep(.el-input) {
     margin-bottom: 15px;
     .el-input__wrapper {
       background-color: #4e76b4 !important;
@@ -145,7 +137,7 @@ const searchContent = ref("");
       border-radius: 2px;
       font-size: 12px;
       cursor: pointer;
-      font-family: "微软雅黑";
+      font-family: '微软雅黑';
       &.selected span {
         color: red;
         background: hsla(0, 76%, 43%, 0.2);
@@ -173,7 +165,7 @@ const searchContent = ref("");
       font-size: 12px;
       cursor: pointer;
       color: hsla(0, 0%, 100%, 0.6);
-      font-family: "微软雅黑";
+      font-family: '微软雅黑';
       &.selected span {
         color: #fff;
         background: hsla(0, 0%, 100%, 0.2);
@@ -201,7 +193,7 @@ const searchContent = ref("");
       font-size: 12px;
       cursor: pointer;
       color: hsla(0, 0%, 100%, 0.6);
-      font-family: "微软雅黑";
+      font-family: '微软雅黑';
       &.selected span {
         color: #fff;
         background: hsla(0, 0%, 100%, 0.2);
@@ -229,7 +221,7 @@ const searchContent = ref("");
       font-size: 12px;
       cursor: pointer;
       color: hsla(0, 0%, 100%, 0.6);
-      font-family: "微软雅黑";
+      font-family: '微软雅黑';
       &.selected span {
         color: #fff;
         background: hsla(0, 0%, 100%, 0.2);
@@ -287,7 +279,7 @@ const searchContent = ref("");
       }
       .speaker-info {
         font-size: 12px;
-        font-family: "微软雅黑";
+        font-family: '微软雅黑';
         text-align: center;
       }
     }

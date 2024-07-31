@@ -148,3 +148,10 @@ export function speakerCollectRemoveApi(id: number) {
     method: 'delete',
   })
 }
+
+export function getRemainApi() {
+  return request({
+    url: '/moyin/tts/remain',
+    method: 'get',
+  })
+}

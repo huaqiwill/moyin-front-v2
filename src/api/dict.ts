@@ -28,6 +28,13 @@ export function getEmotionListApi() {
   })
 }
 
+export function getSpeakerEmotionListApi(speakerId: number) {
+  return request({
+    url: '/moyin/dict/getSpeakerEmotionList/' + speakerId,
+    method: 'get',
+  })
+}
+
 export function getSpeakerEmotionList(speakerId: number) {
   return request({
     url: '/moyin/dict/getSpeakerEmotionList/' + speakerId,

@@ -22,7 +22,7 @@ const style = ref({
 onMounted(async () => {
   loading.value = true;
   style.value.pointerEvents = "none";
-  await dubbingStore.getSpeakerListAll();
+  await dubbingStore.getSpeakerList();
   loading.value = false;
   style.value.pointerEvents = "all";
   emitter.emit("speaker:loading:ok");

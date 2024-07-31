@@ -6,9 +6,9 @@
 </template>
 
 <script setup lang="ts">
-import { Speaker } from "@/components";
-import { EditorView } from "@/views";
-import config from "@/config/mock";
+import { Speaker } from '@/components'
+import { EditorView } from '@/views'
+import config from '@/config/mock'
 </script>
 
 <style scoped lang="scss"></style>

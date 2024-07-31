@@ -9,7 +9,7 @@ import dts from "vite-plugin-dts";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
-  const name = env.VITE_APP_TITLE || "魔音配音工具"; // 网页标题
+  const name = env.VITE_APP_TITLE || "配音工具"; // 网页标题
   const port = parseInt(env.VITE_PORT || "8091"); // 端口
 
   return {

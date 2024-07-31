@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // 单个头像 v2
-import { defaultAvatar } from "@/config";
+import { defaultAvatar } from '@/config'
 
-defineEmits<{ click: [value: string] }>();
+defineEmits<{ click: [value: string] }>()
 
 const props = defineProps({
   activate: {
@@ -10,9 +10,9 @@ const props = defineProps({
     default: false,
   },
   data: Object,
-});
+})
 
-const speaker: any = props.data;
+const speaker: any = props.data
 </script>
 
 <template>
@@ -34,6 +34,9 @@ const speaker: any = props.data;
       :class="{ 'border border-3 border-warning': activate }"
     />
     <div class="anchor-avatar-name text-black mt-1">{{ speaker.name }}</div>
+    <div class="text-black mt-1" style="font-size: 0.65rem" v-if="speaker.alias">
+      ({{ speaker.alias }})
+    </div>
   </div>
 </template>
 

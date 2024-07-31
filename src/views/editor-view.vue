@@ -138,6 +138,8 @@ function handleCreated(editor: IDomEditor) {
 
 function handleChange(editor: IDomEditor) {
   emit('change', editor)
+  let count = editor.getText().length || 0
+  emitter.emit('editor:change:count', count)
 }
 
 function handleClick(ev: MouseEvent) {

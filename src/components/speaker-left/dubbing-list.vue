@@ -282,19 +282,7 @@ $width: 400px;
   min-width: $width;
   padding: 0;
   background-color: #e4e8eb;
-  // overflow-y: auto;
-  // border-radius: 6px;
 
-  // ::v-deep .el-input {
-  //   margin-bottom: 15px;
-  //   .el-input__wrapper {
-  //     background-color: #4e76b4 !important;
-  //     // border-radius: 16px !important;
-  //     input {
-  //       caret-color: white;
-  //     }
-  //   }
-  // }
 
   .dubbing-search {
     margin: 0 3px;

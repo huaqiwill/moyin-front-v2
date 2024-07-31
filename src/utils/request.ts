@@ -139,24 +139,24 @@ request.interceptors.request.use(
  */
 request.interceptors.response.use(
   (res) => {
-    // 未设置状态码则默认成功状态
-    const code = (res.data.code as keyof typeof errorCode) || 200
-    // 获取错误信息
-    const msg = res.data.msg || errorCode[code] || errorCode['default']
     // 二进制数据则直接返回
     if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
       return res.data
     }
+
+    const { code, msg } = res.data
+
     // 如果包含状态码，且为200
-    if (res.data.code === 200) {
+    if (code === 200) {
       return res.data
     }
-    // 兼容魔音接口
-    if (res.data.err_code === 0) {
-      return res.data
-    }
+
     // 错误验证
-    if (code === 401) {
+    if (code == 401) {
+      ElMessage({
+        message: msg,
+        type: 'error',
+      })
       if (!isRelogin.show) {
         isRelogin.show = true
         ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
@@ -178,20 +178,18 @@ request.interceptors.response.use(
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
     }
 
-    // else if (code === 410) {
-    //   const { token } = res.data
-    //   setToken(token) // 重置token
-    // }
-    else if (code === 500) {
+    if (code == 500) {
       ElMessage.error({ message: msg })
       return Promise.reject(new Error(msg))
-    } else if (code === 601) {
+    }
+
+    if (code == 601) {
       ElMessage.warning({ message: msg })
       return Promise.reject('error')
-    } else {
-      ElNotification.error({ title: msg })
-      return Promise.reject('error')
     }
+
+    ElNotification.error(msg)
+    return Promise.reject(msg)
   },
   (error) => {
     console.log('出现了错误：' + error)

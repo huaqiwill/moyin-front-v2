@@ -19,6 +19,9 @@ interface EmitterEventMap {
   'tryplay-generator': []
   'speaker:select': [speaker: any]
   'speaker:loading:ok': []
+  'speaker:emotion:select': [emotion: any]
+  'remain:count': []
+  'editor:change:count': [count: number]
 }
 
 type EmitterMethod<K extends keyof EmitterEventMap> = (...args: EmitterEventMap[K]) => void

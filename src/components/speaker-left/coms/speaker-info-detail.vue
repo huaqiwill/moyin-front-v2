@@ -13,7 +13,14 @@
           <div class="d-flex dlex-row column-gap-2 align-items-end">
             <span style="font-size: 1rem">
               {{ speakerInfo.name }}
-              <span v-if="speakerNotes">({{ speakerNotes }})</span>
+              <span v-if="speakerInfo.alias">({{ speakerInfo.alias }})</span>
+            </span>
+            <span
+              class="badge text-bg-primary px-2"
+              style="cursor: pointer"
+              @click="handleEditAlias"
+            >
+              编辑
             </span>
             <span>{{ speed }}x</span>
           </div>
@@ -29,16 +36,19 @@
         </div>
       </div>
 
-      <el-dialog title="" v-model="dialogVisible" width="200">
+      <el-dialog title="编辑别名" v-model="dialogVisible" width="180">
         <el-input v-model="speakerNotes" placeholder="请输入备注"></el-input>
         <template #footer>
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="handleStarOk">确 定</el-button>
+          <el-button type="primary" @click="handleEditAliasOk">确 定</el-button>
         </template>
       </el-dialog>
 
-      <div class="d-flex flex-column align-items-end">
-        <div class="text-info">音频时长，请以生成后的为准</div>
+      <div class="d-flex flex-column">
+        <div class="d-flex flex-row justify-content-between align-items-center">
+          <div class="me-4" style="font-size: 1rem">({{ speakerInfo.language }})</div>
+          <div class="text-primary" style="font-size: 0.8rem">音频时长，请以生成后的为准</div>
+        </div>
         <div class="d-flex">
           <div class="mt-1 d-flex flex-row align-items-center">
             <a-slider
@@ -79,21 +89,22 @@
     </div>
 
     <!-- 情绪 -->
-    <!-- <EmotionList emotions="emotions"></EmotionList> -->
-    <div
-      class="mt-2 d-flex me-4 flex-row flex-wrap justify-content-start align-items-center row-gap-1 overflow-y-scroll scrollbar-none"
-      style="max-height: 130px; background-color: #f5f5f5; border-radius: 4px"
-    >
-      <div @click="handleStyleClick(0)" style="padding: 5px 6px">
-        <StyleAvatar :activate="0 === selectedEmotion" :data="defaultStyleAvatar"></StyleAvatar>
-      </div>
+    <div class="me-4" style="background-color: #f5f5f5; border-radius: 4px; height: 122px">
       <div
-        @click="handleStyleClick(item.id)"
-        v-for="(item, index) in emotions"
-        :key="index"
-        style="padding: 5px 6px"
+        class="mt-2 d-flex flex-row flex-wrap justify-content-start align-items-center row-gap-1 overflow-y-scroll scrollbar-none"
+        style="max-height: 122px"
       >
-        <StyleAvatar :activate="item.id === selectedEmotion" :data="item"></StyleAvatar>
+        <div @click="handleEmotionClick(0)" style="padding: 5px 6px">
+          <StyleAvatar :activate="0 === selectedEmotion" :data="defaultStyleAvatar"></StyleAvatar>
+        </div>
+        <div
+          @click="handleEmotionClick(item.id)"
+          v-for="(item, index) in emotions"
+          :key="index"
+          style="padding: 5px 6px"
+        >
+          <StyleAvatar :activate="item.id === selectedEmotion" :data="item"></StyleAvatar>
+        </div>
       </div>
     </div>
 
@@ -164,21 +175,17 @@
 </style>
 
 <script setup lang="ts">
-import { ElSlider, ElIcon, ElMessage } from 'element-plus'
-import PlayButton from './play-button.vue'
-import { ref, onUnmounted, computed, watch, onMounted } from 'vue'
+import { ElSlider, ElIcon, ElMessage, ElMessageBox } from 'element-plus'
+import { PlayButton, StyleAvatar } from '.'
+import { ref, computed, watch, onMounted } from 'vue'
 import { formatTime } from '@/utils'
 import { Star, StarFilled } from '@element-plus/icons-vue'
-import StyleAvatar from './style-avatar.vue'
-import { useTryPlayStore } from '@/stores'
 import { emitter } from '@/event-bus'
 import type { Arrayable } from 'element-plus/lib/utils/typescript'
-import { useDubbingStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { getSpeakerEmotionList } from '@/api/dict'
+import { useSpeakerStore, useTryPlayStore } from '@/stores'
+import { defaultPitch, defaultFormatter, defaultSpeed } from './data'
 
-const speakerEmotionList = ref([])
-const dubbingStore = useDubbingStore()
+const speakerStore = useSpeakerStore()
 const tryPlayStore = useTryPlayStore()
 const timeMax = tryPlayStore.audioPlayer.duration
 const currentTime = tryPlayStore.audioPlayer.currentTime
@@ -192,88 +199,65 @@ const timeText = computed(() => formatTime(time.value))
 const isStar = ref(false)
 const emotions = ref<any>([])
 const domains = ref<any>([])
-const { submitTtsData } = storeToRefs(dubbingStore)
 const selectedEmotion = ref(0)
-const speedList = ref<any>([])
-const pitchList = ref<any>([])
+const speedList = defaultSpeed()
+const pitchList = defaultPitch()
 const defaultStyleAvatar = ref({
   id: 0,
   name: '默认',
   imageUrl: '',
 })
 const isSupper48K = ref(false)
-const foramtterList = ref<any>([])
+const foramtterList = defaultFormatter()
 const foramtter = ref('mp3')
 const speakerNotes = ref('')
 
-const speakerInfo = ref({
+const speakerInfo = ref<any>({
   name: '暂未选择',
   behavior: '行为暂时为空',
 })
 
-function handleSpeakerSelect(speaker: any) {
-  speakerInfo.value = speaker
-  const { emotionIdSet, domainIdSet } = speaker
-  const { emotionList, domainList } = dubbingStore
-  emotions.value = emotionList.filter((emotion: any) => emotionIdSet.includes(emotion.id))
-  domains.value = domainList.filter((domain: any) => domainIdSet.includes(domain.id))
-  // console.log("情绪",emotionIdSet,emotionList,emotions.value);
-  // console.log("领域",domainIdSet,domainList,domains.value);
-  defaultStyleAvatar.value.imageUrl = speaker.headerImage
-
-  getSpeakerEmotionList(speaker.id).then((res: any) => {
-    speakerEmotionList.value = res.rows
-
-    // 默认选择首个Emotion
-    if (res.rows.length > 0) {
-      handleStyleClick(res.rows[0].emotionId)
-    }
-
-    let emotion = res.rows.find((em: any) => em.emotionId == 0)
-    if (emotion) {
-      isSupper48K.value = emotion.styleCallName.includes('48k')
-    }
-  })
-
-  // 计算是否为star
-  const { userCollectList } = dubbingStore
-  console.log('用户收藏列表：', userCollectList, speaker.id)
-  let collect: any = userCollectList.find((collect: any) => collect.speakerId == speaker.id)
-  if (collect) {
-    isStar.value = true
-    speakerNotes.value = collect.speakerNotes
-  } else {
-    isStar.value = false
+function handleEditAlias() {
+  if (!isStar.value) {
+    speakerNotes.value = ''
   }
+  dialogVisible.value = true
 }
 
 onMounted(() => {
-  emitter.on('speaker:select', handleSpeakerSelect)
+  emitter.on('speaker:select', async (speaker: any) => {
+    const { emotionIdSet, domainIdSet } = speaker
+    speakerInfo.value = speaker
 
-  speedList.value.push({ label: '0.5x', value: 0.5 })
-  speedList.value.push({ label: '0.6x', value: 0.6 })
-  speedList.value.push({ label: '0.8x', value: 0.8 })
-  speedList.value.push({ label: '1.0x', value: 1.0 })
-  speedList.value.push({ label: '1.2x', value: 1.2 })
-  speedList.value.push({ label: '1.4x', value: 1.4 })
-  speedList.value.push({ label: '1.6x', value: 1.6 })
-  speedList.value.push({ label: '1.8x', value: 1.8 })
-  speedList.value.push({ label: '2.0x', value: 2.0 })
+    // 情绪
+    let emotionList = speakerStore.getEmotionNameListLocal()
+    emotions.value = emotionList.filter((emotion: any) => emotionIdSet.includes(emotion.id))
 
-  for (let i = -10; i <= 10; i++) {
-    if (i == 0) {
-      pitchList.value.push({ label: '默认', value: i })
-    } else {
-      pitchList.value.push({ label: i, value: i })
+    // 领域
+    let domainList = speakerStore.getDomainListLocal()
+    domains.value = domainList.filter((domain: any) => domainIdSet.includes(domain.id))
+
+    // 默认头像
+    defaultStyleAvatar.value.imageUrl = speaker.headerImage
+
+    // speaker emotion
+    let speakerEmotionList = await speakerStore.getSpeakerEmotionList(speaker.id)
+    let speakerEmotion = speakerEmotionList.find((em: any) => em.emotionId == 0)
+    if (speakerEmotion) {
+      isSupper48K.value = speakerEmotion.styleCallName.includes('48k')
     }
-  }
+    handleEmotionClick(0)
 
-  foramtterList.value.push({ label: 'mp3', value: 'mp3' })
-  foramtterList.value.push({ label: 'wav', value: 'wav' })
-})
-
-onUnmounted(() => {
-  emitter.off('speaker:select', handleSpeakerSelect)
+    // star
+    const collectList = speakerStore.getCollectListLocal()
+    let collect: any = collectList.find((collect: any) => collect.speakerId == speaker.id)
+    if (collect) {
+      isStar.value = true
+      speakerNotes.value = collect.speakerNotes
+    } else {
+      isStar.value = false
+    }
+  })
 })
 
 watch(currentTime, (newValue) => {
@@ -281,30 +265,53 @@ watch(currentTime, (newValue) => {
 })
 
 const dialogVisible = ref(false)
-function handleStar() {
+async function handleStar() {
   if (isStar.value) {
-    // 直接取消
-    dubbingStore.setStarNone(speakerInfo.value.id)
-    isStar.value = false
+    ElMessageBox({
+      title: '取消收藏',
+      message: '是否确认取消收藏？取消收藏后将删除别名。',
+      showCancelButton: true,
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+    }).then(() => {
+      // 直接取消
+      speakerStore.collectRemove(speakerInfo.value.id)
+      isStar.value = false
+      speakerInfo.value.alias = ''
+      ElMessage({
+        message: '取消收藏成功',
+        type: 'success',
+      })
+    })
   } else {
     // 打开对话框
-    dialogVisible.value = true
+    isStar.value = true
+    await speakerStore.collect(speakerInfo.value.id)
+    ElMessage({
+      message: '收藏成功',
+      type: 'success',
+    })
   }
 }
 
-function handleStarOk() {
+async function handleEditAliasOk() {
+  await speakerStore.aliasEdit(speakerInfo.value.id, speakerNotes.value)
   isStar.value = true
   dialogVisible.value = false
-  dubbingStore.setStarOk(speakerInfo.value.id, speakerNotes.value)
+  speakerInfo.value.alias = speakerNotes.value
+  ElMessage({
+    message: '编辑成功',
+    type: 'success',
+  })
 }
 
-function handleStyleClick(emotionId: number) {
+function handleEmotionClick(emotionId: number) {
   selectedEmotion.value = emotionId
   // 注意此处不能使用全等
-  let emotion: any = speakerEmotionList.value.find((emotion: any) => emotion.emotionId == emotionId)
+  let speakerEmotionList = speakerStore.getSpeakerEmotionListLocal()
+  let emotion: any = speakerEmotionList.find((emotion: any) => emotion.emotionId == emotionId)
   if (emotion) {
-    let styleCallName = emotion.styleCallName
-    submitTtsData.value.speaker = styleCallName
+    speakerStore.updateSubmitParam('speaker', emotion.styleCallName)
   }
 }
 
@@ -321,18 +328,18 @@ function handleTimeChange(time: Arrayable<number>) {
 }
 
 function handleFormatChange() {
-  submitTtsData.value.audioType = foramtter.value
+  speakerStore.updateSubmitParam('audioType', foramtter.value)
 }
 
 function handleSpeedChange() {
-  submitTtsData.value.speed = speed.value
+  speakerStore.updateSubmitParam('speed', speed.value)
 }
 
 function handlePitchChange() {
-  submitTtsData.value.pitch = pitch.value
+  speakerStore.updateSubmitParam('pitch', pitch.value)
 }
 
 function handleVolumeChange() {
-  submitTtsData.value.volume = volume.value
+  speakerStore.updateSubmitParam('volume', volume.value)
 }
 </script>

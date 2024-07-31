@@ -71,38 +71,22 @@
 </style>
 
 <script setup lang="ts">
-// tag-list v1 item
-import SimpleTag from './simple-tag.vue'
-import { inject, onMounted, ref, shallowRef, toRaw } from 'vue'
-import type { FilterSpeaker, LabelValue } from '@/model'
-// import { getConfig } from "@/config";
-import { useDubbingStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { emitter } from '@/event-bus'
+import { SimpleTag } from '.'
+import { onMounted, ref, shallowRef } from 'vue'
+import { useSpeakerStore } from '@/stores'
 
-const emit = defineEmits<{ 'update:filter': [value: FilterSpeaker] }>()
-// const props = defineProps<{ filter: FilterSpeaker }>();
-
-// const editorKey = inject<symbol>("editorKey")!;
-// const ssmlEditorConfig = getConfig(editorKey);
-// const { topFlag, gender, featchTag } = ssmlEditorConfig.tryPlay;
-const dubbingStore = useDubbingStore()
-
+const speakerStore = useSpeakerStore()
 const tags = shallowRef<any>([])
 const domains = shallowRef<any>([])
 const languages = shallowRef<any>([])
-
 const selectedLanguage = ref('')
 const selectedDomain = ref('')
 const selectedEmotion = ref('')
 
 onMounted(async () => {
-  // tags.value = await featchTag();
-  await dubbingStore.getEmotionList()
-  await dubbingStore.getDomainNameList()
-  await dubbingStore.getLanguageNameList()
-
-  const { emotionList, domainList, languageList } = dubbingStore
+  let emotionList = await speakerStore.getEmotionList()
+  let domainList = await speakerStore.getDomainNameList()
+  let languageList = await speakerStore.getLanguageNameList()
 
   tags.value = [
     {
@@ -142,61 +126,42 @@ onMounted(async () => {
       }
     }),
   ]
-  //
 })
 
-const { speakerListAll } = storeToRefs(dubbingStore)
-
 function filterSpeaker() {
-  const { speakerListAllBackup } = dubbingStore
-
-  speakerListAll.value = [...speakerListAllBackup]
+  const speakerListAllBackup = speakerStore.getSpeakerListBackup()
+  let speakerList = [...speakerListAllBackup]
 
   if (selectedLanguage.value !== '') {
-    speakerListAll.value = speakerListAll.value.filter((speaker: any) =>
+    speakerList = speakerList.filter((speaker: any) =>
       speaker.languageIdSet.includes(selectedLanguage.value),
     )
   }
   if (selectedEmotion.value !== '') {
-    speakerListAll.value = speakerListAll.value.filter((speaker: any) =>
+    speakerList = speakerList.filter((speaker: any) =>
       speaker.emotionIdSet.includes(selectedEmotion.value),
     )
   }
   if (selectedDomain.value !== '') {
-    speakerListAll.value = speakerListAll.value.filter((speaker: any) =>
+    speakerList = speakerList.filter((speaker: any) =>
       speaker.domainIdSet.includes(selectedDomain.value),
     )
   }
-
-  emitter.emit('speaker:loading:ok')
-  console.log('筛选后的数据', speakerListAll.value)
+  speakerStore.setSpeakerList(speakerList)
 }
 
-function handleLanguageClick(value: string) {
-  // emit("update:filter", { ...toRaw(props.filter), language: value });
-
-  // id
-  selectedLanguage.value = value
+function handleLanguageClick(languageId: string) {
+  selectedLanguage.value = languageId
   filterSpeaker()
 }
 
-function handleDomainClick(value: string) {
-  // emit("update:filter", { ...toRaw(props.filter), domain: value });
-  selectedDomain.value = value
+function handleDomainClick(domainId: string) {
+  selectedDomain.value = domainId
   filterSpeaker()
 }
 
-// function handleTopFlagClick(value: string) {
-//   emit("update:filter", { ...toRaw(props.filter), topFlag: value });
-// }
-
-// function handleGenderClick(value: string) {
-//   emit("update:filter", { ...toRaw(props.filter), gender: value });
-// }
-
-function handleEmotionClick(value: string) {
-  // emit("update:filter", { ...toRaw(props.filter), tag: value });
-  selectedEmotion.value = value
+function handleEmotionClick(emotionId: string) {
+  selectedEmotion.value = emotionId
   filterSpeaker()
 }
 </script>

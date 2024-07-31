@@ -83,19 +83,18 @@
 <script setup>
 import {
   defineModel,
-  defineProps,
   onMounted,
   onUpdated,
   ref,
   onBeforeUpdate,
   onBeforeMount,
   inject,
-} from "vue";
-import { useDubbingStore } from "@/stores";
-import { storeToRefs } from "pinia";
-import { getSpeakerEmotionList } from "@/api/dict";
-import { ElMessage } from "element-plus";
-import { useTryPlayStore } from "@/stores";
+} from 'vue'
+import { useDubbingStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { getSpeakerEmotionList } from '@/api/dict'
+import { ElMessage } from 'element-plus'
+import { useTryPlayStore } from '@/stores'
 
 /**
  * 用来控制dialog是否显示
@@ -103,7 +102,7 @@ import { useTryPlayStore } from "@/stores";
 const model = defineModel({
   type: Boolean,
   required: true,
-});
+})
 
 /**
  * 传递配音员信息
@@ -112,84 +111,77 @@ const props = defineProps({
   info: {
     type: Object,
   },
-});
+})
 
-const tryPlayStore = useTryPlayStore();
-const dubbingStore = useDubbingStore();
-const {
-  domainList,
-  globalSpeaker,
-  globalSpeed,
-  globalIntonation,
-  submitTtsData,
-} = storeToRefs(dubbingStore);
+const tryPlayStore = useTryPlayStore()
+const dubbingStore = useDubbingStore()
+const { domainList, globalSpeaker, globalSpeed, globalIntonation, submitTtsData } =
+  storeToRefs(dubbingStore)
 
 /**
  * 情绪、领域列表
  */
-const emotionSet = ref([]);
-const domainSet = ref([]);
-const languageSet = ref([]);
-const speakerEmotionCacheVOList = ref([]);
+const emotionSet = ref([])
+const domainSet = ref([])
+const languageSet = ref([])
+const speakerEmotionCacheVOList = ref([])
 
 /**
  * 语速、语调、音量、选择的情绪
  */
-const speed = ref(1);
-const pitch = ref(0);
-const volume = ref(1);
-const selectedEmotion = ref(null);
-const selectStyleCallName = ref(null);
-const speakerEmotionList = ref([]);
-const selectedEmotionId = ref("");
+const speed = ref(1)
+const pitch = ref(0)
+const volume = ref(1)
+const selectedEmotion = ref(null)
+const selectStyleCallName = ref(null)
+const speakerEmotionList = ref([])
+const selectedEmotionId = ref('')
 
 onBeforeUpdate(async () => {
   if (model.value) {
-    const { emotionList, domainList, languageList } = dubbingStore;
+    const { emotionList, domainList, languageList } = dubbingStore
 
-    speakerEmotionCacheVOList.value = props.info?.speakerEmotionCacheVOList || [];
+    speakerEmotionCacheVOList.value = props.info?.speakerEmotionCacheVOList || []
     // await dubbingStore.getSpeakerEmotionList();
     // await dubbingStore.getStoreSearchCriteria();
 
-    const emotionIdSet = props.info?.emotionIdSet || [];
-    emotionSet.value = emotionList.filter((emotion) => emotionIdSet.includes(emotion.id));
-    console.log("情绪集合", emotionList, emotionIdSet, emotionSet.value);
+    const emotionIdSet = props.info?.emotionIdSet || []
+    emotionSet.value = emotionList.filter((emotion) => emotionIdSet.includes(emotion.id))
+    console.log('情绪集合', emotionList, emotionIdSet, emotionSet.value)
 
-    const domainIdSet = props.info.domainIdSet || [];
-    domainSet.value = domainList.filter((domain) => domainIdSet.includes(domain.id));
-    console.log("领域集合", domainIdSet, domainList, domainSet.value);
+    const domainIdSet = props.info.domainIdSet || []
+    domainSet.value = domainList.filter((domain) => domainIdSet.includes(domain.id))
+    console.log('领域集合', domainIdSet, domainList, domainSet.value)
 
-    const languageIdSet = props.info.languageIdSet || [];
-    languageSet.value = languageList.filter((language) =>
-      languageIdSet.includes(language.id)
-    );
-    console.log("语言集合", languageIdSet, languageList, languageSet.value);
+    const languageIdSet = props.info.languageIdSet || []
+    languageSet.value = languageList.filter((language) => languageIdSet.includes(language.id))
+    console.log('语言集合', languageIdSet, languageList, languageSet.value)
 
-    let speakerId = props.info.id;
+    let speakerId = props.info.id
     getSpeakerEmotionList(speakerId).then((res) => {
-      speakerEmotionList.value = res.rows;
-    });
+      speakerEmotionList.value = res.rows
+    })
   }
-});
+})
 
 function handleDefaultEmotionSelect() {
   // 从情绪列表中筛选出符合条件的数据
   let speakerInfoList = speakerEmotionList.value.filter(
-    (speakerEmotion) => speakerEmotion.emotionId == 0
-  );
+    (speakerEmotion) => speakerEmotion.emotionId == 0,
+  )
 
   // 如果筛选的数据为空
   if (speakerInfoList.length == 0) {
-    return;
+    return
   }
 
   // 播放数据
-  let speakerInfo = speakerInfoList[0];
-  console.log(speakerInfo);
+  let speakerInfo = speakerInfoList[0]
+  console.log(speakerInfo)
 
-  selectStyleCallName.value = speakerInfo.styleCallName;
+  selectStyleCallName.value = speakerInfo.styleCallName
 
-  selectedEmotionId.value = "";
+  selectedEmotionId.value = ''
 
   // ElMessage({
   //   message: selectStyleCallName.value,
@@ -197,55 +189,55 @@ function handleDefaultEmotionSelect() {
 }
 
 function handleCancel() {
-  model.value = false;
+  model.value = false
 }
 
 function handleOk() {
   // console.log("拿到的数据222222====", props.info);
-  model.value = false;
+  model.value = false
   // globalSpeaker.value = props.info;
   // globalSpeed.value = speed.value;
   // globalIntonation.value = intonation.value;
 
-  submitTtsData.value.speed = speed.value;
-  submitTtsData.value.volume = volume.value;
-  submitTtsData.value.pitch = pitch.value;
-  submitTtsData.value.speaker = selectStyleCallName.value;
+  submitTtsData.value.speed = speed.value
+  submitTtsData.value.volume = volume.value
+  submitTtsData.value.pitch = pitch.value
+  submitTtsData.value.speaker = selectStyleCallName.value
 
-  console.log(submitTtsData.value);
+  console.log(submitTtsData.value)
 
   // console.log(editorKey);
 
   // const editorKey = dubbingStore.getGlobaleEditorKey();
-  tryPlayStore.setSpeakerForce(props.info);
+  tryPlayStore.setSpeakerForce(props.info)
 }
 
 function handleEmotionSelect(item) {
-  console.log("拿到的值：", item);
+  console.log('拿到的值：', item)
 
-  selectedEmotionId.value = item.id;
+  selectedEmotionId.value = item.id
 
   // let speaker = props.info.name + "|" + item.emotionNam;
   // let speakerEmotionCacheVOList = props.info.speakerEmotionCacheVOList;
 
   // 从情绪列表中筛选出符合条件的数据
   let speakerInfoList = speakerEmotionList.value.filter(
-    (speakerEmotion) => speakerEmotion.emotionId == item.id
-  );
+    (speakerEmotion) => speakerEmotion.emotionId == item.id,
+  )
 
   // 如果筛选的数据为空
   if (speakerInfoList.length == 0) {
-    return;
+    return
   }
 
   // 播放数据
-  let speakerInfo = speakerInfoList[0];
-  console.log(speakerInfo);
+  let speakerInfo = speakerInfoList[0]
+  console.log(speakerInfo)
 
   // const audio = new Audio(speakerInfo.demoUrl);
   // audio.play();
 
-  selectStyleCallName.value = speakerInfo.styleCallName;
+  selectStyleCallName.value = speakerInfo.styleCallName
 
   // ElMessage({
   //   message: selectStyleCallName.value,
@@ -254,7 +246,7 @@ function handleEmotionSelect(item) {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .el-dialog__body {
+:deep(.el-dialog__body) {
   padding: 2px 20px;
 }
 

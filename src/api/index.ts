@@ -67,3 +67,11 @@ export function sensitiveWordIdentify(text: string) {
     data: text,
   })
 }
+
+export function speakerEditApi(speaker: any) {
+  return request({
+    url: '/moyin/speaker/editAlias',
+    method: 'PUT',
+    data: speaker,
+  })
+}

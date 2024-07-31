@@ -1,10 +1,6 @@
 <template>
   <div class="d-flex mt-1" style="padding: 5px 10px">
-    <a-input
-      v-model="searchName"
-      placeholder="共663款配音师，输入名称搜索"
-      @input="handleInput"
-    ></a-input>
+    <a-input v-model="searchName" :placeholder="placeholder" @input="handleSearch"></a-input>
     <el-button type="primary" class="ms-2" @click="handleRecent">最近</el-button>
     <el-button type="primary" class="ms-2" @click="handleCollect">收藏</el-button>
     <el-button type="primary" class="ms-2" @click="handleAll">全部</el-button>
@@ -12,75 +8,79 @@
 </template>
 
 <style lang="scss" scoped>
-::v-deep .arco-input-wrapper {
+:deep(.arco-input-wrapper) {
   background-color: #fff;
 }
 </style>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useDubbingStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { emitter } from '@/event-bus'
+import { computed, ref } from 'vue'
+import { useSpeakerStore } from '@/stores'
 
-const dubbingStore = useDubbingStore()
+const speakerStore = useSpeakerStore()
 const searchName = ref('')
 
-const { speakerListAll } = storeToRefs(dubbingStore)
+const speakerCount = speakerStore.getSpeakerCount()
+const placeholder = computed(() => {
+  return `共${speakerCount.value}款配音师，输入名称搜索`
+})
 
-function handleInput() {
-  const { speakerListAllBackup, userCollectList } = dubbingStore
-  speakerListAll.value = [...speakerListAllBackup]
-
+function handleSearch() {
+  // const collectList = speakerStore.getCollectListLocal()
+  let speakerList = speakerStore.getSpeakerListBackup()
   if (searchName.value !== '') {
     // 筛选出包含在CollectList的Speaker
-    let collectSpeakerList = speakerListAll.value.filter((speaker: any) => {
-      return userCollectList.find(
-        (collect: any) =>
-          speaker.id == collect.speakerId && collect.speakerNotes.includes(searchName.value),
-      )
-    })
-
-    speakerListAll.value = speakerListAll.value.filter((speaker: any) => {
-      return speaker.name.includes(searchName.value)
-    })
-
-    console.log(speakerListAll.value, collectSpeakerList)
-    for (let i = 0; i < collectSpeakerList.length; i++) {
-      let collectSpeaker: any = collectSpeakerList[i]
-      if (speakerListAll.value.length === 0) {
-        speakerListAll.value.push(collectSpeaker)
-      } else {
-        let result = speakerListAll.value.find((speaker: any) => speaker.id == collectSpeaker.id)
-        if (!result) {
-          speakerListAll.value.push(collectSpeaker)
-        }
+    // let collectSpeakerList = speakerList.filter((speaker: any) => {
+    //   return collectList.find(
+    //     (collect: any) =>
+    //       speaker.id == collect.speakerId && collect.speakerNotes.includes(searchName.value),
+    //   )
+    // })
+    speakerList = speakerList.filter((speaker: any) => {
+      if (speaker.name && speaker.name.includes(searchName.value)) {
+        return true
       }
-    }
+      if (speaker.alias && speaker.alias.includes(searchName.value)) {
+        return true
+      }
+      return false
+    })
+    // for (let i = 0; i < collectSpeakerList.length; i++) {
+    //   let collectSpeaker: any = collectSpeakerList[i]
+    //   if (speakerList.length === 0) {
+    //     speakerList.push(collectSpeaker)
+    //   } else {
+    //     let result = speakerList.find((speaker: any) => speaker.id == collectSpeaker.id)
+    //     if (!result) {
+    //       speakerList.push(collectSpeaker)
+    //     }
+    //   }
+    // }
   }
-  emitter.emit('speaker:loading:ok')
+  speakerStore.setSpeakerList(speakerList)
 }
 
-function handleRecent() {
-  const { speakerListAllBackup } = dubbingStore
-  speakerListAll.value = [...speakerListAllBackup]
-  speakerListAll.value = speakerListAll.value.filter((speaker: any) => speaker.id == 1403)
-  emitter.emit('speaker:loading:ok')
+async function handleRecent() {
+  // const speakerListBackup = speakerStore.getSpeakerListBackup()
+  let recentList = await speakerStore.getRecentList()
+  // let speakerList = speakerListBackup.filter((speaker: any) => {
+  //   return !!recentList.find((recent: any) => recent.speakerId == speaker.id)
+  // })
+  console.log(recentList)
+
+  speakerStore.setSpeakerList(recentList)
 }
 
-function handleCollect() {
-  const { userCollectList, speakerListAllBackup } = dubbingStore
-
-  speakerListAll.value = speakerListAllBackup.filter((speaker: any) => {
-    return userCollectList.find((collect: any) => collect.speakerId == speaker.id) !== undefined
+async function handleCollect() {
+  const speakerListBackup = speakerStore.getSpeakerListBackup()
+  let collectList = await speakerStore.getCollectList()
+  let speakerList = speakerListBackup.filter((speaker: any) => {
+    return !!collectList.find((collect: any) => collect.speakerId == speaker.id)
   })
-
-  emitter.emit('speaker:loading:ok')
+  speakerStore.setSpeakerList(speakerList)
 }
 
 function handleAll() {
-  const { speakerListAllBackup } = dubbingStore
-  speakerListAll.value = [...speakerListAllBackup]
-  emitter.emit('speaker:loading:ok')
+  speakerStore.setSpeakerList(speakerStore.getSpeakerListBackup())
 }
 </script>

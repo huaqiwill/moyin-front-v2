@@ -11,7 +11,7 @@
       >
         <SpeakerAvatar
           :data="item"
-          :activate="item.id === tryPlayStore.speaker.id"
+          :activate="item.id === selectSpeakerId"
           @click="handleClick(item)"
         ></SpeakerAvatar>
       </div>
@@ -22,26 +22,32 @@
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import SpeakerAvatar from './speaker-avatar.vue'
-import { useTryPlayStore } from '@/stores'
+import { onMounted, shallowRef, ref } from 'vue'
+import { SpeakerAvatar } from '.'
 import { emitter } from '@/event-bus'
-import { useDubbingStore } from '@/stores'
+import { useSpeakerStore, useTryPlayStore } from '@/stores'
 
-const dubbingStore = useDubbingStore()
+const speakerStore = useSpeakerStore()
 const tryPlayStore = useTryPlayStore()
-const speakerList = ref<any>([])
+const speakerList = shallowRef<any>([])
+const selectSpeakerId = ref()
+
+let isFirstSelect = true
 
 onMounted(() => {
   emitter.on('speaker:loading:ok', () => {
-    const { speakerListAll } = dubbingStore
-    speakerList.value.splice(0)
-    speakerList.value = [...speakerListAll]
+    speakerList.value = speakerStore.getSpeakerListLocal()
+    if (speakerList.value.length > 0 && isFirstSelect) {
+      handleClick(speakerList.value[0])
+      isFirstSelect = false
+    }
   })
 })
 
 function handleClick(speaker: any) {
-  tryPlayStore.setSpeakerForce(speaker)
+  selectSpeakerId.value = speaker.id
   emitter.emit('speaker:select', speaker)
+  tryPlayStore.setSpeakerForce(speaker)
+  console.log('选择了speaker', speaker)
 }
 </script>

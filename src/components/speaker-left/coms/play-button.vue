@@ -13,10 +13,8 @@ const props = withDefaults(defineProps<{ size?: number }>(), { size: 50 })
 const boxRef = ref<HTMLDivElement>()
 
 const tryPlayStore = useTryPlayStore()
-const { audioPlayer, play } = tryPlayStore
+const { audioPlayer } = tryPlayStore
 const playState = audioPlayer.playState
-// const editorKey = inject<symbol>('editorKey')!
-// const ssmlEditorConfig = getConfig(editorKey)
 
 const styleObject = computed<CSSProperties>(() => ({
   'background-image': `url(${tryPlayStore.speaker.headerImage || defaultAvatar()})`,
@@ -25,7 +23,7 @@ const styleObject = computed<CSSProperties>(() => ({
 }))
 
 const handleClick = throttle(async () => {
-  emitter.emit("tryplay-generator");
+  emitter.emit('tryplay-generator')
 })
 
 defineExpose({
@@ -41,9 +39,7 @@ defineExpose({
     :style="styleObject"
     @click="handleClick"
   >
-    <button
-      class="btn w-100 h-100 bg-black bg-opacity-50 text-white rounded-circle border-0"
-    >
+    <button class="btn w-100 h-100 bg-black bg-opacity-50 text-white rounded-circle border-0">
       <ElIcon v-if="tryPlayStore.isLoading" class="is-loading" color="white">
         <Loading></Loading>
       </ElIcon>
