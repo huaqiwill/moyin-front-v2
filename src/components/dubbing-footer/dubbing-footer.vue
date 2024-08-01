@@ -23,7 +23,7 @@
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import { useSpeakerStore } from '@/stores'
+import { useSpeakerStore, useUserStore } from '@/stores'
 import { IconToBottom } from '@arco-design/web-vue/es/icon'
 import { GenerateLogging2 } from '@/components/dubbing-tools'
 import { onMounted, ref } from 'vue'

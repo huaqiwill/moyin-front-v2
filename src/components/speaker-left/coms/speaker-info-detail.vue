@@ -184,6 +184,7 @@ import { emitter } from '@/event-bus'
 import type { Arrayable } from 'element-plus/lib/utils/typescript'
 import { useSpeakerStore, useTryPlayStore } from '@/stores'
 import { defaultPitch, defaultFormatter, defaultSpeed } from './data'
+import { getSpeakerInfoApi } from '@/api/tts'
 
 const speakerStore = useSpeakerStore()
 const tryPlayStore = useTryPlayStore()
@@ -226,8 +227,11 @@ function handleEditAlias() {
 
 onMounted(() => {
   emitter.on('speaker:select', async (speaker: any) => {
-    const { emotionIdSet, domainIdSet } = speaker
-    speakerInfo.value = speaker
+    await getSpeakerInfoApi(speaker.id).then((res) => {
+      speakerInfo.value = res.data
+    })
+
+    const { emotionIdSet, domainIdSet } = speakerInfo.value
 
     // 情绪
     let emotionList = speakerStore.getEmotionNameListLocal()

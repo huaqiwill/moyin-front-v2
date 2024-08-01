@@ -1,47 +1,45 @@
 import { defineStore } from 'pinia'
-import { login as userLogin, logout as userLogout } from '@/api/login'
+import { userGetInfoApi, login as userLogin, logout as userLogout } from '@/api/login'
 import { setToken, removeToken } from '@/utils/auth'
+import { ref } from 'vue'
 import router from '@/router'
 
-export const useUserStore = defineStore('user', {
-  state: () => {
-    return {
-      token: '',
-      isLogin: false,
-      isPlaying: false,
-      currentSong: {},
-      currentSongIndex: 0,
-      songList: [],
-      isShow: false,
-      isShowPlayList: false,
-      isShowLyric: false,
-      isShowComment: false,
-      isShowSearch: false,
-      isShowMv: false,
-      isShowMvList: false,
-      isShowMvDetail: false,
-      isShowMvPlay: false,
-    }
-  },
-  getters: {},
-  actions: {
+export const useUserStore = defineStore('user', () => {
+  let token = ''
+  let isLogin = false
+  const userInfo = ref<any>(null)
+
+  return {
+    isLogin() {
+      return isLogin
+    },
+    getToken() {
+      return token
+    },
+    getUserInfo() {
+      return userInfo
+    },
     async login(loginForm: object) {
       return await userLogin(loginForm).then((res: any) => {
         setToken(res.token)
         router.push({ path: '/' }).catch(() => {})
-        this.isLogin = true
-        this.token = res.token
+        isLogin = true
+        token = res.token
+        userGetInfoApi().then((res: any) => {
+          userInfo.value = res.user
+          console.log(userInfo.value)
+        })
       })
     },
     logout() {
       userLogout().then(() => {
-        this.isLogin = false
-        this.token = ''
+        isLogin = false
+        token = ''
         removeToken()
         router.push({
           name: 'login',
         })
       })
     },
-  },
+  }
 })

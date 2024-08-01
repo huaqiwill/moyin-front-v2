@@ -26,7 +26,7 @@ export function register(data: any) {
 }
 
 // 获取用户详细信息
-export function getInfo() {
+export function userGetInfoApi() {
   return request({
     url: '/getInfo',
     method: 'get',

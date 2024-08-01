@@ -26,17 +26,20 @@ export const useSpeakerStore = defineStore('speaker', () => {
   let domainNameList: any[] = []
 
   let speakerEmotionList: any[] = []
-  let speakerList: any[] = []
+
+  // 配音员列表
+  const speakerList = ref<any>([])
+  const speakerCount = ref(0)
+
   let speakerListBackup: any[] = []
-  let speakerCount = ref(0)
   let lastPlayUrl: string = ''
+
+  // 查询参数
   const queryParams = {
-    emotion: '',
-    language: '',
-    domain: '',
-    keyword: '',
-    sort: '',
-    order: '',
+    emotionId: '',
+    languageId: '',
+    domainId: '',
+    name: '',
   }
 
   const submitParams = reactive<any>({
@@ -56,9 +59,9 @@ export const useSpeakerStore = defineStore('speaker', () => {
   })
 
   return {
-    setPeakerCount(count: number) {
-      speakerCount.value = count
-    },
+    queryParams,
+    speakerList,
+
     getSpeakerCount() {
       return speakerCount
     },
@@ -153,7 +156,7 @@ export const useSpeakerStore = defineStore('speaker', () => {
     async getSpeakerList() {
       return await speakerListApi(queryParams).then((res: any) => {
         this.setSpeakerList(res.rows)
-        speakerListBackup = res.rows
+        // speakerListBackup = res.rows
         speakerCount.value = res.total
         return speakerList
       })
@@ -162,11 +165,10 @@ export const useSpeakerStore = defineStore('speaker', () => {
       emitter.emit('speaker:select', speaker)
     },
     getSpeakerListLocal() {
-      return speakerList
+      return speakerList.value
     },
     setSpeakerList(list: any) {
-      speakerList.slice(0)
-      speakerList = [...list]
+      speakerList.value = list
       emitter.emit('speaker:loading:ok')
     },
     // play

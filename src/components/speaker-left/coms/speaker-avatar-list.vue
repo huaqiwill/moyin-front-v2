@@ -34,7 +34,9 @@ const selectSpeakerId = ref()
 
 let isFirstSelect = true
 
-onMounted(() => {
+onMounted(async () => {
+  await speakerStore.getSpeakerList()
+
   emitter.on('speaker:loading:ok', () => {
     speakerList.value = speakerStore.getSpeakerListLocal()
     if (speakerList.value.length > 0 && isFirstSelect) {

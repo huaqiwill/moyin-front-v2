@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function speakerListApi(params: any) {
   return request({
-    url: '/moyin/speaker/listAll',
+    url: '/moyin/speaker/listJustShow',
     method: 'get',
     params,
   })

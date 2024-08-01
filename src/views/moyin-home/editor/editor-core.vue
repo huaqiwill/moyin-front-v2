@@ -4,8 +4,8 @@ import { type IDomEditor, createEditor } from '@wangeditor/editor'
 import { getConfig } from '@/config'
 import { useEditorStore } from '@/stores'
 import Core from '@/core'
-import { emitter } from '@/event-bus'
-import { getEmitter } from '@/core/emitter'
+import { emitter } from '@/event-bus.ts'
+import { getEmitter } from '@/core/emitter.ts'
 
 const emit = defineEmits<{ created: [editor: IDomEditor]; change: [editor: IDomEditor] }>()
 const { setEditor, saveEditorHtml } = useEditorStore()
@@ -90,7 +90,7 @@ async function handleSaveEditorHtml(editor: IDomEditor) {
 </template>
 
 <style lang="scss" scoped>
-@import "@/assets/scrollbar.scss";
+@import "@/assets/scrollbar";
 
 :deep() {
   .w-e-scroll {
