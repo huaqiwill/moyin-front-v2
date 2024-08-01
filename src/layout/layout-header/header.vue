@@ -1,99 +1,7 @@
-<script setup>
-import { onMounted, ref } from "vue";
-import { Logo, LoginOrRegister } from "./index";
-import { useUserStore } from "@/stores";
-import { ElMessageBox } from "element-plus";
-import { storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-const userStore = useUserStore();
-const { token, isLogin } = storeToRefs(userStore);
-
-onMounted(() => {
-  console.log("是否登录", isLogin.value);
-});
-
-// 是否为登录状态
-const activeIndex = ref(0);
-const handleSelect = (key, keyPath) => {
-  console.log(key, keyPath);
-};
-
-/**
- * 用户登录弹窗
- */
-const loginOrRegisterDialogShow = ref(false);
-/**
- * 用户登录
- */
-const handleUserLogin = () => {
-  loginOrRegisterDialogShow.value = true;
-};
-
-/**
- * 菜单列表
- */
-const menus = [
-  {
-    path: "/dubbing",
-    name: "开始配音",
-  },
-  {
-    path: "/member",
-    name: "购买会员",
-  },
-  {
-    path: "/contact",
-    name: "联系我们",
-    innerHTML: `联系我们
-          <div class="contact-image">
-            <img src="../../../assets/images/微信名片.JPG" alt="微信名片" />
-          </div>`,
-  },
-];
-
-/**
- * 退出登录
- */
-const handleLogout = () => {
-  ElMessageBox.confirm("确定要退出登录吗？", "提示", {
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-    type: "warning",
-  }).then(() => {
-    userStore.logout();
-    isLogin.value = false;
-  });
-};
-
-/**
- * 账户管理
- */
-const handleAccount = () => {
-  router.push({
-    name: "profile",
-  });
-};
-
-/**
- * 布局管理
- */
-const handleLayout = () => {};
-</script>
-
 <template>
   <div class="header">
-    <a-menu
-      mode="horizontal"
-      :default-selected-keys="['开始配音']"
-      class="menu-container"
-    >
-      <a-menu-item
-        key="0"
-        :style="{ padding: 0, marginRight: '38px', cursor: 'pointer' }"
-        disabled
-      >
+    <a-menu mode="horizontal" :default-selected-keys="['开始配音']" class="menu-container">
+      <a-menu-item key="0" :style="{ padding: 0, marginRight: '38px', cursor: 'pointer' }" disabled>
         <Logo></Logo>
       </a-menu-item>
       <a-menu-item v-for="menu in menus" :key="menu.name">
@@ -113,7 +21,7 @@ const handleLayout = () => {};
           <router-link :to="menu.path">{{ menu.name }}</router-link>
         </li>
       </ul>
-    </div> --> 
+    </div> -->
     <a-dropdown v-if="isLogin" trigger="hover">
       <div class="login-in d-flex flex-row me-2">
         <img
@@ -248,3 +156,61 @@ const handleLayout = () => {};
   }
 }
 </style>
+
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { Logo } from './index'
+import { useUserStore } from '@/stores'
+import { ElMessageBox } from 'element-plus'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+import { userGetInfoApi } from '@/api/login'
+
+const router = useRouter()
+const userStore = useUserStore()
+const { isLogin } = storeToRefs(userStore)
+const userInfo = ref(null)
+const menus = [
+  {
+    path: '/dubbing',
+    name: '开始配音',
+  },
+  {
+    path: '/member',
+    name: '购买会员',
+  },
+  {
+    path: '/contact',
+    name: '联系我们',
+  },
+]
+
+onMounted(() => {
+  userGetInfoApi().then((res: any) => {
+    userInfo.value = res.data
+    console.log(userInfo)
+  })
+})
+
+// 退出登录
+function handleLogout() {
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    userStore.logout()
+    isLogin.value = false
+  })
+}
+
+// 账户管理
+function handleAccount() {
+  router.push({
+    name: 'profile',
+  })
+}
+
+//布局管理
+const handleLayout = () => {}
+</script>

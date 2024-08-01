@@ -16,7 +16,7 @@
 
 .scrollbar-custom {
   scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #ff6347 #ffffff; /* Firefox */
+  scrollbar-color: #ff6347 #e4e8eb; /* Firefox */
 }
 
 .scrollbar-custom::-webkit-scrollbar {
@@ -24,13 +24,13 @@
 }
 
 .scrollbar-custom::-webkit-scrollbar-track {
-  background: #ffffff; /* 滚动条轨道的颜色 */
+  background: #e4e8eb; /* 滚动条轨道的颜色 */
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb {
   background-color: #ff6347; /* 滚动条的颜色 */
   border-radius: 10px; /* 滚动条圆角 */
-  border: 3px solid #ffffff; /* 滚动条的边框 */
+  border: 3px solid #e4e8eb; /* 滚动条的边框 */
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb:hover {

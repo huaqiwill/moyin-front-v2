@@ -22,23 +22,20 @@
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import { onMounted, shallowRef, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { SpeakerAvatar } from '.'
 import { emitter } from '@/event-bus'
 import { useSpeakerStore, useTryPlayStore } from '@/stores'
 
 const speakerStore = useSpeakerStore()
 const tryPlayStore = useTryPlayStore()
-const speakerList = shallowRef<any>([])
+const speakerList = ref<any>()
 const selectSpeakerId = ref()
 
 let isFirstSelect = true
 
-onMounted(async () => {
-  await speakerStore.getSpeakerList()
-
+onMounted(() => {
   emitter.on('speaker:loading:ok', () => {
-    speakerList.value = speakerStore.getSpeakerListLocal()
     if (speakerList.value.length > 0 && isFirstSelect) {
       handleClick(speakerList.value[0])
       isFirstSelect = false

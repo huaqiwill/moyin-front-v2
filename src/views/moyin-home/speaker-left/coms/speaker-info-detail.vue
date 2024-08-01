@@ -307,6 +307,12 @@ async function handleEditAliasOk() {
     message: '编辑成功',
     type: 'success',
   })
+
+  let speakerList = await speakerStore.getSpeakerList()
+  console.log(speakerList)
+  speakerStore.setSpeakerList(speakerList)
+
+  
 }
 
 function handleEmotionClick(emotionId: number) {

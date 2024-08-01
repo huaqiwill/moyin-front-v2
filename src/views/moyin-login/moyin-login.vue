@@ -1,61 +1,53 @@
 <script setup>
-import {
-  ref,
-  reactive,
-  watch,
-  computed,
-  defineProps,
-  onMounted,
-  onBeforeUpdate,
-} from "vue";
-import { ElMessage } from "element-plus";
-import { User, Lock, Key } from "@element-plus/icons-vue";
-import { useRoute, useRouter } from "vue-router";
-import { login, getCodeImg } from "@/api/login";
-import { getUserProtocol } from "@/api";
-import { useUserStore } from "@/stores/index";
-import { setToken } from "@/utils/auth";
-import { storeToRefs } from "pinia";
-import { defaultBackgroundImage } from "@/config";
+import { ref, reactive, watch, computed, defineProps, onMounted, onBeforeUpdate } from 'vue'
+import { ElMessage } from 'element-plus'
+import { User, Lock, Key } from '@element-plus/icons-vue'
+import { useRoute, useRouter } from 'vue-router'
+import { login, getCodeImg } from '@/api/login'
+import { getUserProtocol } from '@/api'
+import { useUserStore } from '@/stores/index'
+import { setToken } from '@/utils/auth'
+import { storeToRefs } from 'pinia'
+import { defaultBackgroundImage } from '@/config'
 
-const userStore = useUserStore();
-const { token, isLogin } = storeToRefs(userStore);
+const userStore = useUserStore()
+const { token, isLogin } = storeToRefs(userStore)
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const imgSrc = ref("");
+const imgSrc = ref('')
 
 const loginForm = reactive({
-  username: "",
-  password: "",
-  code: "",
-  uuid: "",
-});
+  username: '',
+  password: '',
+  code: '',
+  uuid: '',
+})
 
 const formRules = {
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
-  code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
-};
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+}
 
 onMounted(() => {
-  handleGetCaptcha();
-});
+  handleGetCaptcha()
+})
 
 onBeforeUpdate(() => {
-  handleGetCaptcha();
-});
+  handleGetCaptcha()
+})
 
-// 登录 
+// 登录
 async function handleLogin() {
-  loading.value = true;
+  loading.value = true
   try {
-    await userStore.login(loginForm);
+    await userStore.login(loginForm)
   } catch {
-    handleGetCaptcha();
+    handleGetCaptcha()
   }
-  loading.value = false;
+  loading.value = false
   // login(loginForm).then((res) => {
   //   setToken(res.token);
   //   router.push({ path: "/" }).catch(() => {});
@@ -65,34 +57,34 @@ async function handleLogin() {
 // 注册
 function handleRegister() {
   router.push({
-    name: "register",
-  });
+    name: 'register',
+  })
 }
 
 // 用户协议
 function handleUserProtocol() {
   getUserProtocol().then((res) => {
-    ElMessage(res.data);
-  });
+    ElMessage(res.data)
+  })
 }
 
 // 获取验证码
 function handleGetCaptcha() {
   getCodeImg().then((res) => {
-    imgSrc.value = "data:image/gif;base64," + res.img;
-    loginForm.uuid = res.uuid;
-  });
+    imgSrc.value = 'data:image/gif;base64,' + res.img
+    loginForm.uuid = res.uuid
+  })
 }
 
-const loading = ref(false);
+const loading = ref(false)
 
 const bgStyle = {
-  backgroundImage: "url(/images/bg.jpg)",
-  backgroundSize: "cover",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center",
-  backgroundAttachment: "fixed",
-};
+  backgroundImage: 'url(/images/bg.jpg)',
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+  backgroundAttachment: 'fixed',
+}
 </script>
 
 <template>
@@ -101,11 +93,7 @@ const bgStyle = {
       <h2 class="title">用户登录</h2>
       <el-form label-width="auto" :model="loginForm" :rules="formRules">
         <el-form-item size="large">
-          <el-input
-            :prefix-icon="User"
-            v-model="loginForm.username"
-            placeholder="请输入用户名"
-          />
+          <el-input :prefix-icon="User" v-model="loginForm.username" placeholder="请输入用户名" />
         </el-form-item>
         <el-form-item size="large">
           <el-input
@@ -117,11 +105,7 @@ const bgStyle = {
         </el-form-item>
         <el-form-item size="large">
           <div class="login-code">
-            <el-input
-              :prefix-icon="Key"
-              v-model="loginForm.code"
-              placeholder="请输入验证码"
-            >
+            <el-input :prefix-icon="Key" v-model="loginForm.code" placeholder="请输入验证码">
             </el-input>
             <div class="login-code-image" @click="handleGetCaptcha">
               <img :src="imgSrc" />

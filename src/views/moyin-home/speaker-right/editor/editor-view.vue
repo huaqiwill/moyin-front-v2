@@ -27,7 +27,7 @@
             <!-- <a-doption @click="handleAccount">我的账户</a-doption> -->
             <!-- <a-doption>绑定手机号 15576364885</a-doption> -->
             <!-- <a-doption @click="handleLayout">布局管理</a-doption> -->
-            <a-doption @click="handleLogout" style="padding: 0 28px">退出登录</a-doption>
+            <a-doption @click="handleLogout" style="padding: 0 66px">退出登录</a-doption>
           </template>
         </a-dropdown>
         <div class="d-flex align-items-center me-2" v-else>

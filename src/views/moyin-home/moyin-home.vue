@@ -5,10 +5,10 @@
   </div>
 </template>
 
+<style scoped lang="scss"></style>
+
 <script setup lang="ts">
-import { Speaker } from '@/components'
+import { Speaker } from './speaker-left'
 import { EditorView } from '@/views'
 import config from '@/config/mock'
 </script>
-
-<style scoped lang="scss"></style>
