@@ -1,1 +1,1 @@
-export { default as DubbingFooter } from './dubbing-footer.vue'
+export { default as DubbingFooter } from './speaker-footer.vue'

@@ -10,12 +10,12 @@
 import { ToolBar } from "./tool-bar";
 import { Editor } from "./index";
 
-// import { EditorView } from "@mekumiao/ssml-editor";
+// import { EditorView } from "@mekumiao/ssml-speaker-editor";
 // import { EditorView } from "@/ssmlEditor";
 </script>
 
 <style lang="scss" scoped>
-// .dubbing-editor {
+// .dubbing-speaker-editor {
 //   width: 100%;
 //   overflow: hidden;
 //   border-left: 1px solid #fff;

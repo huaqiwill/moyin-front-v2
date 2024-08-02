@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EditorView } from "@/views";
+import { EditorView } from "src/views/moyin-home/speaker-editor";
 import config from "./config";
 import type { IDomEditor } from "@wangeditor/editor";
 

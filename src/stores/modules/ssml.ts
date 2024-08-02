@@ -2,7 +2,7 @@ import { type MsttsBackgroundaudio, type MsttsExpressAs, type Prosody, type Voic
 import { defineStore } from 'pinia'
 import { shallowReactive } from 'vue'
 
-export const useSSMLStore = defineStore('--editor-ssml', () => {
+export const useSSMLStore = defineStore('--speaker-editor-ssml', () => {
   const rootVoice = shallowReactive<Voice>({
     type: 'ssml-voice',
     name: '',

@@ -54,7 +54,7 @@ export default <T extends IDomEditor>(editor: T) => {
       const copydata = new DataTransfer()
       const text = data.getData('text/plain').trim()
       // 判断是否为本编辑器生成的html
-      if (text.startsWith('<paragraph data-ow-remark="mekumiao/ssml-editor">')) {
+      if (text.startsWith('<paragraph data-ow-remark="mekumiao/ssml-speaker-editor">')) {
         copydata.setData('text/html', text)
       } else {
         copydata.setData('text/plain', text)
@@ -69,10 +69,10 @@ export default <T extends IDomEditor>(editor: T) => {
    */
   newEditor.setFragmentData = (data) => {
     setFragmentData(data)
-    // const { selection } = editor
+    // const { selection } = speaker-editor
     // if (selection) {
-    //   const plain = SlateEditor.string(editor, selection)
-    //   data.setData('text/plain', editor.getText())
+    //   const plain = SlateEditor.string(speaker-editor, selection)
+    //   data.setData('text/plain', speaker-editor.getText())
     // } else {
     //   setFragmentData(data)
     // }

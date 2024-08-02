@@ -10,6 +10,8 @@ export const useUserStore = defineStore('user', () => {
   const userInfo = ref<any>(null)
 
   return {
+    userInfo,
+
     isLogin() {
       return isLogin
     },
@@ -17,7 +19,7 @@ export const useUserStore = defineStore('user', () => {
       return token
     },
     getUserInfo() {
-      return userInfo
+      return userInfo.value
     },
     async login(loginForm: object) {
       return await userLogin(loginForm).then((res: any) => {

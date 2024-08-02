@@ -186,7 +186,7 @@ function defaultSpeakNode(): Speak {
 
 /**
  * 将自定义多人配音节点处理为可序列化的voice节点
- * @param editor editor 对象
+ * @param editor speaker-editor 对象
  * @param customNode 自定义多人配音节点
  * @returns
  */
@@ -414,7 +414,7 @@ function wrapVoiceNode(editor: IDomEditor) {
 
 export default function serializeToSSML() {
   const { editor } = useEditorStore()
-  if (!editor) throw Error('没有找到 editor 对象')
+  if (!editor) throw Error('没有找到 speaker-editor 对象')
   const { rootBackgroundaudio } = useSSMLStore()
   const speak = defaultSpeakNode()
   const backgroundaudio = { ...rootBackgroundaudio } as MsttsBackgroundaudio

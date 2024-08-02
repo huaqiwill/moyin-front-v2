@@ -175,16 +175,16 @@
 </style>
 
 <script setup lang="ts">
-import { ElSlider, ElIcon, ElMessage, ElMessageBox } from 'element-plus'
-import { PlayButton, StyleAvatar } from '.'
-import { ref, computed, watch, onMounted } from 'vue'
-import { formatTime } from '@/utils'
-import { Star, StarFilled } from '@element-plus/icons-vue'
-import { emitter } from '@/event-bus'
-import type { Arrayable } from 'element-plus/lib/utils/typescript'
-import { useSpeakerStore, useTryPlayStore } from '@/stores'
-import { defaultPitch, defaultFormatter, defaultSpeed } from './data'
-import { getSpeakerInfoApi } from '@/api/tts'
+import {ElSlider, ElIcon, ElMessage, ElMessageBox} from 'element-plus'
+import {PlayButton, StyleAvatar} from '.'
+import {ref, computed, watch, onMounted} from 'vue'
+import {formatTime} from '@/utils'
+import {Star, StarFilled} from '@element-plus/icons-vue'
+import {emitter} from '@/event-bus'
+import type {Arrayable} from 'element-plus/lib/utils/typescript'
+import {useSpeakerStore, useTryPlayStore} from '@/stores'
+import {defaultPitch, defaultFormatter, defaultSpeed} from './data'
+import {getSpeakerInfoApi} from '@/api/tts'
 
 const speakerStore = useSpeakerStore()
 const tryPlayStore = useTryPlayStore()
@@ -231,7 +231,7 @@ onMounted(() => {
       speakerInfo.value = res.data
     })
 
-    const { emotionIdSet, domainIdSet } = speakerInfo.value
+    const {emotionIdSet, domainIdSet} = speakerInfo.value
 
     // 情绪
     let emotionList = speakerStore.getEmotionNameListLocal()
@@ -245,7 +245,8 @@ onMounted(() => {
     defaultStyleAvatar.value.imageUrl = speaker.headerImage
 
     // speaker emotion
-    let speakerEmotionList = await speakerStore.getSpeakerEmotionList(speaker.id)
+    // let speakerEmotionList = await speakerStore.getSpeakerEmotionList(speaker.id)
+    let speakerEmotionList = speakerInfo.value.emotionDataList || []
     let speakerEmotion = speakerEmotionList.find((em: any) => em.emotionId == 0)
     if (speakerEmotion) {
       isSupper48K.value = speakerEmotion.styleCallName.includes('48k')
@@ -253,14 +254,16 @@ onMounted(() => {
     handleEmotionClick(0)
 
     // star
-    const collectList = speakerStore.getCollectListLocal()
-    let collect: any = collectList.find((collect: any) => collect.speakerId == speaker.id)
-    if (collect) {
-      isStar.value = true
-      speakerNotes.value = collect.speakerNotes
-    } else {
-      isStar.value = false
-    }
+    // const collectList = speakerStore.getCollectListLocal()
+    // let collect: any = collectList.find((collect: any) => collect.speakerId == speaker.id)
+    // if (collect) {
+    //   isStar.value = true
+    //   speakerNotes.value = collect.speakerNotes
+    // } else {
+    //   isStar.value = false
+    // }
+
+    isStar.value = speakerInfo.value.isStar
   })
 })
 
@@ -269,6 +272,7 @@ watch(currentTime, (newValue) => {
 })
 
 const dialogVisible = ref(false)
+
 async function handleStar() {
   if (isStar.value) {
     ElMessageBox({
@@ -308,20 +312,25 @@ async function handleEditAliasOk() {
     type: 'success',
   })
 
-  let speakerList = await speakerStore.getSpeakerList()
-  console.log(speakerList)
-  speakerStore.setSpeakerList(speakerList)
+  let speakerList = speakerStore.getSpeakerListLocal()
+  let speaker = speakerList.filter((speaker: any) => speaker.id == speakerInfo.value.id)
+  speaker.alias = speakerNotes.value
 
-  
+  emitter.emit('speaker:update:alias', speakerNotes.value)
+
+  await speakerStore.getRecentList()
+  await speakerStore.getCollectList()
 }
 
 function handleEmotionClick(emotionId: number) {
   selectedEmotion.value = emotionId
   // 注意此处不能使用全等
-  let speakerEmotionList = speakerStore.getSpeakerEmotionListLocal()
+  // let speakerEmotionList = speakerStore.getSpeakerEmotionListLocal()
+  let speakerEmotionList = speakerInfo.value.emotionDataList || []
   let emotion: any = speakerEmotionList.find((emotion: any) => emotion.emotionId == emotionId)
   if (emotion) {
-    speakerStore.updateSubmitParam('speaker', emotion.styleCallName)
+    console.log(emotion)
+    speakerStore.submitParams.speaker = emotion.styleCallName
   }
 }
 

@@ -11,7 +11,7 @@
       >
         <SpeakerAvatar
           :data="item"
-          :activate="item.id === selectSpeakerId"
+          :activate="item.id === selectedSpeakerId"
           @click="handleClick(item)"
         ></SpeakerAvatar>
       </div>
@@ -30,7 +30,8 @@ import {useSpeakerStore, useTryPlayStore} from '@/stores'
 const speakerStore = useSpeakerStore()
 const tryPlayStore = useTryPlayStore()
 const speakerList = ref<any>()
-const selectSpeakerId = ref()
+const selectedSpeakerId = ref()
+const selectedSpeaker = ref<any>()
 
 let isFirstSelect = true
 
@@ -42,10 +43,19 @@ onMounted(() => {
       isFirstSelect = false
     }
   })
+
+  emitter.on('speaker:update:alias', (alias: string) => {
+    selectedSpeaker.value.alias = alias
+    let speaker = speakerList.value.filter((speaker: any) => speaker.id == selectedSpeakerId.value)
+    if (speaker) {
+      speaker.alias = alias
+    }
+  })
 })
 
 function handleClick(speaker: any) {
-  selectSpeakerId.value = speaker.id
+  selectedSpeakerId.value = speaker.id
+  selectedSpeaker.value = speaker
   emitter.emit('speaker:select', speaker)
   tryPlayStore.setSpeakerForce(speaker)
   console.log('选择了speaker', speaker)

@@ -97,10 +97,10 @@ export async function deleteRecentUsage(id?: string): Promise<void> {
 
 export async function saveHtml(getter: () => string) {
   await sleep(200)
-  window.localStorage.setItem('editor-html', getter())
+  window.localStorage.setItem('speaker-editor-html', getter())
   return true
 }
 
 export async function readHtml() {
-  return window.localStorage.getItem('editor-html') || html
+  return window.localStorage.getItem('speaker-editor-html') || html
 }

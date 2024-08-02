@@ -131,7 +131,7 @@ const handleClicked = () => {
   const quill = quillEditorRef.value.getQuill(); // 获取 Quill 实例
   const range = quill.getSelection(); // 获取当前光标位置
   if (range) {
-    const editorElement = quillEditorRef.value.editor.querySelector(".ql-editor");
+    const editorElement = quillEditorRef.value.editor.querySelector(".ql-speaker-editor");
     const rect = editorElement.getBoundingClientRect();
     const bounds = quill.getBounds(range.index, range.length); // 获取光标位置的边界信息
     const x = rect.x + bounds.right;

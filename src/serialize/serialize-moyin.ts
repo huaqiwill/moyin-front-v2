@@ -346,7 +346,7 @@ function converToSpeakDataList(editor: IDomEditor): SpeakData[] {
  */
 export function serializeToSpeakDataList() {
   const { editor } = useEditorStore()
-  if (!editor) throw Error('没有找到 editor 对象')
+  if (!editor) throw Error('没有找到 speaker-editor 对象')
   const speaks = converToSpeakDataList(editor)
   return speaks
 }

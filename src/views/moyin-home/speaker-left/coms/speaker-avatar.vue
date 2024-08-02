@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // 单个头像 v2
-import { defaultAvatar } from '@/config'
+import {defaultAvatar} from '@/config'
+import {ref, watch} from "vue";
 
 defineEmits<{ click: [value: string] }>()
 
@@ -12,7 +13,13 @@ const props = defineProps({
   data: Object,
 })
 
-const speaker: any = props.data
+const speaker = ref<any>(null)
+speaker.value = props.data
+
+watch(() => props.data, (newVal) => {
+  console.log("发生了变化：", newVal)
+  speaker.value = newVal
+})
 </script>
 
 <template>
@@ -48,6 +55,7 @@ const speaker: any = props.data
     -webkit-user-drag: none; /* Safari */
     user-select: none; /* Standard syntax */
   }
+
   .anchor-avatar-name {
     font-size: 12px;
   }

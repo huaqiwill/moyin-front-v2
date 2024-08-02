@@ -6,7 +6,7 @@ import throttle from 'lodash.throttle'
 
 type SaveState = 'unsave' | 'saving' | 'saved'
 
-export const useEditorStore = defineStore('--editor-config', () => {
+export const useEditorStore = defineStore('--speaker-editor-config', () => {
   const _editor = shallowRef<IDomEditor>()
   const _saveState = ref<SaveState>('saved')
 

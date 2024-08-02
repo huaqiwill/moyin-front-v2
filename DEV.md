@@ -21,8 +21,8 @@ yalc push
 2.在自己的项目中
 
 ```sh
-# 将原有 @mekumiao/ssml-editor 依赖换为本地依赖
-yalc add @mekumiao/ssml-editor
+# 将原有 @mekumiao/ssml-speaker-editor 依赖换为本地依赖
+yalc add @mekumiao/ssml-speaker-editor
 # 更新包
 yarn
 ```

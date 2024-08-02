@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 import {
   getEmotionNameListApi,
   getLanguageNameListApi,
@@ -14,8 +14,8 @@ import {
   speakerCollectRemoveApi,
   speakerAliasEditApi,
 } from '@/api/speaker'
-import { emitter } from '@/event-bus'
-import { reactive, ref } from 'vue'
+import {emitter} from '@/event-bus'
+import {reactive, ref} from 'vue'
 
 export const useSpeakerStore = defineStore('speaker', () => {
   let collectList: any[] = []
@@ -42,7 +42,7 @@ export const useSpeakerStore = defineStore('speaker', () => {
     name: '',
   }
 
-  const submitParams = reactive<any>({
+  const submitParams = reactive({
     text: '',
     rawText: '',
     speaker: '',
@@ -60,6 +60,7 @@ export const useSpeakerStore = defineStore('speaker', () => {
 
   return {
     queryParams,
+    submitParams,
     speakerList,
 
     getSpeakerCount() {

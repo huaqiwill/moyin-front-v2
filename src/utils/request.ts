@@ -153,10 +153,13 @@ request.interceptors.response.use(
 
     // 错误验证
     if (code == 401) {
-      ElMessage({
-        message: msg,
-        type: 'error',
-      })
+      if (!msg.includes('认证失败，无法访问系统资源')) {
+        ElMessage({
+          message: msg,
+          type: 'error',
+        })
+      }
+
       if (!isRelogin.show) {
         isRelogin.show = true
         ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {

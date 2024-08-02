@@ -11,7 +11,7 @@ import { getConfig } from '@/config'
 import { tts } from '@/api/tts'
 import { useSpeakerStore } from './speaker'
 
-export const useTryPlayStore = defineStore('--editor-try-play', () => {
+export const useTryPlayStore = defineStore('--speaker-editor-try-play', () => {
   const ssmlStore = useSSMLStore()
   const speakerStore = useSpeakerStore()
   const _audioPlayer = shallowRef(new AudioPlayer())
