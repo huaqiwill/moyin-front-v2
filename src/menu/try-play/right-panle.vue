@@ -76,8 +76,8 @@ emitter.on('speaker:select', (speaker: any) => {
   const { emotionList, domainList } = dubbingStore
   emotions.value = emotionList.filter((emotion: any) => emotionIdSet.includes(emotion.id))
   domains.value = domainList.filter((domain: any) => domainIdSet.includes(domain.id))
-  // console.log("情绪",emotionIdSet,emotionList,emotions.value);
-  // console.log("领域",domainIdSet,domainList,domains.value);
+// console.log("情绪",emotionIdSet,emotionList,emotions.value);
+// console.log("领域",domainIdSet,domainList,domains.value);
   defaultStyleAvatar.value.imageUrl = speaker.headerImage
 
   getSpeakerEmotionList(speaker.id).then((res: any) => {
@@ -150,7 +150,7 @@ function handleStyleClick(value: number) {
 
   // 注意此处不能使用全等
   let filters: any = speakerEmotionList.value.filter((emotion: any) => emotion.emotionId == value)
-  // console.log(speakerEmotionList.value, value,filters);
+// console.log(speakerEmotionList.value, value,filters);
   if (filters.length > 0) {
     let styleCallName = filters[0].styleCallName
     submitTtsData.value.speaker = styleCallName

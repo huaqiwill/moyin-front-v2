@@ -54,10 +54,10 @@ onUnmounted(() => {
 })
 
 function handleClick(value: string) {
-  console.log(value)
+// console.log(value)
   getSpeakerInfoApi(value).then((res: any) => {
     let speaker = res.data
-    // console.log(speaker);
+// console.log(speaker);
     tryPlayStore.setSpeaker(editorKey, speaker)
     emitter.emit('speaker:select', speaker)
     // speaker && tryPlayStore.setSpeaker(editorKey, speaker);
@@ -73,11 +73,11 @@ function handleUpdateStarTheCache(speakerId: string, isStar: boolean) {
 
 async function handleFetchData() {
   // try {
-  //   console.log("属性1：", props.filter);
+// console.log("属性1：", props.filter);
 
   //   speaderCache.value = await fetchData({ ...toRaw(props.filter) });
 
-  //   console.log("属性2：", speaderCache.value);
+// console.log("属性2：", speaderCache.value);
 
   //   // getSpeakerList().then(res=>{
 
@@ -88,8 +88,8 @@ async function handleFetchData() {
 
   getSpeakerListApi({}).then((res: any) => {
     // speakerList.value = res.rows;
-    // console.log("获取配音员列表：", res.rows);
-    console.log(res.rows)
+// console.log("获取配音员列表：", res.rows);
+// console.log(res.rows)
     speakerAvatarList.value = res.rows.map((v: any) => ({
       label: v.name,
       value: v.id,

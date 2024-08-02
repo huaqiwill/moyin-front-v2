@@ -28,7 +28,7 @@ const queryParams = reactive({
 const getTtsRecordList = () => {
   loading.value = true;
   ttsRecordListApi(queryParams).then((res) => {
-    console.log(res);
+// console.log(res);
     pageTotal.value = res.total;
     tableData.value = res.rows;
     loading.value = false;

@@ -97,7 +97,7 @@ function filterSpeaker() {
   }
 
   emitter.emit("speaker:loading:ok");
-  console.log("筛选后的数据", speakerListAll.value);
+// console.log("筛选后的数据", speakerListAll.value);
 }
 
 function handleLanguageClick(value: string) {

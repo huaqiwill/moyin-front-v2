@@ -50,7 +50,7 @@
 </style>
 
 <script setup lang="ts">
-import { DubbingFooter } from '@/components'
+import { DubbingFooter } from './speaker-footer'
 import EditorCore from './editor-core.vue'
 import EditorBar from './editor-bar.vue'
 import { type IDomEditor } from '@wangeditor/editor'

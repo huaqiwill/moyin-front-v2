@@ -3,7 +3,7 @@ import { onMounted } from 'vue'
 import { ElMessageBox } from 'element-plus'
 
 onMounted(() => {
-  console.log(props)
+// console.log(props)
 })
 
 const props = defineProps({

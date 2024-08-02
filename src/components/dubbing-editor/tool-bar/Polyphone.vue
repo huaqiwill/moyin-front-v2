@@ -38,7 +38,7 @@ const onClicked = () => {
   if (range) {
     const bounds = quill.getBounds(range.index, range.length);
     const text = quill.getText(range.index, range.length);
-    console.log(bounds, text);
+// console.log(bounds, text);
     if (text === "" || text.length !== 1) {
       ElMessage({
         message: "请划选文字",

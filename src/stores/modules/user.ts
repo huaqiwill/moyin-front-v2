@@ -29,7 +29,7 @@ export const useUserStore = defineStore('user', () => {
         token = res.token
         userGetInfoApi().then((res: any) => {
           userInfo.value = res.user
-          console.log(userInfo.value)
+// console.log(userInfo.value)
         })
       })
     },

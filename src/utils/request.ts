@@ -129,7 +129,7 @@ request.interceptors.request.use(
     return config
   },
   (error) => {
-    console.log(error)
+// console.log(error)
     Promise.reject(error)
   },
 )
@@ -195,7 +195,7 @@ request.interceptors.response.use(
     return Promise.reject(msg)
   },
   (error) => {
-    console.log('出现了错误：' + error)
+// console.log('出现了错误：' + error)
     let { message } = error
     if (message == 'Network Error') {
       message = '后端接口连接异常'

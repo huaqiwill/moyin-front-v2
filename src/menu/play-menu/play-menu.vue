@@ -52,10 +52,10 @@ const handleClick = throttle(async () => {
 
   speakerRecentAddApi(tryPlayStore.speaker)
     .then(() => {
-      console.log('加入最近成功')
+// console.log('加入最近成功')
     })
     .catch((err) => {
-      console.log('已加入', err)
+// console.log('已加入', err)
     })
 
   play()

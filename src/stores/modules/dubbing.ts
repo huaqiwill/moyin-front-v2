@@ -132,7 +132,7 @@ export const useDubbingStore = defineStore('dubbing', {
     getStarList() {
       speakerCollectListApi().then((res: any) => {
         this.userCollectList = res.rows
-        console.log('获取的收藏列表：', this.userCollectList)
+// console.log('获取的收藏列表：', this.userCollectList)
       })
     },
     setGlobaleEditorKey(globalEditorKey: any) {
@@ -196,7 +196,7 @@ export const useDubbingStore = defineStore('dubbing', {
     async getSpeakerEmotionList() {
       return await getSpeakerEmotionListApi().then((res: any) => {
         this.speakerEmotionList = res.rows
-        console.log(this.speakerEmotionList)
+// console.log(this.speakerEmotionList)
       })
     },
     /**

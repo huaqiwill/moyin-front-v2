@@ -89,7 +89,7 @@ onMounted(() => {
 
   searchSpeakers().then((res) => {
     searchSpeakerList.value = res.data.results
-    console.log(searchSpeakerList.value)
+// console.log(searchSpeakerList.value)
   })
 })
 

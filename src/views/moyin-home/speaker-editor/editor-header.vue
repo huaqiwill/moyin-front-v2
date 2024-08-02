@@ -84,7 +84,7 @@ function handleExport() {
  * @param isFormat 是否格式化ssml(多余的空格和换行可能会导致意外的停顿)
  */
 async function handleCopy(isFormat: boolean) {
-  console.log(ssml.value);
+// console.log(ssml.value);
 
   await navigator.clipboard.writeText(isFormat ? ssmlFormat.value : ssml.value);
   dialogVisible.value = false;

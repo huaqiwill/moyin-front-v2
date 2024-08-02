@@ -175,16 +175,16 @@
 </style>
 
 <script setup lang="ts">
-import {ElSlider, ElIcon, ElMessage, ElMessageBox} from 'element-plus'
-import {PlayButton, StyleAvatar} from '.'
-import {ref, computed, watch, onMounted} from 'vue'
-import {formatTime} from '@/utils'
-import {Star, StarFilled} from '@element-plus/icons-vue'
-import {emitter} from '@/event-bus'
-import type {Arrayable} from 'element-plus/lib/utils/typescript'
-import {useSpeakerStore, useTryPlayStore} from '@/stores'
-import {defaultPitch, defaultFormatter, defaultSpeed} from './data'
-import {getSpeakerInfoApi} from '@/api/tts'
+import { ElSlider, ElIcon, ElMessage, ElMessageBox } from 'element-plus'
+import { PlayButton, StyleAvatar } from '.'
+import { ref, computed, watch, onMounted } from 'vue'
+import { formatTime } from '@/utils'
+import { Star, StarFilled } from '@element-plus/icons-vue'
+import { emitter } from '@/event-bus'
+import type { Arrayable } from 'element-plus/lib/utils/typescript'
+import { useSpeakerStore, useTryPlayStore } from '@/stores'
+import { defaultPitch, defaultFormatter, defaultSpeed } from './data'
+import { getSpeakerInfoApi } from '@/api/tts'
 
 const speakerStore = useSpeakerStore()
 const tryPlayStore = useTryPlayStore()
@@ -229,9 +229,10 @@ onMounted(() => {
   emitter.on('speaker:select', async (speaker: any) => {
     await getSpeakerInfoApi(speaker.id).then((res) => {
       speakerInfo.value = res.data
+// console.log('配音员详情', speakerInfo.value)
     })
 
-    const {emotionIdSet, domainIdSet} = speakerInfo.value
+    const { emotionIdSet, domainIdSet } = speakerInfo.value
 
     // 情绪
     let emotionList = speakerStore.getEmotionNameListLocal()
@@ -329,8 +330,11 @@ function handleEmotionClick(emotionId: number) {
   let speakerEmotionList = speakerInfo.value.emotionDataList || []
   let emotion: any = speakerEmotionList.find((emotion: any) => emotion.emotionId == emotionId)
   if (emotion) {
-    console.log(emotion)
+// console.log(emotion)
     speakerStore.submitParams.speaker = emotion.styleCallName
+
+    // 将emotion具体数据传给try play
+    emitter.emit('try:play:emotion', emotion)
   }
 }
 

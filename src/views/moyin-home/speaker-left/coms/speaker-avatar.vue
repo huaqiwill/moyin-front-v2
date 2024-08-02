@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // 单个头像 v2
-import {defaultAvatar} from '@/config'
-import {ref, watch} from "vue";
+import { defaultAvatar } from '@/config'
+import { ref, watch } from 'vue'
 
 defineEmits<{ click: [value: string] }>()
 
@@ -16,10 +16,12 @@ const props = defineProps({
 const speaker = ref<any>(null)
 speaker.value = props.data
 
-watch(() => props.data, (newVal) => {
-  console.log("发生了变化：", newVal)
-  speaker.value = newVal
-})
+watch(
+  () => props.data,
+  (newVal) => {
+    speaker.value = newVal
+  },
+)
 </script>
 
 <template>

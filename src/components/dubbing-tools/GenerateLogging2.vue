@@ -14,7 +14,7 @@
         <el-table-column prop="text" label="生成内容" />
         <el-table-column fixed="right" label="操作" width="160" align="center">
           <template #default="scope">
-            <el-button type="success" @click="onRecory(scope.row)">恢复</el-button>
+            <!-- <el-button type="success" @click="onRecory(scope.row)">恢复</el-button> -->
             <el-button type="danger" @click="onDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -59,7 +59,7 @@ function onGeneraterLogging(params) {
 function getTtsRecordList() {
   loading.value = true
   ttsRecordListApi(queryParams).then((res) => {
-    console.log(res)
+// console.log(res)
     pageTotal.value = res.total
     ttsRecordList.value = res.rows
     loading.value = false

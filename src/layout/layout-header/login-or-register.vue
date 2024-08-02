@@ -91,7 +91,7 @@ const register = () => {
 // TabBar
 const userLoginActiveName = ref('login')
 const handleUserLoginTabClick = (tab, event) => {
-  console.log(tab, event)
+// console.log(tab, event)
 }
 
 const loginSelected = computed(() => {

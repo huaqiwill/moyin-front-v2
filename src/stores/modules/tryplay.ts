@@ -53,6 +53,37 @@ export const useTryPlayStore = defineStore('--speaker-editor-try-play', () => {
     emitter.emit('tryplay-speaker-update-star', _speaker.value.id, resIsStar)
   }
 
+  function pausePlay() {
+    audioPlayer.value.pause()
+  }
+
+  async function playSimple(url: any) {
+    if (isLoading.value) {
+      _isLoading.value = false
+      audioPlayer.value.cancel()
+      return
+    }
+    if (audioPlayer.value.playState.value === 'playing') {
+      audioPlayer.value.pause()
+      return
+    }
+    try {
+      _isLoading.value = true
+
+      await audioPlayer.value.load(url)
+      await sleep(200)
+      if (isLoading.value) {
+        _isLoading.value = false
+        audioPlayer.value.play()
+      }
+    } catch (error) {
+      emitter.emit('error', error)
+    } finally {
+      emitter.emit('remain:count')
+      _isLoading.value = false
+    }
+  }
+
   // 播放
   async function play() {
     if (isLoading.value) {
@@ -67,13 +98,13 @@ export const useTryPlayStore = defineStore('--speaker-editor-try-play', () => {
     try {
       _isLoading.value = true
       const submitParams = speakerStore.getSubmitParams()
-      console.log('播放参数', submitParams)
+// console.log('播放参数', submitParams)
 
       const audio = await tts(submitParams)
       // const audio = await fetchAudio(serializeToSSML)
       speakerStore.setLastPlayUrl(audio.data)
       const src = speakerStore.getLastPlayUrl()
-      console.log('当前的音频地址：' + src)
+// console.log('当前的音频地址：' + src)
 
       await audioPlayer.value.load(src)
       await sleep(200)
@@ -89,5 +120,15 @@ export const useTryPlayStore = defineStore('--speaker-editor-try-play', () => {
     }
   }
 
-  return { speaker, setSpeaker, setSpeakerForce, star, audioPlayer, isLoading, play }
+  return {
+    speaker,
+    setSpeaker,
+    setSpeakerForce,
+    pausePlay,
+    star,
+    playSimple,
+    audioPlayer,
+    isLoading,
+    play,
+  }
 })

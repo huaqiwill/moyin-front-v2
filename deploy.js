@@ -22,7 +22,7 @@ zip.writeZip('dist.zip')
 const conn = new Client()
 conn
   .on('ready', () => {
-    console.log('Client :: ready')
+// console.log('Client :: ready')
 
     // 上传dist.zip到服务器
     const sftp = conn.sftp()
@@ -30,7 +30,7 @@ conn
       if (err) {
         throw err
       }
-      console.log('File uploaded!')
+// console.log('File uploaded!')
 
       // 执行解压命令
       conn.exec(
@@ -39,11 +39,11 @@ conn
           if (err) throw err
           stream
             .on('close', (code, signal) => {
-              console.log(`Stream :: close :: code: ${code}, signal: ${signal}`)
+// console.log(`Stream :: close :: code: ${code}, signal: ${signal}`)
               conn.end()
             })
             .on('data', (data) => {
-              console.log(`STDOUT: ${data}`)
+// console.log(`STDOUT: ${data}`)
             })
             .stderr.on('data', (data) => {
               console.error(`STDERR: ${data}`)
@@ -64,7 +64,7 @@ conn.on('error', (err) => {
 })
 
 conn.on('end', () => {
-  console.log('SSH Connection :: end')
+// console.log('SSH Connection :: end')
   // 清理本地文件
   fs.unlinkSync('dist.zip')
 })

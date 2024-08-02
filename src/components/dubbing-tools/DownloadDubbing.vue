@@ -17,8 +17,8 @@ import { downloadAudio } from "@/api/tts";
 const onClicked = () => {
   downloadAudio("0CE40145E9DC86E1F04F3D8516FD7FC343E793F3FBB7982EAF03A305B76E6042").then(
     (res) => {
-      console.log(res);
-      console.log(res);
+// console.log(res);
+// console.log(res);
       const blob = new Blob([res], { type: "audio/mp3" });
       const localUrl = (window.URL || webkitURL).createObjectURL(blob);
       const audio = document.createElement("audio");

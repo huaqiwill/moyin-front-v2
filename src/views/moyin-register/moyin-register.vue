@@ -118,7 +118,7 @@ const formRules = {
 // TabBar
 const userLoginActiveName = ref("login");
 const handleUserLoginTabClick = (tab, event) => {
-  console.log(tab, event);
+// console.log(tab, event);
 };
 </script>
 

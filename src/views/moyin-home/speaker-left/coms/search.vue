@@ -28,7 +28,7 @@ const placeholder = computed(() => {
 async function handleSearch() {
   speakerStore.queryParams.name = searchName.value
   let searchList = await speakerStore.getSpeakerList()
-  console.log('搜索数据', searchName.value)
+// console.log('搜索数据', searchName.value)
 
   speakerStore.setSpeakerList(searchList)
 }
@@ -49,6 +49,6 @@ async function handleAll() {
   speakerStore.queryParams.languageId = ''
   speakerStore.queryParams.domainId = ''
   let speakerList = await speakerStore.getSpeakerList()
-  speakerStore.setSpeakerList(speakerList.value)
+  speakerStore.setSpeakerList(speakerList)
 }
 </script>

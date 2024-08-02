@@ -40,9 +40,9 @@ onMounted(() => {
 const onStress = () => {
   const quill = quillEditorRef.value.getQuill();
   quill.focus();
-  console.log(quill);
+// console.log(quill);
   const range = quill.getSelection();
-  console.log(range);
+// console.log(range);
   if (range) {
     quill.insertText(range.index, "200", { StressBlot: "Custom Inline Value" });
     quill.setSelection(range.index + 1); // 将光标移到自定义 Inline 后面

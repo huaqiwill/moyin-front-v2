@@ -147,15 +147,15 @@ onBeforeUpdate(async () => {
 
     const emotionIdSet = props.info?.emotionIdSet || []
     emotionSet.value = emotionList.filter((emotion) => emotionIdSet.includes(emotion.id))
-    console.log('情绪集合', emotionList, emotionIdSet, emotionSet.value)
+// console.log('情绪集合', emotionList, emotionIdSet, emotionSet.value)
 
     const domainIdSet = props.info.domainIdSet || []
     domainSet.value = domainList.filter((domain) => domainIdSet.includes(domain.id))
-    console.log('领域集合', domainIdSet, domainList, domainSet.value)
+// console.log('领域集合', domainIdSet, domainList, domainSet.value)
 
     const languageIdSet = props.info.languageIdSet || []
     languageSet.value = languageList.filter((language) => languageIdSet.includes(language.id))
-    console.log('语言集合', languageIdSet, languageList, languageSet.value)
+// console.log('语言集合', languageIdSet, languageList, languageSet.value)
 
     let speakerId = props.info.id
     getSpeakerEmotionList(speakerId).then((res) => {
@@ -177,7 +177,7 @@ function handleDefaultEmotionSelect() {
 
   // 播放数据
   let speakerInfo = speakerInfoList[0]
-  console.log(speakerInfo)
+// console.log(speakerInfo)
 
   selectStyleCallName.value = speakerInfo.styleCallName
 
@@ -193,7 +193,7 @@ function handleCancel() {
 }
 
 function handleOk() {
-  // console.log("拿到的数据222222====", props.info);
+// console.log("拿到的数据222222====", props.info);
   model.value = false
   // globalSpeaker.value = props.info;
   // globalSpeed.value = speed.value;
@@ -204,16 +204,16 @@ function handleOk() {
   submitTtsData.value.pitch = pitch.value
   submitTtsData.value.speaker = selectStyleCallName.value
 
-  console.log(submitTtsData.value)
+// console.log(submitTtsData.value)
 
-  // console.log(editorKey);
+// console.log(editorKey);
 
   // const editorKey = dubbingStore.getGlobaleEditorKey();
   tryPlayStore.setSpeakerForce(props.info)
 }
 
 function handleEmotionSelect(item) {
-  console.log('拿到的值：', item)
+// console.log('拿到的值：', item)
 
   selectedEmotionId.value = item.id
 
@@ -232,7 +232,7 @@ function handleEmotionSelect(item) {
 
   // 播放数据
   let speakerInfo = speakerInfoList[0]
-  console.log(speakerInfo)
+// console.log(speakerInfo)
 
   // const audio = new Audio(speakerInfo.demoUrl);
   // audio.play();

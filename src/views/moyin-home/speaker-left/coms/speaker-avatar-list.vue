@@ -41,10 +41,7 @@ let isFirstSelect = true
 
 onMounted(() => {
   emitter.on('speaker:loading:ok', () => {
-    console.log('新数据更新')
-
     speakerList.value = speakerStore.getSpeakerListLocal()
-    console.log('SpeakerList', speakerList.value)
 
     if (speakerList.value.length > 0 && isFirstSelect) {
       handleClick(speakerList.value[0])
@@ -66,6 +63,6 @@ function handleClick(speaker: any) {
   selectedSpeaker.value = speaker
   emitter.emit('speaker:select', speaker)
   tryPlayStore.setSpeakerForce(speaker)
-  console.log('选择了speaker', speaker)
+// console.log('选择了speaker', speaker)
 }
 </script>

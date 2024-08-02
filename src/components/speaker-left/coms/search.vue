@@ -66,7 +66,7 @@ async function handleRecent() {
   // let speakerList = speakerListBackup.filter((speaker: any) => {
   //   return !!recentList.find((recent: any) => recent.speakerId == speaker.id)
   // })
-  console.log(recentList)
+// console.log(recentList)
 
   speakerStore.setSpeakerList(recentList)
 }

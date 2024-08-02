@@ -23,6 +23,7 @@ interface EmitterEventMap {
   'remain:count': []
   'editor:change:count': [count: number]
   'speaker:update:alias': [alias: string]
+  'try:play:emotion': [emotion: any]
 }
 
 type EmitterMethod<K extends keyof EmitterEventMap> = (...args: EmitterEventMap[K]) => void

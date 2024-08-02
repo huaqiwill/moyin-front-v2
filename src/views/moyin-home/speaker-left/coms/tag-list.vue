@@ -148,16 +148,16 @@ async function filterSpeaker() {
   //   )
   // }
 
-  console.log('情绪：', selectedEmotion.value)
-  console.log('领域：', selectedDomain.value)
-  console.log('语言：', selectedLanguage.value)
+// console.log('情绪：', selectedEmotion.value)
+// console.log('领域：', selectedDomain.value)
+// console.log('语言：', selectedLanguage.value)
 
   speakerStore.queryParams.emotionId = selectedEmotion.value
   speakerStore.queryParams.domainId = selectedDomain.value
   speakerStore.queryParams.languageId = selectedLanguage.value
 
   const speakerList = await speakerStore.getSpeakerList()
-  console.log(speakerList)
+// console.log(speakerList)
 
   speakerStore.setSpeakerList(speakerList)
 }

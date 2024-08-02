@@ -24,7 +24,7 @@ const audioSrc = ref("");
 const handleClicked = () => {
   let text = quillEditorRef.value.getText() || "";
 
-  console.log(Base64.encode(text));
+// console.log(Base64.encode(text));
 
   if (text.length === 1) {
     ElMessage({
@@ -49,10 +49,10 @@ const handleClicked = () => {
     mergeSymbol: false,
   };
 
-  console.log(data);
+// console.log(data);
 
   // tts(data).then((res) => {
-  //   // console.log(res);
+// console.log(res);
   //   // audioSrc.value = "/dev-api/moyin/tts/audition/" + res.data;
   //   const audio = new Audio("/dev-api/moyin/tts/audition/" + res.data);
   //   audio.play();

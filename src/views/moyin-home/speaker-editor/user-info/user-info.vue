@@ -62,7 +62,7 @@ onMounted(() => {
       avatar.value =
         res.user.avatar ||
         'https://peiyinshenqi-1254161078.cos.ap-shanghai.myqcloud.com/avatar/mFcMn2'
-      console.log('用户信息11：', userInfo.value)
+// console.log('用户信息11：', userInfo.value)
     })
   }
 })

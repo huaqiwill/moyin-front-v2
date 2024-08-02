@@ -16,7 +16,7 @@ const props = defineProps({
 const data: any = props.data;
 
 onMounted(() => {
-  console.log("属性数据", props.data);
+// console.log("属性数据", props.data);
 });
 
 function getRandomColor() {

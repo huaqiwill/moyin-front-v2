@@ -29,7 +29,7 @@ const handleFindSensitiveWords = () => {
 
 const handleFind = () => {
   sensitiveWordIdentify(text).then((res) => {
-    console.log(res);
+// console.log(res);
   });
 };
 

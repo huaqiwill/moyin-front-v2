@@ -67,8 +67,8 @@ onMounted(async () => {
   // 异步加载情绪集合
   // dubbingStore.getSpeakerEmotionList()
 
-  // console.log("情绪集合", speakerEmotionList.value);
-  // console.log("搜索条件", storeSearchCriteria.value);
+// console.log("情绪集合", speakerEmotionList.value);
+// console.log("搜索条件", storeSearchCriteria.value);
 
   // const speakerEmotionPromise = getSpeakerEmotionList().then((res) => {
   //   speakerEmotionList.value = res.data;
@@ -158,13 +158,13 @@ const onSearchSpeaker = () => {
   // getSearchSpeakers();
   getSpeakerListApi(queryParams).then((res) => {
     speakerList.value = res.rows;
-    // console.log("拿到的结果", speakerList.value);
+// console.log("拿到的结果", speakerList.value);
   });
 };
 
 //
 const handleTagSelect = (tag, index) => {
-  console.log(tag, index);
+// console.log(tag, index);
 };
 
 // 对话框点击确定后
@@ -178,7 +178,7 @@ const list = ref();
 
 onMounted(() => {
   if (list.value) {
-    console.log("高度", list.value.offsetHeight); // 获取元素的高度
+// console.log("高度", list.value.offsetHeight); // 获取元素的高度
   }
 });
 /**
@@ -187,12 +187,12 @@ onMounted(() => {
  */
 const handleScroll = async () => {
   bottom.value = false;
-  console.log("符合条件");
+// console.log("符合条件");
   queryParams.pageNum++;
 
   getSpeakerListApi(queryParams).then((res) => {
     speakerList.value.push(...res.rows);
-    // console.log("拿到的结果", speakerList.value);
+// console.log("拿到的结果", speakerList.value);
     bottom.value = true;
   });
 

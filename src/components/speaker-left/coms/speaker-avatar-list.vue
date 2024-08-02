@@ -50,6 +50,6 @@ function handleClick(speaker: any) {
   selectSpeakerId.value = speaker.id
   emitter.emit('speaker:select', speaker)
   tryPlayStore.setSpeakerForce(speaker)
-  console.log('选择了speaker', speaker)
+// console.log('选择了speaker', speaker)
 }
 </script>

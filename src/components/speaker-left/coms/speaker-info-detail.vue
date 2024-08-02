@@ -229,6 +229,7 @@ onMounted(() => {
   emitter.on('speaker:select', async (speaker: any) => {
     await getSpeakerInfoApi(speaker.id).then((res) => {
       speakerInfo.value = res.data
+// console.log('配音员详情', speakerInfo.value)
     })
 
     const { emotionIdSet, domainIdSet } = speakerInfo.value

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, type CSSProperties, inject } from 'vue'
+import { computed, ref, onMounted, type CSSProperties, inject } from 'vue'
 import { defaultAvatar } from '@/config'
 import { useTryPlayStore } from '@/stores'
-import { ElIcon } from 'element-plus'
+import { ElIcon, ElMessage } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
 import throttle from 'lodash.throttle'
 // import { getConfig } from '@/config'
@@ -22,8 +22,26 @@ const styleObject = computed<CSSProperties>(() => ({
   height: `${props.size}px`,
 }))
 
+const demoUrl = ref('')
+
+onMounted(() => {
+  emitter.on('try:play:emotion', (emotion: any) => {
+    demoUrl.value = emotion.demoUrl
+    tryPlayStore.pausePlay()
+  })
+})
+
 const handleClick = throttle(async () => {
-  emitter.emit('tryplay-generator')
+  // emitter.emit('tryplay-generator')
+  if (!demoUrl.value) {
+    ElMessage({
+      message: '请先选择情绪后再试听',
+      type: 'warning',
+    })
+    return
+  }
+  tryPlayStore.playSimple(demoUrl.value)
+// console.log('拿到的DemoUrl', demoUrl.value)
 })
 
 defineExpose({

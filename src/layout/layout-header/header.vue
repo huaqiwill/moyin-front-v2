@@ -188,7 +188,7 @@ const menus = [
 onMounted(() => {
   userGetInfoApi().then((res: any) => {
     userInfo.value = res.data
-    console.log(userInfo)
+// console.log(userInfo)
   })
 })
 
