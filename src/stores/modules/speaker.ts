@@ -1,4 +1,4 @@
-import {defineStore} from 'pinia'
+import { defineStore } from 'pinia'
 import {
   getEmotionNameListApi,
   getLanguageNameListApi,
@@ -14,8 +14,8 @@ import {
   speakerCollectRemoveApi,
   speakerAliasEditApi,
 } from '@/api/speaker'
-import {emitter} from '@/event-bus'
-import {reactive, ref} from 'vue'
+import { emitter } from '@/event-bus'
+import { reactive, ref } from 'vue'
 
 export const useSpeakerStore = defineStore('speaker', () => {
   let collectList: any[] = []
@@ -159,7 +159,7 @@ export const useSpeakerStore = defineStore('speaker', () => {
         this.setSpeakerList(res.rows)
         // speakerListBackup = res.rows
         speakerCount.value = res.total
-        return speakerList
+        return speakerList.value
       })
     },
     selectSpeaker(speaker: any) {
@@ -169,6 +169,7 @@ export const useSpeakerStore = defineStore('speaker', () => {
       return speakerList.value
     },
     setSpeakerList(list: any) {
+      // 防止传过来的List出现问题
       speakerList.value = list
       emitter.emit('speaker:loading:ok')
     },

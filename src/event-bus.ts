@@ -1,11 +1,11 @@
-import type {IDomEditor} from '@wangeditor/editor'
+import type { IDomEditor } from '@wangeditor/editor'
 import ee from 'event-emitter'
-import type {Speaker} from '@/model'
-import type {DeepReadonly, UnwrapNestedRefs} from 'vue'
+import type { Speaker } from '@/model'
+import type { DeepReadonly, UnwrapNestedRefs } from 'vue'
 
 const emitter = ee() as EventBus
 
-export {emitter}
+export { emitter }
 
 interface EmitterEventMap {
   warn: [message: string]
@@ -21,7 +21,7 @@ interface EmitterEventMap {
   'speaker:loading:ok': []
   'speaker:emotion:select': [emotion: any]
   'remain:count': []
-  'editor:change:count': [count: number],
+  'editor:change:count': [count: number]
   'speaker:update:alias': [alias: string]
 }
 

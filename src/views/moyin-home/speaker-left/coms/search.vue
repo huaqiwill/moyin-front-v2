@@ -14,8 +14,8 @@
 </style>
 
 <script setup lang="ts">
-import {computed, ref} from 'vue'
-import {useSpeakerStore} from '@/stores'
+import { computed, ref } from 'vue'
+import { useSpeakerStore } from '@/stores'
 
 const speakerStore = useSpeakerStore()
 const searchName = ref('')
@@ -28,6 +28,8 @@ const placeholder = computed(() => {
 async function handleSearch() {
   speakerStore.queryParams.name = searchName.value
   let searchList = await speakerStore.getSpeakerList()
+  console.log('搜索数据', searchName.value)
+
   speakerStore.setSpeakerList(searchList)
 }
 

@@ -3,7 +3,10 @@
     style="height: 100%; width: 100%; border-left: 1px solid #fff"
     class="overflow-x-hidden overflow-y-auto scrollbar-custom"
   >
-    <div class="d-flex flex-row flex-wrap justify-content-start">
+    <div
+      v-if="speakerList && speakerList.length > 0"
+      class="d-flex flex-row flex-wrap justify-content-start"
+    >
       <div
         style="margin: 8px 0; flex: 0 0 68px; height: 68px"
         v-for="item in speakerList"
@@ -16,16 +19,17 @@
         ></SpeakerAvatar>
       </div>
     </div>
+    <div v-else style="margin: 8px">没有搜索到相关配音员~</div>
   </div>
 </template>
 
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
-import {SpeakerAvatar} from '.'
-import {emitter} from '@/event-bus'
-import {useSpeakerStore, useTryPlayStore} from '@/stores'
+import { onMounted, ref } from 'vue'
+import { SpeakerAvatar } from '.'
+import { emitter } from '@/event-bus'
+import { useSpeakerStore, useTryPlayStore } from '@/stores'
 
 const speakerStore = useSpeakerStore()
 const tryPlayStore = useTryPlayStore()
@@ -37,7 +41,11 @@ let isFirstSelect = true
 
 onMounted(() => {
   emitter.on('speaker:loading:ok', () => {
-    speakerList.value = speakerStore.getSpeakerListLocal();
+    console.log('新数据更新')
+
+    speakerList.value = speakerStore.getSpeakerListLocal()
+    console.log('SpeakerList', speakerList.value)
+
     if (speakerList.value.length > 0 && isFirstSelect) {
       handleClick(speakerList.value[0])
       isFirstSelect = false
