@@ -1,7 +1,7 @@
 <template>
   <a-dropdown v-if="isLogin" trigger="hover">
     <div class="login-in d-flex flex-row me-2">
-      <img :src="avatar" alt="" />
+      <img class="rounded-circle" :src="avatar" alt="" />
       <div class="ms-1">
         <div class="">
           <span v-if="userInfo">{{ userInfo.nickName }}</span>
@@ -59,10 +59,12 @@ onMounted(() => {
     isLogin.value = true
     userGetInfoApi().then((res: any) => {
       userInfo.value = res.user
-      avatar.value =
-        res.user.avatar ||
-        'https://peiyinshenqi-1254161078.cos.ap-shanghai.myqcloud.com/avatar/mFcMn2'
-// console.log('用户信息11：', userInfo.value)
+      if (res.user.avatar) {
+        avatar.value = '/dev-api' + res.user.avatar
+      } else {
+        avatar.value = 'https://peiyinshenqi-1254161078.cos.ap-shanghai.myqcloud.com/avatar/mFcMn2'
+      }
+      // console.log('用户信息11：', userInfo.value)
     })
   }
 })
