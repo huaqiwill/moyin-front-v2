@@ -53,8 +53,8 @@ const handleClicked = () => {
 
   // tts(data).then((res) => {
 // console.log(res);
-  //   // audioSrc.value = "/dev-api/moyin/tts/audition/" + res.data;
-  //   const audio = new Audio("/dev-api/moyin/tts/audition/" + res.data);
+  //   // audioSrc.value = "/prod-api/moyin/tts/audition/" + res.data;
+  //   const audio = new Audio("/prod-api/moyin/tts/audition/" + res.data);
   //   audio.play();
   // });
 };

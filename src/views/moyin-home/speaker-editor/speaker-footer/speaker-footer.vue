@@ -5,7 +5,7 @@
   >
     <div>
       <span>当前字符数：{{ currentCount }}</span>
-      <span class="ms-3">今日剩余字符：{{ remainCount }} / 6000</span>
+      <span class="ms-3">今日剩余字符：{{ remainCount }} / {{ limitCount }}</span>
       <!-- <el-tag v-if="speakerStore.submitParams.speaker" class="ms-2">{{ speakerStore.submitParams.speaker }}</el-tag> -->
     </div>
     <div class="d-flex">
@@ -33,13 +33,15 @@ import { ElMessage } from 'element-plus'
 
 const speakerStore = useSpeakerStore()
 const remainCount = ref(6000)
+const limitCount = ref(6000)
 const currentCount = ref(0)
 
 onMounted(() => {
   // 剩余字数计算
   emitter.on('remain:count', () => {
     getRemainApi().then((res: any) => {
-      remainCount.value = 6000 - res.data
+      remainCount.value = res.remain
+      limitCount.value = res.limit
     })
   })
   // 编辑器字数变更

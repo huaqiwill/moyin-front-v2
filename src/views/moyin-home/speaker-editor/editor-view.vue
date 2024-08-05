@@ -91,9 +91,25 @@ function handleCreated(editor: IDomEditor) {
   emit('created', editor)
 }
 
+function isAnsi(char: string) {
+  return char.charCodeAt(0) >= 0 && char.charCodeAt(0) <= 127
+}
+
+function calculateDubbingLength(text: string) {
+  let dubbingLength = 0
+  for (let i = 0; i < text.length; i++) {
+    if (isAnsi(text.charAt(i))) {
+      dubbingLength += 1
+    } else {
+      dubbingLength += 2
+    }
+  }
+  return dubbingLength
+}
+
 function handleChange(editor: IDomEditor) {
   emit('change', editor)
-  let count = editor.getText().length || 0
+  let count = calculateDubbingLength(editor.getText()) || 0
   emitter.emit('editor:change:count', count)
 }
 

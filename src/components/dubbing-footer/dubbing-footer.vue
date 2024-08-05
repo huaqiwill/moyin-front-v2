@@ -33,12 +33,14 @@ import { emitter } from '@/event-bus'
 const speakerStore = useSpeakerStore()
 const submitParams = speakerStore.getSubmitParams()
 const remainCount = ref(6000)
+const limitCount = ref(6000)
 const currentCount = ref(0)
 
 onMounted(() => {
   emitter.on('remain:count', () => {
     getRemainApi().then((res: any) => {
-      remainCount.value = 6000 - res.data
+      remainCount.value = res.data.remain
+      limitCount.value = res.data.limit
     })
   })
 

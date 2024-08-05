@@ -150,7 +150,7 @@ export const useDubbingStore = defineStore('dubbing', {
     },
     generatorVoice() {},
     setLastPlayUrl(url: string) {
-      this.lastPlayUrl = '/dev-api/moyin/tts/audition/' + url
+      this.lastPlayUrl = '/prod-api/moyin/tts/audition/' + url
     },
     getLastPlayUrl() {
       return this.lastPlayUrl

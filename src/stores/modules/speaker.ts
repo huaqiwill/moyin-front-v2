@@ -175,7 +175,7 @@ export const useSpeakerStore = defineStore('speaker', () => {
     },
     // play
     setLastPlayUrl(url: string) {
-      lastPlayUrl = '/dev-api/moyin/tts/audition/' + url
+      lastPlayUrl = '/prod-api/moyin/tts/audition/' + url
     },
     getLastPlayUrl() {
       return lastPlayUrl

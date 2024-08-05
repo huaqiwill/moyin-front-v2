@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => {
       port: port,
       open: true,
       proxy: {
-        ['/dev-api']: {
+        ['/prod-api']: {
           target: `http://localhost:8080`,
           changeOrigin: true,
           rewrite: (path) =>

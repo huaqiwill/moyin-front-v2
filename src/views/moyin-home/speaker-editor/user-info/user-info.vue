@@ -60,7 +60,7 @@ onMounted(() => {
     userGetInfoApi().then((res: any) => {
       userInfo.value = res.user
       if (res.user.avatar) {
-        avatar.value = '/dev-api' + res.user.avatar
+        avatar.value = '/prod-api' + res.user.avatar
       } else {
         avatar.value = 'https://peiyinshenqi-1254161078.cos.ap-shanghai.myqcloud.com/avatar/mFcMn2'
       }
